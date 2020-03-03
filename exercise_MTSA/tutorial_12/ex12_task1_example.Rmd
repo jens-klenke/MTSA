@@ -1,0 +1,40 @@
+---
+title: "Exercise Sheet 12 -- Simulation for Task 1"
+output: html_notebook
+---
+
+## Preparations
+```{r}
+set.seed(42)
+# Innovations
+a1 <- rnorm(n = 1000, mean = 0, sd = 1)
+a2 <- rnorm(n = 1000, mean = 0, sd = 1)
+a3 <- rnorm(n = 1000, mean = 0, sd = 1)
+```
+
+## Generate Common Stochastic Trend
+```{r}
+x <- cumsum(a3) # random walk
+plot.ts(x)
+z1 <- x + a1
+z2 <- 0.5*x + a2
+z <- cbind(z1,z2)
+plot.ts(z)
+```
+
+## VECM coefficients
+```{r}
+# Decomposition of Pi
+beta <- c(1,-2)
+alpha <- c(1, 0.5)
+alpha %*% t(beta)
+
+cointegratin.relationship <- matrix(data = NA, nrow = 1000, ncol = 1)
+for (i in 1:1000){
+   cointegratin.relationship[i,] <- t(beta) %*% z[i,]
+}
+plot.ts(correction.term)
+```
+
+
+

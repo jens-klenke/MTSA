@@ -1,0 +1,94 @@
+---
+title: "Exercise Sheet 10 -- Development File"
+output: html_notebook
+---
+
+## Task 1: Compute IRFs by hand.
+```{r}
+phi_1 <- matrix(data = c(0.5, 0.25, 0, 0.5), nrow = 2)
+L <- matrix(data = c(1/2, 1/4, 0, 1/2), nrow = 2)
+Sigma_a <- L %*% t(L)
+Sigma_a
+```
+#### a) Compute the first 5 realisations of an impulse on z_1,0 by hand: (using the VAR structure)
+```{r}
+impulse <- c(1,0)
+irf <- matrix(data = NA, nrow = 6, ncol = 2)
+irf[1,] <- phi_1 %*% c(0,0) + impulse # t = 0
+irf[2,] <- phi_1 %*% irf[1,] # t = 1 .....
+irf[3,] <- phi_1 %*% irf[2,]
+irf[4,] <- phi_1 %*% irf[3,]
+irf[5,] <- phi_1 %*% irf[4,]
+irf[6,] <- phi_1 %*% irf[5,] # t = 5
+print(irf)
+plot(x = 0:5, y = irf[,1], ylim = c(0,1), type = "l", col = "red", main = "IRF of shock on z_1")
+points(x = 0:5, y = irf[,2], type = "l", col = "blue")
+legend("topright", legend = c("z1","z2"), lwd = c(2,2), col = c("red", "blue"))
+```
+#### c) Orthogonal impulse on z_1,0 by hand: (using the causal representation of a)
+```{r}
+L.est <- t(chol(Sigma_a))
+Theta_0 <- diag(2) %*% L.est # the thick \theta in the lecture!
+Theta_1 <- phi_1 %*% L.est
+Theta_2 <- phi_1 %*% Theta_1
+Theta_3 <- phi_1 %*% Theta_2
+Theta_4 <- phi_1 %*% Theta_3
+Theta_5 <- phi_1 %*% Theta_4
+ortho_impulse <- c(1,0) # now we are shocking the innovation series \eta_t and not a_t anymore!
+# computing the impulse responses
+ortho_irf <- matrix(data = NA, nrow = 6, ncol = 2)
+ortho_irf[1,] <- Theta_0 %*% ortho_impulse
+ortho_irf[2,] <- Theta_1 %*% ortho_impulse
+ortho_irf[3,] <- Theta_2 %*% ortho_impulse
+ortho_irf[4,] <- Theta_3 %*% ortho_impulse
+ortho_irf[5,] <- Theta_4 %*% ortho_impulse
+ortho_irf[6,] <- Theta_5 %*% ortho_impulse
+
+print(ortho_irf)
+plot(x = 0:5, y = ortho_irf[,1], ylim = c(0,1), type = "l", col = "red", main = "Orthogonalised IRF of shock on z_1")
+points(x = 0:5, y = ortho_irf[,2], type = "l", col = "blue")
+```
+
+## Task 2: b) FEVdec with the MTS package, reproducing the results by hand
+```{r}
+library(MTS)
+FEVdec(Phi = phi_1, Theta = NULL, Sig = Sigma_a, lag = 5)
+# summing up from 0 to h-1 for the variance decomposition of a h-step ahead forecast
+var0 <- Theta_0^2 # squaring every scalar entry of the coefficient matrix! this is not a matrix product any more!
+var1 <- var0 + Theta_1^2 # summing up for h = 2
+var2 <- var1 + Theta_2^2 # h = 3 ...
+var3 <- var2 + Theta_3^2 
+var4 <- var3 + Theta_4^2
+var5 <- var4 + Theta_5^2 
+print(var5)
+```
+
+## Task 2: b) continued
+```{r}
+fev <- list()
+fev[[1]] <- diag(1/rowSums(var0)) %*% var0 # rescaling with the sums of each row (the variance of each variable)
+fev[[2]] <- diag(1/rowSums(var1)) %*% var1 
+fev[[3]] <- diag(1/rowSums(var2)) %*% var2
+fev[[4]] <- diag(1/rowSums(var3)) %*% var3
+fev[[5]] <- diag(1/rowSums(var4)) %*% var4
+fev[[6]] <- diag(1/rowSums(var5)) %*% var5
+for (i in 1:6){print(fev[[i]])}
+```
+
+## Task 3 f, g)
+```{r}
+phi_1 <- matrix(data = c(0.5, 0.1, 0, 0, 0.1, 0.2, 0, 0.3, 0.3), nrow = 3)
+print(phi_1)
+print(phi_1%^%2)
+```
+#### h)
+```{r}
+phi_1.alt <- matrix(data = c(0.5, 0.1, 0, 0.1, 0.1, 0.2, 0, 0, 0.3), nrow = 3)
+print(phi_1.alt)
+print(phi_1.alt%^%2)
+print(phi_1.alt%^%3)
+print(phi_1.alt%^%4)
+# the 0 in the top right corner remains like in the other setup!
+```
+
+

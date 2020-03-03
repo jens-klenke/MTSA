@@ -1,0 +1,43 @@
+---
+title: "Exercise Sheet 9 -- Solutions"
+output: html_notebook
+---
+
+# Task 2: Granger Causality and IRFs in Data
+```{r}
+# cleaning and loading
+rm(list = ls())
+fx_series <- readRDS("fx_series.Rda")
+library(vars)
+```
+
+#### a) Test for Granger Non-Causality with p = 1: Variable 1
+```{r}
+var1.fit <- VAR(fx_series, p = 1, type = "const") # VAR(1) with intercept, no trends
+causality(x = var1.fit, cause = "lr.Eu", vcov. = vcovHC(var1.fit)) # there is conditional heteroscedasticity in the data, that's why employing a HC VCOV matric helps
+```
+
+#### a) Test for Granger Non-Causality with p = 1: Variable 2
+```{r}
+causality(x = var1.fit, cause = "lr.Ja", vcov. = vcovHC(var1.fit))
+```
+
+#### c) Get Impulse Response Functions with p = 1 for 5 periods (i)
+```{r}
+irf1 <- irf(x = var1.fit, ortho = FALSE, n.ahead = 5)
+# plot IRFs of shock on first exchange rate
+plot(x = 0:5, irf1$irf$lr.Eu[,1], ylim = c(0,1), type = "l", col = "red"
+     , main = "IRF of shock on lr.Eu")
+points(x = 0:5, y = irf1$irf$lr.Eu[,2], type = "l", col = "blue")
+legend("topright", legend = c("lr.Eu","lr.Ja"), lwd = c(2,2), col = c("red", "blue"))
+# plot IRFs of shock on second exchange rate
+plot(x = 0:5, irf1$irf$lr.Ja[,1], ylim = c(0,1), type = "l", col = "red"
+     , main = "IRF of shock on lr.Ja")
+points(x = 0:5, y = irf1$irf$lr.Ja[,2], type = "l", col = "blue")
+legend("topright", legend = c("lr.Eu","lr.Ja"), lwd = c(2,2), col = c("red", "blue"))
+```
+
+```{r}
+irf1$irf$lr.Eu
+irf1$irf$lr.Ja
+```

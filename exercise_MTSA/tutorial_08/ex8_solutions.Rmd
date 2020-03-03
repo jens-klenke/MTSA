@@ -1,0 +1,59 @@
+---
+title: "Exercise Sheet 8 -- R Solutions"
+output: pdf_document
+
+# Solution for Task 1:
+
+#### d)
+```{r}
+library(MASS)
+N <- 10000 # number of repetitions
+K <- 3 # dimension of VAR
+gauss <- mvrnorm(n = N, mu = c(0,0,0), Sigma = diag(K)) # drawing a_t from iid N(0,I)
+msfe_gauss <- diag(gauss %*% t(gauss)) # computing e'e for all draws in one take equals diag(EE')
+#msfe_gauss <- rowSums(gauss^2) # alternative way to write the inner product down
+limit <- qchisq(p = 0.95, df=3, lower.tail=TRUE) # this is only a one-sided test since we have squared each error!
+sum(msfe_gauss < limit) / N # see formula in the notes!
+```
+#### e)
+```{r}
+unif <- matrix(data = runif(n = N * 3, min = -sqrt(12)/2, max = sqrt(12)/2), nrow = N, ncol = 3) # variance = 1 again, Kurtosis is < 3 for this one
+msfe_unif <- rowSums(unif^2)
+sum(msfe_unif < limit) / N
+```
+#### f) 
+```{r}
+t2 <- matrix(data = rt(n = N * 3, df = 2), nrow = N, ncol = 3) # variance = 1 by default, kurtosis > 3 and this hurts a lot
+msfe_t2 <- rowSums(t2^2)
+sum(msfe_t2 < limit) / N
+```
+
+#### Aftermath: Looking into Empirical Data
+```{r}
+load(file = "us_macrodata.Rda")
+# compute growth rates (diff-logs) of every variable except unemployment
+macdata <- cbind(diff(log(us.macro_series$cpi)),
+                 diff(log(us.macro_series$rgdp)),
+                 us.macro_series$unemprate[-T],
+                 diff(log(us.macro_series$gp_investment)),
+                 diff(log(us.macro_series$debt_gdp)))
+library(MTS)
+var1.fit <- VAR(x = macdata, p = 1, include.mean = TRUE)
+var4.fit <- VAR(x = macdata, p = 4, include.mean = TRUE)
+plot(density(var1.fit$residuals[,5])) # play around and change the columns 1:5 for different variables
+plot(density(var4.fit$residuals[,5]))
+library(normtest)
+```
+#### Aftermath: Univariate Testing
+```{r}
+j <- 1 # again, play around with columns 1:5. But it won't change the results very much.
+jb.norm.test(x = var1.fit$residuals[,j]) # Runs the univariate Jarque-Bera test which considers skewness and kurtosis
+jb.norm.test(x = var4.fit$residuals[,j])
+```
+
+
+
+
+
+
+

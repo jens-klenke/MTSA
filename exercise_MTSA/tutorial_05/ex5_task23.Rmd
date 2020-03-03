@@ -1,0 +1,205 @@
+---
+title: "Exercise Sheet 5, Tasks 2 & 3"
+output: pdf_document
+---
+
+# Exercise Sheet 5
+## Tasks 2 & 3  
+
+### Task 2
+```{r}
+# Clearing Workspace
+rm(list = ls())
+# please put the datasets into the same folder as this file; R will search in the latter's directory by default
+load(file = "us_macrodata.Rda")
+library(MTS)
+```
+
+#### a) Plot all time series and judge which time series seem non-stationary. Proceed to compute
+growth rates of the non-stationary variables.
+**Hint: Date has linear trend**
+```{r}
+macmat <- data.matrix(us.macro_series)
+plot.ts(macmat)
+# Every series except unemployment looks non-stationary. Regarding the debt-to-gdp ratio,
+# this is surprising, but we better difference it as well.
+```
+
+
+##### a) continued
+```{r}
+macdata <- cbind(diff(log(us.macro_series$cpi)), us.macro_series$unemprate[-T], diff(log(us.macro_series$rgdp)),
+                 diff(log(us.macro_series$gp_investment)), diff(log(us.macro_series$debt_gdp)))
+# Note that the last observation of 'unemp' was dropped for conformable length. Its last and not first due to the date information: measurements are always from the first day of a quarter.
+plot.ts(macdata)
+```
+
+
+#### b) Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a VAR(p)
+model here?
+```{r}
+mq(x = macdata, lag = 20)
+# well, there seems to be something
+mq(x = macdata[,-3], lag = 20)
+# even without unemployment, there are patterns.
+```
+
+#### c) Determine the length of the time series. How many coefficients can be estimated and what does it mean for K and p?
+```{r}
+data_dim <- dim(macdata) 
+print(Tmax <- data_dim[1]) # observations
+print(K <- data_dim[2]) # variables
+print(max.p <- (Tmax * K - K) / K^2) # how many lags can be estimated in addition to the intercept
+```
+
+#### d) Consult the AIC, BIC and HQ to determine the optimal lag order for a VAR(p) model for the whole dataset. Plot the values of the three criteria for the lag orders p from 1 to 5 in one plot.
+```{r}
+M <- 10 # maximal p 
+VARorder(x = macdata, maxp = M)
+# so it's p = 1, 2 or 4.....
+var1to5.fit <- lapply(X = 1:M, function(i) VAR(x = macdata, include.mean = TRUE, p = i, output = FALSE))
+var1to5.aic <- sapply(1:M, function(i) var1to5.fit[[i]]$aic)
+var1to5.bic <- sapply(1:M, function(i) var1to5.fit[[i]]$bic)
+var1to5.hq <- sapply(1:M, function(i) var1to5.fit[[i]]$hq)
+plot(x = 1:M, y = var1to5.aic, type = "b", main = "Values of Information Criteria", xlab = "p",
+     ylim = c( min(c(var1to5.aic, var1to5.bic, var1to5.hq)), max(c(var1to5.aic, var1to5.bic, var1to5.hq)) ) )
+points(x = 1:M, y = var1to5.bic, pch = 11, col = "red")
+points(x = 1:M, y = var1to5.hq, col = "blue", pch = 25)
+legend("topleft", legend = c("AIC", "BIC", "HQ"), col = c("black", "red", "blue"), pch = c(NA, 11, 25), lwd = c(2, NA, NA))
+```
+
+#### e) Fit VAR(p) models incorporating all variables using the optimal lag order(s) p suggested by each of the information criteria. Apply the Ljung-Box test to inspect the residuals’ properties. For which models does the test reject the null hypothesis on one of the first ten lags?
+```{r}
+var1.fit <- VAR(x = macdata, p = 1, include.mean = TRUE, output = FALSE)
+var2.fit <- VAR(x = macdata, p = 2, include.mean = TRUE, output = FALSE)
+var4.fit <- VAR(x = macdata, p = 4, include.mean = TRUE, output = FALSE)
+# Now the Ljung-Box test. We adjust using K = 5 with 5^2 * p
+mq(x = var1.fit$residuals, lag = 25, adj = 25 * 1)
+mq(x = var2.fit$residuals, lag = 25, adj = 25 * 2)
+mq(x = var4.fit$residuals, lag = 25, adj = 25 * 4)
+# Well, this seems bad :(
+```
+
+#### f) Now take a VAR(1) and a VAR(4) model with all variables included and an intercept specified.
+
+```{r}
+# i) How many coefficients are estimated in each case?
+paste("VAR(1):", 5 + 5^2 * 1, "-- VAR(4):", 5 + 5^2 * 4)
+
+# ii) Any major differences between the residual covariance matrices?
+paste("Ratio of residual coveriances")
+var1.fit$Sigma / var4.fit$Sigma
+
+# iii) Now compare the standard errors and look for a pattern. Do you see the same pattern in Sigma_a ?
+paste("Ratio of standard errors")
+var1.fit$secoef / var4.fit$secoef[1:6,]
+```
+
+#### g) Repeat the task from above with CPI and the debt-to-gdp ratio as the only variables (hence K = 2). How many coefficients are estimated in this case?
+```{r}
+# How many coefficients can be estimated?
+(Tmax * 2 - 2) / 2^2
+var1red.fit <- VAR(x = macdata[,c(1,5)], p = 1, output = FALSE, include.mean = TRUE)
+var4red.fit <- VAR(x = macdata[,c(1,5)], p = 4, output = FALSE, include.mean = TRUE)
+
+# i) How many coefficients were estimated?
+paste("VAR(1):", 2 + 2^2 * 1, "-- VAR(4):", 2 + 2^2 * 4)
+
+# ii) Any major differences between the residual covariance matrices?
+paste("Ratio of residual coveriances")
+var1red.fit$Sigma / var4red.fit$Sigma
+
+# iii) Now compare the standard errors and look for a pattern. Do you see the same pattern in Sigma_a ?
+paste("Ratio of standard errors")
+var1red.fit$secoef / var4red.fit$secoef[1:3,]
+```
+
+#### h) At last, go back to VAR(1) and VAR(4) models from task f). Use the standard error matrices to compute t-statistics for each coefficient with the null hypothesis H_0: phi_(p,jk) = 0. How often is the null hypothesis rejected at the 5% level in each of the two models? 
+```{r}
+var1.t_ratios <- var1.fit$coef / var1.fit$secoef
+var2.t_ratios <- var2.fit$coef / var2.fit$secoef
+var4.t_ratios <- var4.fit$coef / var4.fit$secoef
+# testing H_0 with a two-sided test at 5% -> t is roughly 1.96
+print( var1.rej_count <- sum(abs(var1.t_ratios ) > 1.96) )
+print( var2.rej_count <- sum(abs(var2.t_ratios ) > 1.96) )
+print( var4.rej_count <- sum(abs(var4.t_ratios ) > 1.96) )
+
+paste("Fraction of coefficients to be rejected @ VAR(1):", var1.rej_count / (5 + 5^2 * 1))
+paste("Fraction of coefficients to be rejected @ VAR(2):", var2.rej_count / (5 + 5^2 * 2))
+paste("Fraction of coefficients to be rejected @ VAR(4):", var4.rej_count / (5 + 5^2 * 4))
+```
+
+
+### Task 3
+#### Cleaning and Preparation:
+```{r, results = "hide"}
+rm(list = ls())
+
+library(Quandl)
+# Set api key for unlimited downloads of free time series
+Quandl.api_key("") # Please enter your key in here.
+# Download and prepare data
+FX.Ja   <- Quandl("FRED/DEXJPUS", start_date = "1998-12-30", end_date = "2018-12-31", type = "xts")   # Download daily data on Japan/US FX rates
+FX.Eu   <- Quandl("FRED/DEXUSEU", start_date = "1998-12-30", end_date = "2018-12-31", type = "xts")  # Download daily data on Euro/US FX rates
+# Compute Growth rates
+lr.Eu <- diff(log(FX.Eu[, 1]))[-1]   # leave out NA in first component via [-1]
+lr.Ja <- diff(log(FX.Ja[, 1]))[-1]    # leave out NA in first component via [-1]
+
+V         <- merge.xts(lr.Eu, lr.Ja, all=FALSE)  # only use data when both log-returns are available
+date      <- index(V)                 # save dates for later use
+fx_series <- coredata(V)          # raw log-returns
+N         <- length(date)
+```
+
+#### a) Apply the Ljung-Box test on the multivariate time series and comment.
+```{r}
+mq(x = fx_series, lag = 35)
+# Except those correlations around lag 20 to 24, there seems  to be no commanding dynamic pattern here.
+```
+
+#### b) Do the usual information criteria support the finding of the Ljung-Box test?
+```{r}
+VARorder(x = fx_series, maxp = 35)
+# Well, .... yes. Kind of. There is just not anything to find.
+```
+
+#### c) Regardless of a) and b), fit a VAR(1) to the time series. Compare Sigma_a with Gamma_0.
+```{r}
+fx_var1.fit <- VAR(x = fx_series, p = 1, include.mean = TRUE, output = FALSE)
+print( Gamma_0 <- cov(fx_series) )
+print(fx_var1.fit$Sigma)
+fx_var1.fit$Sigma / Gamma_0
+```
+
+#### d) Apply the Ljung-Box test on the residuals (degrees of freedom!) Comment. Do the results surprise you?
+```{r}
+# Ljung-Box test on the regression residuals 
+mq(x = fx_var1.fit$residuals, lag = 35, adj = 2^2 * 1)
+# ... as expected
+
+```
+
+#### e) Repeat the Ljung-Box test but this time with the squared residuals. Also have a look at the information criteria.
+```{r}
+# Ljung-Box test on the squared residuals
+mq(x = fx_var1.fit$residuals^2, lag = 50, adj = 2^2 * 1)
+# oops. Looks heteroscedastic!
+VARorder(x = fx_var1.fit$residuals^2, maxp = 20)
+# Conditionally heteroscedastic, to be exact!
+plot.ts(fx_var1.fit$residuals^2)
+```
+#### f) Can you rule out weak stationarity for the growth rates of the exchange rates only based on
+your findings up to this point?
+No. Weak stationarity is about time-invariance regarding the *unconditional* expecation and variance. Heteroscedasticity can be a violation of weak stationarity, simply because the variance is not constant over time. But if we are able to sufficiently model the variation of the variance using a VAR, we are in fact facing *conditional* heteroscedasticity: $E(a_{t}^2) = \sigma_{t} * \epsilon_{t}$ with $\epsilon_{t}$ as white noise.  And as we learned before, a stable VAR with white noise-innovations yields a stationary time series.
+This is analogous to a stationary VAR, where the conditional expectation of the observations may differ from the unconditional expectation (depending on past observations).
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,59 @@
+---
+title: "Exercise Sheet 11 -- Solutions"
+output: html_notebook
+---
+
+## Task 1
+#### d) Simulate the ARIMA models
+```{r}
+set.seed(42)
+x.levels <- arima.sim(model = list(order = c(1,1,0), ar = c(-0.3)), n = 200, sd = 1)[-1] # each integration step is accompanied with an extra starting point at 0 and we wish to cut that out.
+y.levels <- arima.sim(model = list(order = c(0,2,0)), n = 200, sd = 1)[-(1:2)]
+plot.ts(cbind(x.levels, y.levels))
+```
+
+#### e) Regress x_{t} on first differences of y_{t}
+```{r}
+reg <- lm(x.levels[-1] ~ diff(y.levels))
+summary(reg)
+#plot.ts(reg$residuals)
+#acf(reg$residuals)
+```
+
+#### f) Monte Carlo Simulation
+```{r}
+# function to create the processes, run the regression and print the t-statistics
+spuriousreg <- function(T.max){
+x.levels <- arima.sim(model = list(order = c(1,1,0), ar = c(-0.3)), n = T.max, sd = 1)[-1]
+y.levels <- arima.sim(model = list(order = c(0,1,0)), n = T.max, sd = 1)[-1] # instead of differences an I(2) I just create an I(1) process of the differences
+reg <- lm(x.levels[-1] ~ y.levels[-1])
+regsum <- summary(reg)
+return(regsum$coefficients[2,c(1,3,4)]) # returns estimated coefficient, t-statistic and p-value
+}
+```
+#### f) continued: running the simulation study
+```{r}
+N <- 1000
+results <- matrix(data = NA, nrow = N, ncol = 3)
+for (i in 1:N){
+   results[i,] <- spuriousreg(25)
+}
+#plot(density(results[,1])) # KDE of regression coefficient
+#plot(density(results[,2])) # KDE of coefficient's t-statistic
+mean(results[,1]) # mean of regressin coefficients (still around zero, as expected)
+#var(results[,2]) # variance of t-statistics (increasing with T)
+sum(results[,3] < 0.05) / N # fraction of rejections under the null
+```
+
+## Task 3, c) Do impulse responses vanish over time? we will see...
+```{r}
+library(expm)
+phi_1 <- matrix(data = c(1.1, -0.2, -0.2, 1.4), nrow = 2)
+det(phi_1)
+det(phi_1%^%5)
+det(phi_1%^%10)
+```
+
+
+
+

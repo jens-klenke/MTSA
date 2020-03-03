@@ -1,0 +1,192 @@
+---
+title: "Exercise Sheet 6 -- R Solutions"
+output: pdf_document
+---
+
+# Solution for Tasks 2 & 3  
+
+### Task 2
+
+```{r, warning=FALSE}
+# Clearing Workspace
+rm(list = ls())
+# Please put the datasets into the same folder as the .Rmd-file!
+load(file = "us_macrodata.Rda")
+# compute growth rates (diff-logs) of every variable except unemployment
+macdata <- cbind(diff(log(us.macro_series$cpi)),
+                 diff(log(us.macro_series$rgdp)),
+                 us.macro_series$unemprate[-T],
+                 diff(log(us.macro_series$gp_investment)),
+                 diff(log(us.macro_series$debt_gdp)))
+library(MTS)
+```
+
+#### a) Fit a VAR(p) model according to the Hannan-Quinn information criterion.
+```{r}
+VARorder(x = macdata, maxp = 25)
+var4.fit <- VAR(x = macdata, p = 4, include.mean = TRUE)
+```
+
+#### b) Use the estimated coefficients and the associated standard errors to compute the t-statistics for each coefficient separately. Then count how many coefficients are not significantly different from zero at the 5% level.
+```{r}
+var4.tsingle <- var4.fit$coef / var4.fit$secoef
+sum(abs(var4.tsingle) < 1.96)
+# alternative solution:
+VARchi(x = macdata, p = 4, include.mean = TRUE, thres = 1.96)
+```
+
+#### c) Estimate the refined model using the command refVAR by setting a threshold corresponding to the 5% level from b).
+```{r}
+var4.ref.fit <- refVAR(model = var4.fit, thres = 1.96)
+```
+##### i) How many variables have been set to 0?
+```{r}
+sum(var4.ref.fit$coef == 0)
+```
+##### ii) Does the number coincide with your count in task b)?
+```{r}
+# Let me guess...
+isTRUE(71 == 78)
+paste("Nope. But it comes pretty close.")
+```
+
+##### iii) What may be the reason for the two numbers differing? (Hint: Slide 4-21)
+```{r}
+paste("Joint test vs a lot of single tests. Multiple testing?")
+```
+
+
+#### d) Compare the values of all information criteria offered to you both for the ‘ordinary’ VAR and the refined VAR model. Which model is best? Is the recommendation unanimous?
+```{r}
+cbind( c("AIC", "BIC", "HQ"), c(var4.fit$aic, var4.fit$bic, var4.fit$hq), c(var4.ref.fit$aic, var4.ref.fit$bic, var4.ref.fit$hq) )
+```
+
+#### e) Proceed to compare the MSEs of the ‘ordinary’ VAR model and the refined model. Is the model picked by the information criteria again superior? Explain your results.
+```{r}
+# 1. Check squared errors for each variable
+diag(var4.fit$Sigma) / diag(var4.ref.fit$Sigma)
+# 2. Check determinants of the MSE matrices (like for the ICs)
+det(var4.fit$Sigma) / det(var4.ref.fit$Sigma)
+
+```
+#### f) Calculate the numbers of coefficients estimated both for the ‘ordinary’ model and the refined model. Then perform a Ljung-Box test on the residuals of both models.
+```{r}
+# coefficients specified in total:
+5^2 * 4 + 5
+# But, we want only to adjust for the dynamic coefficients for the Ljung-Box test!
+ncoef.var4 <- 5^2 * 4 # leaving out the intercept! 
+ncoef.var4.ref <- ncoef.var4 - sum(var4.ref.fit$coef[-1,] == 0.0) # leaving out the intercept!!!
+# checking if line 46 is correct
+sum(var4.ref.fit$coef[-1,] != 0) # yep.
+
+# performing the Ljung-Box tests
+mq(var4.fit$residuals, lag = 25, adj = ncoef.var4) # overspecified model
+mq(var4.ref.fit$residuals, lag = 25, adj = ncoef.var4.ref)
+# Well, both tests show depressing results. but by freeing up degrees of freedom, we can at least make a statement about m = 3 in the refined model
+
+# some computation:
+ncoef.var4 / 5^2
+ncoef.var4.ref / 5^2
+```
+
+#### g) Now estimate a VAR(1) model (with intercept). How does it compare to the VAR(4) model in terms of MSE?
+```{r}
+var1.fit <- VAR(x = macdata, p = 1, include.mean = TRUE)
+diag(var1.fit$Sigma) / diag(var4.fit$Sigma)
+det(var1.fit$Sigma) / det(var4.fit$Sigma)
+```
+
+#### h) Lastly, compute the forecasts’ MSEs (referred to as MSFE) for both models using the command VARpred. Please use a forecast horizon h of 10.
+```{r}
+var1.pred <- VARpred(model = var1.fit, h = 10)
+var4.pred <- VARpred(model = var4.fit, h = 10)
+```
+
+##### h): i) Does the model superior in f) still prevail at every h? (for (ii) see the notes)
+```{r}
+var1.pred$rmse / var4.pred$rmse
+```
+
+##### h): iii) To which values do the forecasts converge to if h goes to infinity? (1)
+```{r}
+var1.pred$pred
+var4.pred$pred
+```
+##### h): iii) To which values do the forecasts converge to if h goes to infinity? (2)
+```{r}
+# deviations from mean
+var1.pred$pred - matrix(data = colMeans(macdata), nrow = 10, ncol = 5, byrow = TRUE)
+var4.pred$pred - matrix(data = colMeans(macdata), nrow = 10, ncol = 5, byrow = TRUE)
+# Well, the predictions converge to the mean vector since the impact of the observed innovations vanishes.
+```
+
+#------------------------------------
+
+### Task 2
+
+#### Preparations:
+```{r, warning=FALSE}
+# cleaning and loading
+rm(list = ls())
+fx_series <- readRDS("fx_series.Rda")
+answer <- "There is nothing to gain here, hence the VAR(1) is not better or worse than the VAR(0). There are still plenty of degrees of freedom left."
+```
+
+#### a) Fit a VAR(1) model to the data regardless of the information criteria.
+```{r}
+fx_var1.fit <- VAR(x = fx_series, p = 1, include.mean = TRUE)
+```
+
+#### b) Now fit the refined model based on your VAR(1) setting the threshold to 1.96. How many coefficients have been set to zero?
+```{r}
+fx_var1.ref.fit <- refVAR(model = fx_var1.fit, thres = 1.96)
+cat("\n")
+paste("Number of coefficients not restricted to 0:")
+sum(fx_var1.ref.fit$coef != 0.0) # yes, all coefficients are zero!
+cat("\n")
+paste("Means of the series:")
+colMeans(fx_series)
+```
+
+#### c) Compare the MSEs of the ‘ordinary’ model and the refined model.
+```{r}
+diag(fx_var1.fit$Sigma) / diag(fx_var1.ref.fit$Sigma)
+det(fx_var1.fit$Sigma) / det(fx_var1.ref.fit$Sigma)
+```
+
+#### d) Thirdly, estimate a VAR(0) with intercept by regression. Compare its MSFE with the forecast errors of the ‘ordinary’ VAR(1) model regarding a forecast horizon h = 10.
+```{r}
+fx_var0.predictions <- colMeans(fx_series) # pretty much 0
+fx_var0.msfe <- colMeans( (cbind(fx_series[,1] - fx_var0.predictions[1], fx_series[,2] - fx_var0.predictions[2]))^2 )
+fx_var0.rmse <- sqrt(fx_var0.msfe)
+fx_var1.pred <- VARpred(model = fx_var1.fit, h = 10)
+cat("\n")
+paste("Ratio of forecast errors:")
+fx_var1.pred$rmse / matrix(data = fx_var0.rmse, nrow = 10, byrow = TRUE, ncol = 2)
+```
+
+#### e) How do your results in d) align with the insights you gained in exercise 2h)?
+```{r}
+paste(answer)
+```
+
+#### f) What can you do to reproduce the findings from 2h) in this setting?
+```{r}
+# reduce the number of observations massively and raise the number of coefficients distinctly. This will produce overfitting.
+var25.fit <- VAR(x = fx_series[1:500,], p = 25, include.mean = TRUE, output = FALSE)
+var25.pred <- VARpred(model = var25.fit, h = 10, output = FALSE)
+var25.pred$rmse / fx_var1.pred$rmse
+paste("Note the chaotic (non-)structure in the MSFE! Usually it should rise with h...")
+paste("degrees of freedom: ", 500 - 25 * 2^2 + 2)
+# The forecasts will converge to the mean quickly (faster than in 2)h) ), since there is barly any autocorrelation so the innovations' effects vanish almost immediately. And trivially, the MSFE (out-of-sample) will be similar to the MSE (in-sample), because there is effectively no model to be found except the global mean.
+```
+
+
+
+
+
+
+
+
+
+
