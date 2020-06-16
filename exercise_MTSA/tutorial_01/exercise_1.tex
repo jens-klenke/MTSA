@@ -1,0 +1,421 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{lmodern}
+
+\usepackage{placeins}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[lmargin = 2cm, rmargin = 2.5cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
+
+
+% Figure Placement:
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+%%%% Jens %%%%
+\usepackage{titlesec}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+
+\titleformat{\section}
+{\normalfont\large\bfseries}{\thesection}{1em}{}
+
+\newcommand{\tmpsection}[1]{}
+\let\tmpsection=\section
+\renewcommand{\section}[1]{\tmpsection{\underline{#1}} }
+
+
+%% citation setup
+\usepackage{csquotes}
+
+\usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
+\setlength\bibitemsep{1.5\itemsep}
+\addbibresource{R_packages.bib}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true, linktocpage = TRUE]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Dr.~Yannick Hoga},
+            pdftitle={Multivariate Time Series Analysis},
+            colorlinks=true,
+            citecolor=black,
+            urlcolor=black,
+            linkcolor=black,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Multivariate Time Series Analysis}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+\subtitle{Exercise Sheet 1}
+  \author{Dr.~Yannick Hoga}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \date{}
+  \predate{}\postdate{}
+
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+
+%% linespread settings
+
+\usepackage{setspace}
+
+\onehalfspacing
+
+% Language Setup
+
+\usepackage{ifthen}
+\usepackage{iflang}
+\usepackage[super]{nth}
+\usepackage[ngerman, english]{babel}
+
+%Acronyms
+\usepackage[printonlyused, withpage, nohyperlinks]{acronym}
+\usepackage{changepage}
+
+% Multicols for the Title page
+\usepackage{multicol}
+
+\begin{document}
+
+\selectlanguage{english}
+
+%%%%%%%%%%%%%% Jens %%%%%
+\numberwithin{equation}{section}
+
+
+
+
+\restoregeometry
+
+
+%%% Header 
+
+\begin{minipage}{0.6\textwidth}
+University of Duisburg-Essen\\
+Faculty of Business Administration and Economics\\
+Chair of Econometrics\\
+\end{minipage}
+
+%\begin{minipage}{0.4\textwidth}
+	\begin{flushright}
+	\vspace{-3cm}
+	\includegraphics*[width=5cm]{Includes/duelogo_en.png}\\
+	\vspace{.5cm}
+	\end{flushright}
+%\end{minipage}
+\vspace{.25cm}
+\hspace{-0.005cm}Winter Term 2019/2020
+
+\vspace{0.25cm}
+
+\begin{center}
+	\vspace{.25cm}
+	Dr.~Yannick Hoga \hspace{.5cm} Thilo Reinschlüssel \\
+	\vspace{.25cm}
+	\textbf{\Large{Multivariate Time Series Analysis}}\\
+	\vspace{.25cm}
+	\textbf{\large{Exercise Sheet 1}}\\
+	\vspace{.125cm}
+\end{center}
+
+
+% body from markdown
+
+\hypertarget{exercise-1-matrix-operations}{%
+\section{Exercise 1: Matrix
+Operations}\label{exercise-1-matrix-operations}}
+
+Prove properties 3,4 and 5 from Proposition 1.2 (Slide 1-11). Are there
+any requirements regarding the matrix dimensions?
+
+\emph{Solution:}\\
+
+\begin{itemize}
+    \item[i)] Property 3: $(A \otimes B)(F \otimes G) = (AF) \otimes (BG)$
+    \begin{align*}
+      \text{Let} \ A & = 
+      \begin{pmatrix}
+      a_{11} & \ldots & a_{1q}\\
+      \vdots & \ddots & \vdots \\
+      a_{p1} & \ldots & a_{pq}\\
+      \end{pmatrix}
+      \text{and} \ F = 
+      \begin{pmatrix}
+      f_{11} & \ldots & f_{1n}\\
+      \vdots & \ddots & \vdots \\
+      f_{m1} & \ldots & f_{mn}\\
+      \end{pmatrix}\\
+      \text{hence} (A \otimes B) & = 
+      \begin{pmatrix}
+      a_{11}B & \ldots & a_{1q}B\\
+      \vdots & \ddots & \vdots \\
+      a_{p1}B & \ldots & a_{pq}B\\
+      \end{pmatrix}
+      \text{and} \ (F \otimes G) \ \text{analsgously}
+    \end{align*}
+    \begin{align*}
+    (A \otimes B)(F \otimes G) & = 
+    \begin{pmatrix}
+      a_{11}B & \ldots & a_{1q}B\\
+      \vdots & \ddots & \vdots \\
+      a_{p1}B & \ldots & a_{pq}B\\
+    \end{pmatrix}
+    \begin{pmatrix}
+      f_{11}G & \ldots & f_{1n}G\\
+      \vdots & \ddots & \vdots \\
+      f_{m1}G & \ldots & f_{mn}G\\
+    \end{pmatrix}\\
+    & = 
+    \begin{pmatrix}
+      (a_{11}B f_{11}G +\ldots + a_{1q}B f_{m1}G) & \ldots & (a_{11}B f_{1n}G +\ldots + a_{1q}B f_{mn}G)\\
+      \vdots & \ddots & \vdots \\
+      (a_{p1}B f_{11}G +\ldots + a_{pq}B f_{m1}G) & \ldots & (a_{p1}B f_{1n}G +\ldots + a_{pq}B f_{mn}G)\\
+    \end{pmatrix}\\
+     & = 
+    \begin{pmatrix}
+      (a_{11} f_{11} +\ldots + a_{1q} f_{m1}) & \ldots & (a_{11} f_{1n} +\ldots + a_{1q} f_{mn})\\
+      \vdots & \ddots & \vdots \\
+      (a_{p1} f_{11} +\ldots + a_{pq} f_{m1}) & \ldots & (a_{p1} f_{1n} +\ldots + a_{pq} f_{mn})\\
+    \end{pmatrix} \otimes (BG) \\
+    \end{align*}
+    \begin{align*}
+    & = 
+    \begin{pmatrix}
+      \sum_{i = 1}^{q = m} a_{1i} f_{i1} & \ldots &  \sum_{i = 1}^{q = m} a_{1i} f_{1i} \\
+      \vdots & \ddots & \vdots \\
+      \sum_{i = 1}^{q = m} a_{pi} f_{i1} & \ldots & \sum_{i = 1}^{q = m} a_{pi} f_{in}\\
+    \end{pmatrix} \otimes (BG) \qquad \quad \\
+    & = (AF) \otimes (BG) 
+    \end{align*}
+    Dimensions: 
+      \begin{table}[h]
+      \centering
+      \begin{tabular}{|l|l|}
+        \hline
+          $A: p \times q$ & $F: m \times n$ \\ \hline
+          $B: c \times d$ & $G: h \times k$ \\ \hline
+      \end{tabular}
+      \end{table}
+    \begin{itemize}
+      \item[$\Rightarrow$] $dim(A \otimes B) = pc \times qd, dim(F \otimes G) = mh \times kn$
+    \end{itemize}
+    \item[ii)] Property 4: $(A \otimes B)^{-1} = A^{-1} \otimes B^{-1}$ \\
+    $\Rightarrow$ Claim and verify \\
+    The inverse is defined as following: \\
+    $(A \otimes B)(A \otimes B)^{-1} = I$ where $I$ is the identitiy matrix\\
+    Then $(A \otimes B)(A^{-1} \otimes B^{-1}) = I$ must hold if the claim was true\\
+    We know from Property 3 that $(A \otimes B)(A^{-1} \otimes B^{-1}) = (AA^{-1} \otimes BB^{-1}) =  I \otimes I = I$ \\
+    Dimensions: $A$ and $B$ must be non-singular square matrices
+    \item[iii)] Property 3: $tr(A \otimes C ) = tr(A) \cdot tr( C)$ for square matrices $A$ and $C$
+    \begin{align*}
+      tr(A \otimes C) = 
+      tr 
+      \begin{pmatrix}
+        a_{11}C & \ldots & a_{1n}C \\
+        \vdots & \ddots & \vdots \\
+        a_{n1}C & \ldots & a_{nn}C
+      \end{pmatrix}
+      = \sum_{i = 1}^{n}\left( a_{ii} tr(C) \right) = tr(C) \sum_{i=1}^{n} a_{ii} = tr(C) tr(A)
+    \end{align*}
+\end{itemize}
+
+\hypertarget{excerise-2-bivariate-functions}{%
+\section{Excerise 2: Bivariate
+Functions}\label{excerise-2-bivariate-functions}}
+
+Find the extrema of the following functions (using pen and paper).
+Determine whether these points constitute minima, maxima or saddle
+points:
+
+\begin{itemize}
+    \item[a)] $f(x,y) = (x -2)^2 + (y -5)^2 + xy$
+    \item[b)] $g(x,y) = (x -1)^3 - (4y + 1)^2$
+\end{itemize}
+
+\emph{Solution:}\\
+Soluton concept:
+
+\begin{enumerate}
+  \item FOC: first derivatives $\overset{!}{=} 0$
+  \item SOC: check the determinant of the Hessian matrix
+\end{enumerate}
+
+\begin{itemize}
+    \item[a)] $f(x,y) = (x -2)^2 + (y -5)^2 + xy$
+    \begin{align*}
+      f(x,y) & = (x -2)^2 + (y - 5)^2 + xy\\
+      & \\
+      \dfrac{\partial f(x,y)}{\partial x} & = 2(x -2) + y \overset{!}{=} 0
+      \dfrac{\partial f(x,y)}{\partial y} & = 2(y -5) + x \overset{!}{=} 0 
+    \end{align*}
+    \begin{itemize}
+      \item Solving the equation system yields:
+    \end{itemize}
+    \begin{align*}
+      x = 2 -\dfrac{y}{2} \Rightarrow 2y - 10 + 2 - \dfrac{y}{2} = 0 &\Rightarrow y^{*} = \dfrac{16}{3} \\
+      &\Rightarrow x^{*} = 2 -\dfrac{16}{3 \cdot 2} = - \dfrac{2}{3}
+    \end{align*}
+    \begin{itemize}
+      \item Evaluting the Hessian matrix:
+    \end{itemize}
+    \begin{align*}
+      \dfrac{\partial f(x,y)}{\partial x^2} = 2 \qquad  \dfrac{\partial f(x,y)}{\partial xy} = 1 \\
+      \dfrac{\partial f(x,y)}{\partial yx} = 1  \qquad  \dfrac{\partial f(x,y)}{\partial y^2} = 2\\
+      \Rightarrow H = 
+      \begin{pmatrix}
+        2 & 1 \\
+        1 & 2
+      \end{pmatrix}
+    \end{align*}
+    \begin{itemize}
+      \item[] and $det(H) = 2 \cdot 2 - 1 \cdot 1 = 3 > 0 \;$ which indicates a minimum
+    \end{itemize}
+    \item[b)] $g(x,y) = (x -1)^3 - (4y + 1)^2$
+    \begin{align*}
+      g(x,y) & = (x -1)^3 + (4y - 1)^2\\
+      & \\
+      \dfrac{\partial g(x,y)}{\partial x} & = 3(x - 1)^2 \overset{!}{=} 0 \Leftrightarrow x^{*} = 1 \\
+      \dfrac{\partial g(x,y)}{\partial y} & = 2 \cdot 4(4y -5) + x \overset{!}{=} 0 \Leftrightarrow y^{*} = - \dfrac{1}{4} 
+    \end{align*}
+    \begin{itemize}
+      \item Evaluting the Hessian matrix:
+    \end{itemize}
+    \begin{align*}
+      \dfrac{\partial g(x,y)}{\partial x^2} = 6x- 6 \qquad  \dfrac{\partial g(x,y)}{\partial xy} = 0 \\
+      \dfrac{\partial g(x,y)}{\partial yx} = 0  \qquad  \dfrac{\partial g(x,y)}{\partial y^2} = 32\\
+      \Rightarrow H = 
+      \begin{pmatrix}
+        6x- 6 & 0 \\
+        0 & 32
+      \end{pmatrix}
+    \end{align*}
+    \begin{itemize}
+      \item[] and $det(H)|_{x = x^{*}, y = y^{*}} = (6-6)  \cdot 32 - 0 \cdot 0 = 0 \;$ which indicates a saddle point. Thus we did not find an extremal point.
+    \end{itemize}
+\end{itemize}
+
+\hypertarget{excerise-3-stationarity}{%
+\section{Excerise 3: Stationarity}\label{excerise-3-stationarity}}
+
+\begin{itemize}
+    \item[a)] Are weakly stationary processes always strictly stationary? Construct an example to support your argument
+    \item[b)] Is weak stationarity a necessary condition for strict stationarity? Bring an example.
+    \item[] \textit{Hint: How many moments does a distribution require?}
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{itemize}
+    \item[a)] No. A time series of length $T$ drawing from $N(0, 1)$ for $t \in \left[0, \dfrac{T}{2} \right]$ and drawing from Student’s t-distribution for $t \in \left(\dfrac{T}{2}, T \right]$ has a constant mean $\mu = 0$ and variance $\sigma^2 = 1$, but the kurtosis ($4^{th}$ moment) changes throughout time. In consequence the joint distribution of a subsequence $x_{t-p}, \ldots , x_{t+p}$ is not independent of $t$. Therefore it is not strictly stationary
+    \item[b)] No. Take the Cauchy distribution as an example: $f(x) = \dfrac{1}{\pi} \cdot \dfrac{s}{s^2 + (x -t)^2}$. Any $i.i.d.$ sample from this distribution would be obviously strictly stationary. Yet this distribution has no existing moments at all (the integral diverges), hence it cannot exhibit a constant expected value or variance over time. Therefore it is only strictly stationary, but not weakly stationary! (Other example: $t_1$ distribution, where only the mean but not the variance exists).
+\end{itemize}
+
+\hypertarget{excerise-3-covariance-matrices-under-stationarity}{%
+\section{Excerise 3: Covariance Matrices under
+Stationarity}\label{excerise-3-covariance-matrices-under-stationarity}}
+
+Referring to Remark 1.13: Show that \(\Gamma_l = \Gamma^{T}_{-l}\) holds
+for all weakly stationary processes.
+
+(\emph{Two dimensions suffice})
+
+\emph{Solution:}
+
+Without loss of generality assume \(\mu = 0\) everywhere and assume
+\(z\) to be a bivariate vector \((x,y)^T\). Let \(\Gamma_{l,t}\) be the
+covariance matrix of the \(l^{th}\) lag at time \(t\):
+
+\begin{align*}
+\Gamma_{l,t} = 
+\begin{bmatrix}
+  \mathbb{E}(x_t \cdot x_{t-l}) & \mathbb{E}(x_t \cdot y_{t-l}) \\
+  \mathbb{E}(y_t \cdot x_{t-l}) & \mathbb{E}(y_t \cdot y_{t-l}) \\
+\end{bmatrix}
+\quad \text{and} \quad 
+\Gamma_{l,t}^{T} = 
+\begin{bmatrix}
+  \mathbb{E}(x_{t-l} \cdot x_t ) & \mathbb{E}(x_{t-l} \cdot y_t) \\
+  \mathbb{E}(y_{t-l} \cdot x_t  ) & \mathbb{E}( y_{t-l} \cdot y_t) \\
+\end{bmatrix}
+= \Gamma_{-l, t- l}
+\end{align*}
+
+Since weak stationarity has been assumed, the covariance matrix is
+constant across time and
+\(\Gamma_{-l, t- l} = \Gamma_{-l} = \Gamma_{l}^{T}\) and vice versa.
+
+\end{document}

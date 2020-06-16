@@ -1,0 +1,50 @@
+---
+title: 'Multivariate Time Series Analysis'
+author: 'Dr. Yannick Hoga'
+author2: 'Thilo Reinschlüssel'
+subtitle: 'Exercise Sheet 1'
+semester: "Winter Term 2019/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+    template: template.tex
+    fig_caption: yes
+    citation_package: biblatex
+    number_sections: true
+toc: true
+lot: true
+lof: true
+graphics: true
+linkcolor: black
+urlcolor: black
+citecolor: black
+colorlinks: true
+font: Times New Roman
+fontsize: 12pt
+geometry: lmargin = 2cm, rmargin = 2.5cm, tmargin = 2cm, bmargin = 2.5cm
+classoption: a4paper
+---
+
+```{r , include=FALSE}
+Sys.setlocale(locale = "English_United States.1252") ## English US Windows
+knitr::opts_chunk$set(echo = TRUE)
+
+#options(kableExtra.latex.load_packages = FALSE)
+#### required packages ####
+source("packages/packages.R")
+```
+
+# Exercise 1: Matrix Operations
+
+
+Prove properties 3,4 and 5 from Proposition 1.2 (Slide 1-11). Are there any requirements regarding
+the matrix dimensions?
+
+
+_Solution:_ \
+
+
+
+
+
+
