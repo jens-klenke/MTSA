@@ -132,23 +132,23 @@ _Solution:_ \
     \end{align*}
 \end{itemize}
 
-# Excerise 2: Bivariate Functions
+# Exercise 2: Bivariate Functions
 
-Find the extrema of the following functions (using pen and paper). Determine whether these points
-constitute minima, maxima or saddle points:
+Find the extrema of the following functions (using pen and paper). Determine whether these points constitute minima, maxima or saddle points:
 
 \begin{itemize}
     \item[a)] $f(x,y) = (x -2)^2 + (y -5)^2 + xy$
     \item[b)] $g(x,y) = (x -1)^3 - (4y + 1)^2$
 \end{itemize}
 
-_Solution:_ \
-Soluton concept:
+_Solution:_ 
 
+Solution concept:
 \begin{enumerate}
-  \item FOC: first derivatives $\overset{!}{=} 0$
-  \item SOC: check the determinant of the Hessian matrix
+    \item FOC: first derivatives $\overset{!}{=} 0$
+    \item SOC: check the determinant of the Hessian matrix
 \end{enumerate}
+
 
 \begin{itemize}
     \item[a)] $f(x,y) = (x -2)^2 + (y -5)^2 + xy$
@@ -166,7 +166,7 @@ Soluton concept:
       &\Rightarrow x^{*} = 2 -\dfrac{16}{3 \cdot 2} = - \dfrac{2}{3}
     \end{align*}
     \begin{itemize}
-      \item Evaluting the Hessian matrix:
+      \item Evaluating the Hessian matrix:
     \end{itemize}
     \begin{align*}
       \dfrac{\partial f(x,y)}{\partial x^2} = 2 \qquad  \dfrac{\partial f(x,y)}{\partial xy} = 1 \\
@@ -188,7 +188,7 @@ Soluton concept:
       \dfrac{\partial g(x,y)}{\partial y} & = 2 \cdot 4(4y -5) + x \overset{!}{=} 0 \Leftrightarrow y^{*} = - \dfrac{1}{4} 
     \end{align*}
     \begin{itemize}
-      \item Evaluting the Hessian matrix:
+      \item Evaluating the Hessian matrix:
     \end{itemize}
     \begin{align*}
       \dfrac{\partial g(x,y)}{\partial x^2} = 6x- 6 \qquad  \dfrac{\partial g(x,y)}{\partial xy} = 0 \\
@@ -204,7 +204,7 @@ Soluton concept:
     \end{itemize}
 \end{itemize}
 
-# Excerise 3:  Stationarity
+# Exercise 3:  Stationarity
 
 \begin{itemize}
     \item[a)] Are weakly stationary processes always strictly stationary? Construct an example to support your argument
@@ -219,7 +219,7 @@ _Solution:_
     \item[b)] No. Take the Cauchy distribution as an example: $f(x) = \dfrac{1}{\pi} \cdot \dfrac{s}{s^2 + (x -t)^2}$. Any $i.i.d.$ sample from this distribution would be obviously strictly stationary. Yet this distribution has no existing moments at all (the integral diverges), hence it cannot exhibit a constant expected value or variance over time. Therefore it is only strictly stationary, but not weakly stationary! (Other example: $t_1$ distribution, where only the mean but not the variance exists).
 \end{itemize}
 
-# Excerise 3:  Covariance Matrices under Stationarity
+# Exercise 4:  Covariance Matrices under Stationarity
 
 Referring to Remark 1.13: Show that $\Gamma_l = \Gamma^{T}_{-l}$ holds for all weakly stationary processes.
 
@@ -247,14 +247,88 @@ vector $(x,y)^T$. Let $\Gamma_{l,t}$ be the covariance matrix of the $l^{th}$ la
 
 Since weak stationarity has been assumed, the covariance matrix is constant across time and $\Gamma_{-l, t- l} = \Gamma_{-l} = \Gamma_{l}^{T}$ and vice versa.
 
+# Exercise 5: Ljung-Box Test in R
+
+Load the package _MTS_ and open the associated data pool ’mts-examples’ (Slide 1-8). We are interested in the time series ’GS’, ’MS’ and ’JPM’ from the dataset ’tenstocks’:
+
+\begin{itemize}
+  \item[a)] First apply the Ljung-Box test on each time series individually. What do the results imply?
+  \item[b)] Now apply the multivariate Ljung-Box test on all three time series together. Compare the results with those from the univariate test and comment on it.
+\end {itemize}
+
+_Solution:_ 
+
+Firstly, we need to importe the example datasets from the _MTS_ package, which includes the tenstocks data set. 
+```{r, eval = TRUE}
+data("mts-examples")
+```
+
+If we take a look at the description of the _tenstock_ dataset^[To access help-file: `?tenstock()`], we can see that it contains `r ncol(tenstocks)` variables and that we have `r nrow(tenstocks)` monthly simple returns from January 2001 to December 2011 for each of the `r ncol(tenstocks) -1` companies (one variable is the time vector).   
+
+\begin{itemize}
+  \item[a)] $\quad$
+\end {itemize}
+
+First, we will have a look at the simple returns for  _JP-Morgan Chase & Co. (JPM)_. 
+
+```{r, message = FALSE, warning = FALSE, fig.height = 4}
+mq(x = tenstocks$JPM, lag = 20) 
+```
+
+\FloatBarrier
+For this time series there are no autocorrelation for the first 20 lags. 
+
+Next, we will have a look at time series for _Morgan Stanley (MS)_.
+\FloatBarrier
+
+```{r, message = FALSE, warning = FALSE, fig.height = 4}
+mq(x = tenstocks$MS, lag = 20) 
+```
+
+The results for the _MS_ time series are similar to those of the _JPM_.
 
 
+Lastly, there is only the time series from _Goldman Sachs Group Inc (GS)_ left to be analysed. 
 
+```{r, message = FALSE, warning = FALSE, fig.height = 4}
+mq(x = tenstocks$GS, lag = 20)
+```
 
+Only the first lag is _relatively_ close to significant to a 5 percent significance level
 
+\begin{itemize}
+  \item[b)] $\quad$
+\end {itemize}
 
+Now we take a look at the combined test. 
 
+```{r, message = FALSE, warning = FALSE, fig.height = 4}
+mq(x = cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS), lag = 20)
+```
 
+All p-values are below 5%. Since the time series are not much autocorrelated (univariate!), there must be cross-correlations which cause the Null hypothesis to be rejected. So there is a dynamic pattern which might be explained using multivariate time series models.
 
+Lets have a look at the correlation to may see some patterns. 
 
+```{r, eval = FALSE}
+ccf(x = tenstocks$JPM, y = tenstocks$MS, lag.max = 20)
+ccf(y = tenstocks$JPM, x = tenstocks$MS, lag.max = 20) 
+ccf(x = tenstocks$JPM, y = tenstocks$GS, lag.max = 20)
+ccf(x = tenstocks$MS, y = tenstocks$GS, lag.max = 20)
+```
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.height = 4.5}
+par(mfrow=c(2,2))
+ccf(x = tenstocks$JPM, y = tenstocks$MS, lag.max = 20)
+ccf(y = tenstocks$JPM, x = tenstocks$MS, lag.max = 20) 
+ccf(x = tenstocks$JPM, y = tenstocks$GS, lag.max = 20)
+ccf(x = tenstocks$MS, y = tenstocks$GS, lag.max = 20)
+par(mfrow=c(1,1))
+```
+
+But keep in mind that the _Ljung-Box_ test does not take $\rho_0$ into consideration. Lastly, we will plot the times series with the command `plot.ts()`.  
+
+```{r, message = FALSE, warning = FALSE, fig.height = 4}
+plot.ts(cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS)) 
+```
 
