@@ -263,29 +263,29 @@ Firstly, we need to importe the example datasets from the _MTS_ package, which i
 data("mts-examples")
 ```
 
-If we take a look at the description of the _tenstock_ dataset^[To access help-file: `?tenstock()`], we can see that it contains `r ncol(tenstocks)` variables and that we have `r nrow(tenstocks)` monthly simple returns from January 2001 to December 2011 for each of the `r ncol(tenstocks) -1` companies (one variable is the time vector).   
+If we take a look at the description of the _tenstock_ dataset^[To access help-file: `?tenstock()`], we can see that it contains `r ncol(tenstocks)` variables and `r nrow(tenstocks)` observations on  monthly simple returns from January 2001 to December 2011 for each of the `r ncol(tenstocks) -1` companies (first variable is the time vector).   
 
 \begin{itemize}
   \item[a)] $\quad$
 \end {itemize}
 
-First, we will have a look at the simple returns for  _JP-Morgan Chase & Co. (JPM)_. 
+First, we will performe the Ljung-Box-test for the simple returns of _JP-Morgan Chase & Co. (JPM)_ company. 
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 mq(x = tenstocks$JPM, lag = 20) 
 ```
 
 \FloatBarrier
-For this time series there are no autocorrelation for the first 20 lags. 
+The simple returns for _JP-Morgan Chase & Co. (JPM)_ show no autocorrelation for the first 20 lags to a significance level of 5 percent.   
 
-Next, we will have a look at time series for _Morgan Stanley (MS)_.
+Next, we will have a look at the test for the time series for _Morgan Stanley (MS)_.
 \FloatBarrier
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 mq(x = tenstocks$MS, lag = 20) 
 ```
 
-The results for the _MS_ time series are similar to those of the _JPM_.
+The results for the _MS_ time series are similar to those of _JPM_.
 
 
 Lastly, there is only the time series from _Goldman Sachs Group Inc (GS)_ left to be analysed. 
@@ -294,13 +294,13 @@ Lastly, there is only the time series from _Goldman Sachs Group Inc (GS)_ left t
 mq(x = tenstocks$GS, lag = 20)
 ```
 
-Only the first lag is _relatively_ close to significant to a 5 percent significance level
+Only the first lag is _relatively_ close to be significant at a 5 percent significance level.
 
 \begin{itemize}
   \item[b)] $\quad$
 \end {itemize}
 
-Now we take a look at the combined test. 
+Now we take a look at the combined Ljung-Box test. 
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 mq(x = cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS), lag = 20)
@@ -308,7 +308,7 @@ mq(x = cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS), lag = 20)
 
 All p-values are below 5%. Since the time series are not much autocorrelated (univariate!), there must be cross-correlations which cause the Null hypothesis to be rejected. So there is a dynamic pattern which might be explained using multivariate time series models.
 
-Lets have a look at the correlation to may see some patterns. 
+Lets have a look at the correlation as a second look. 
 
 ```{r, eval = FALSE}
 ccf(x = tenstocks$JPM, y = tenstocks$MS, lag.max = 20)
@@ -326,7 +326,9 @@ ccf(x = tenstocks$MS, y = tenstocks$GS, lag.max = 20)
 par(mfrow=c(1,1))
 ```
 
-But keep in mind that the _Ljung-Box_ test does not take $\rho_0$ into consideration. Lastly, we will plot the times series with the command `plot.ts()`.  
+But keep in mind that the _Ljung-Box_ test does not take $\rho_0$ into consideration.
+
+Lastly, we will plot the times series with the command `plot.ts()`.  
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 plot.ts(cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS)) 

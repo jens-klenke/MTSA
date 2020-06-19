@@ -161,6 +161,7 @@
 
 \onehalfspacing
 
+
 % Language Setup
 
 \usepackage{ifthen}
@@ -174,6 +175,13 @@
 
 % Multicols for the Title page
 \usepackage{multicol}
+
+
+% foot
+
+
+
+
 
 \begin{document}
 
@@ -217,6 +225,8 @@ Chair of Econometrics\\
 	\textbf{\large{Exercise Sheet 1}}\\
 	\vspace{.125cm}
 \end{center}
+
+
 
 
 % body from markdown
@@ -471,16 +481,16 @@ package, which includes the tenstocks data set.
 
 If we take a look at the description of the \emph{tenstock}
 dataset\footnote{To access help-file: \texttt{?tenstock()}}, we can see
-that it contains 11 variables and that we have 132 monthly simple
+that it contains 11 variables and 132 observations on monthly simple
 returns from January 2001 to December 2011 for each of the 10 companies
-(one variable is the time vector).
+(first variable is the time vector).
 
 \begin{itemize}
   \item[a)] $\quad$
 \end {itemize}
 
-First, we will have a look at the simple returns for \emph{JP-Morgan
-Chase \& Co.~(JPM)}.
+First, we will performe the Ljung-Box-test for the simple returns of
+\emph{JP-Morgan Chase \& Co.~(JPM)} company.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -517,10 +527,12 @@ Chase \& Co.~(JPM)}.
 
 \FloatBarrier
 
-For this time series there are no autocorrelation for the first 20 lags.
+The simple returns for \emph{JP-Morgan Chase \& Co.~(JPM)} show no
+autocorrelation for the first 20 lags to a significance level of 5
+percent.
 
-Next, we will have a look at time series for \emph{Morgan Stanley (MS)}.
-\FloatBarrier
+Next, we will have a look at the test for the time series for
+\emph{Morgan Stanley (MS)}. \FloatBarrier
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -555,7 +567,7 @@ Next, we will have a look at time series for \emph{Morgan Stanley (MS)}.
 
 \includegraphics{exercise_1_files/figure-latex/unnamed-chunk-4-1.pdf}
 
-The results for the \emph{MS} time series are similar to those of the
+The results for the \emph{MS} time series are similar to those of
 \emph{JPM}.
 
 Lastly, there is only the time series from \emph{Goldman Sachs Group Inc
@@ -594,14 +606,14 @@ Lastly, there is only the time series from \emph{Goldman Sachs Group Inc
 
 \includegraphics{exercise_1_files/figure-latex/unnamed-chunk-5-1.pdf}
 
-Only the first lag is \emph{relatively} close to significant to a 5
-percent significance level
+Only the first lag is \emph{relatively} close to be significant at a 5
+percent significance level.
 
 \begin{itemize}
   \item[b)] $\quad$
 \end {itemize}
 
-Now we take a look at the combined test.
+Now we take a look at the combined Ljung-Box test.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -641,7 +653,7 @@ autocorrelated (univariate!), there must be cross-correlations which
 cause the Null hypothesis to be rejected. So there is a dynamic pattern
 which might be explained using multivariate time series models.
 
-Lets have a look at the correlation to may see some patterns.
+Lets have a look at the correlation as a second look.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -655,8 +667,10 @@ Lets have a look at the correlation to may see some patterns.
 \includegraphics{exercise_1_files/figure-latex/unnamed-chunk-8-1.pdf}
 
 But keep in mind that the \emph{Ljung-Box} test does not take \(\rho_0\)
-into consideration. Lastly, we will plot the times series with the
-command \texttt{plot.ts()}.
+into consideration.
+
+Lastly, we will plot the times series with the command
+\texttt{plot.ts()}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
