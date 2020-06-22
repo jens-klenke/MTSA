@@ -1,0 +1,328 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{lmodern}
+
+\usepackage{placeins}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[lmargin = 2cm, rmargin = 2.5cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
+
+
+% Figure Placement:
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+%%%% Jens %%%%
+\usepackage{titlesec}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\renewcommand{\vec}{\operatorname{vec}}
+
+\titleformat{\section}
+{\normalfont\large\bfseries}{\thesection}{1em}{}
+
+\newcommand{\tmpsection}[1]{}
+\let\tmpsection=\section
+\renewcommand{\section}[1]{\tmpsection{\underline{#1}} }
+
+
+%% citation setup
+\usepackage{csquotes}
+
+\usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
+\setlength\bibitemsep{1.5\itemsep}
+\addbibresource{R_packages.bib}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true, linktocpage = TRUE]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Dr.~Yannick Hoga},
+            pdftitle={Multivariate Time Series Analysis},
+            colorlinks=true,
+            citecolor=black,
+            urlcolor=black,
+            linkcolor=black,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Multivariate Time Series Analysis}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+\subtitle{Exercise Sheet 2}
+  \author{Dr.~Yannick Hoga}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \date{}
+  \predate{}\postdate{}
+
+
+%% linespread settings
+
+\usepackage{setspace}
+
+\onehalfspacing
+
+
+% Language Setup
+
+\usepackage{ifthen}
+\usepackage{iflang}
+\usepackage[super]{nth}
+\usepackage[ngerman, english]{babel}
+
+%Acronyms
+\usepackage[printonlyused, withpage, nohyperlinks]{acronym}
+\usepackage{changepage}
+
+% Multicols for the Title page
+\usepackage{multicol}
+
+
+% foot
+
+
+
+
+
+\begin{document}
+
+\selectlanguage{english}
+
+%%%%%%%%%%%%%% Jens %%%%%
+\numberwithin{equation}{section}
+
+
+
+
+\restoregeometry
+
+
+%%% Header 
+
+\begin{minipage}{0.6\textwidth}
+University of Duisburg-Essen\\
+Faculty of Business Administration and Economics\\
+Chair of Econometrics\\
+\end{minipage}
+
+%\begin{minipage}{0.4\textwidth}
+	\begin{flushright}
+	\vspace{-3cm}
+	\includegraphics*[width=5cm]{Includes/duelogo_en.png}\\
+	\vspace{.5cm}
+	\end{flushright}
+%\end{minipage}
+\vspace{.25cm}
+\hspace{-0.005cm}Winter Term 2019/2020
+
+\vspace{0.25cm}
+
+\begin{center}
+	\vspace{.25cm}
+	Dr.~Yannick Hoga \hspace{.5cm} Thilo Reinschlüssel \\
+	\vspace{.25cm}
+	\textbf{\Large{Multivariate Time Series Analysis}}\\
+	\vspace{.25cm}
+	\textbf{\large{Exercise Sheet 2}}\\
+	\vspace{.125cm}
+\end{center}
+
+
+
+
+% body from markdown
+
+\hypertarget{exercise-1-moments-and-simulation-of-a-var1-process}{%
+\section{Exercise 1: Moments and Simulation of a VAR(1)
+Process}\label{exercise-1-moments-and-simulation-of-a-var1-process}}
+
+Take the model from Example 2.4 on Slide 2-6:
+
+\begin{itemize}
+  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R
+  \begin{align*}
+    z_t & = \phi_1 z_{t-1} + a_t\\
+    \\
+    \Gamma_0 & = \phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
+    \Leftrightarrow \vec(\Gamma_0) &= (\phi_1 \otimes \phi_1) \cdot \vec(\Gamma_0) + \vec(\Sigma_a) \\
+    \Leftrightarrow \vec(\Gamma_0) &= (I_{K^2} - \phi_1 \otimes \phi_1) \cdot \vec(\Sigma_a) \\
+   \Rrightarrow \Gamma_1 & = \phi_1 \Gamma_0\\
+   \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
+  \end{align*}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# First define parameters/coefficients:}
+\NormalTok{Phi <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.2}\NormalTok{, }\FloatTok{-0.6}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{1.1}\NormalTok{), }
+              \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# VAR coefficients}
+\NormalTok{Sigma_a <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{2.0}\NormalTok{), }
+                  \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# innovations' covariances}
+
+\NormalTok{Phi_kron <-}\StringTok{ }\KeywordTok{kronecker}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ Phi, }\DataTypeTok{Y =}\NormalTok{ Phi) }\CommentTok{# kronecker product}
+\CommentTok{# Phi %x% Phi # alternative command}
+
+\NormalTok{Ident <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\CommentTok{# identity matrix with the same dimensions as Phi_kron}
+\NormalTok{Gamma0.vec <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(Ident }\OperatorTok{-}\StringTok{ }\NormalTok{Phi_kron) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{c}\NormalTok{(Sigma_a) }
+\CommentTok{# c() works like the "vec" operator}
+
+\NormalTok{Gamma0.mat <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Gamma0.vec, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{Gamma0.mat}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##          [,1]     [,2]
+## [1,] 2.288889 3.511111
+## [2,] 3.511111 8.622222
+\end{verbatim}
+
+\begin{itemize}  
+  \item[] \textit{Hint: A glance at the slides and a loop might save you some time}
+  \item[b)] Based on your results, compute the cross-correlation matrices
+  \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions
+  \item[] \textit{Hint: 'mvrnorm' and 'for' are still allowed}
+  \item[d)] Plot the multivariate time series you have just created. Does it look stationary?
+  \item[e)] Estimate the sample cross-covariance and cross-correlation matrices. Compare these with the population moment matrices from task a)
+\end{itemize}
+
+\hypertarget{exercise-2-checking-var1-stationarity}{%
+\section{Exercise 2: Checking VAR(1)
+Stationarity}\label{exercise-2-checking-var1-stationarity}}
+
+Recall the conditions to check if a VAR(1) process is stationary. Now
+assume the VAR(1) model \(z_t = \phi_1 z_{t-1} + a_t\) with \(a_t\) as
+asequences of \(i.i.d.\) innovations:
+
+\begin{itemize}
+  \item[a)] Do you need to make further assumptions on the cross-correlations of $a_t$ to ensure stationarity
+  \item[b)] Which of the following processes are stationary? $\phi_1 = \ldots$
+  \begin{align*}
+    \text{i)} 
+    \begin{pmatrix}
+      0.2 & 0.3 \\
+      -0.6 & 1.1
+    \end{pmatrix}
+    \text{ii)} 
+    \begin{pmatrix}
+      0.5 & 0.3 \\
+      0 & -0.3
+    \end{pmatrix}
+    \text{iii)} 
+    \begin{pmatrix}
+      1 & 0 \\
+      0 & 1
+    \end{pmatrix}
+    \text{iv)} 
+    \begin{pmatrix}
+      1 & -1 \\
+      1 & -1
+    \end{pmatrix}
+    \text{v)} 
+    \begin{pmatrix}
+      1 & -0.5 \\
+      -0.5 & 0
+    \end{pmatrix}
+  \end{align*}
+\end{itemize}
+
+\end{document}
