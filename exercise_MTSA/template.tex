@@ -72,6 +72,11 @@ $endif$
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \renewcommand{\vec}{\operatorname{vec}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+
+
 
 \titleformat{\section}
 {\normalfont\large\bfseries}{\thesection}{1em}{}
@@ -79,6 +84,9 @@ $endif$
 \newcommand{\tmpsection}[1]{}
 \let\tmpsection=\section
 \renewcommand{\section}[1]{\tmpsection{\underline{#1}} }
+
+
+
 
 
 %% citation setup
@@ -238,9 +246,6 @@ $endif$
 % foot
 
 
-
-
-
 \begin{document}
 
 $if(language)$
@@ -274,13 +279,13 @@ Chair of Econometrics\\
 	\begin{flushright}
 	\vspace{-3cm}
 	\includegraphics*[width=5cm]{Includes/duelogo_en.png}\\
-	\vspace{.5cm}
+	\vspace{.125cm}
 	\end{flushright}
 %\end{minipage}
-\vspace{.25cm}
+%\vspace{.125cm}
 \hspace{-0.005cm}$semester$
 
-\vspace{0.25cm}
+\vspace{0.05cm}
 
 \begin{center}
 	\vspace{.25cm}

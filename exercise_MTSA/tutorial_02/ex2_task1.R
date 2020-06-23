@@ -62,6 +62,8 @@ head(z) # making sure it did work
 for (i in 2:(T)){
   z[i,] <- var1gen(coef.mat = Phi, z.lag = z[(i-1),], innovation = a[i,])
 }
+
+
 # Note that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point!
 # In our case we skipped this step to keep things short and clear.
 

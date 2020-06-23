@@ -43,6 +43,11 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \renewcommand{\vec}{\operatorname{vec}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
+
+
 
 \titleformat{\section}
 {\normalfont\large\bfseries}{\thesection}{1em}{}
@@ -50,6 +55,9 @@
 \newcommand{\tmpsection}[1]{}
 \let\tmpsection=\section
 \renewcommand{\section}[1]{\tmpsection{\underline{#1}} }
+
+
+
 
 
 %% citation setup
@@ -180,9 +188,6 @@
 % foot
 
 
-
-
-
 \begin{document}
 
 \selectlanguage{english}
@@ -208,13 +213,13 @@ Chair of Econometrics\\
 	\begin{flushright}
 	\vspace{-3cm}
 	\includegraphics*[width=5cm]{Includes/duelogo_en.png}\\
-	\vspace{.5cm}
+	\vspace{.125cm}
 	\end{flushright}
 %\end{minipage}
-\vspace{.25cm}
+%\vspace{.125cm}
 \hspace{-0.005cm}Winter Term 2019/2020
 
-\vspace{0.25cm}
+\vspace{0.05cm}
 
 \begin{center}
 	\vspace{.25cm}
@@ -238,37 +243,46 @@ Process}\label{exercise-1-moments-and-simulation-of-a-var1-process}}
 Take the model from Example 2.4 on Slide 2-6:
 
 \begin{itemize}
-  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R
-  \begin{align*}
-    z_t & = \phi_1 z_{t-1} + a_t\\
-    \\
-    \Gamma_0 & = \phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
-    \Leftrightarrow \vec(\Gamma_0) &= (\phi_1 \otimes \phi_1) \cdot \vec(\Gamma_0) + \vec(\Sigma_a) \\
-    \Leftrightarrow \vec(\Gamma_0) &= (I_{K^2} - \phi_1 \otimes \phi_1) \cdot \vec(\Sigma_a) \\
-   \Rrightarrow \Gamma_1 & = \phi_1 \Gamma_0\\
-   \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
-  \end{align*}
+  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R.
+  \item[] \textit{Hint: A glance at the slides and a loop might save you some time.}
+  \item[b)] Based on your results, compute the cross-correlation matrices.
 \end{itemize}
+
+\emph{Solution:}\\
+
+\begin{align*}
+  z_t & = \phi_1 z_{t-1} + a_t\\
+  \\
+  \Gamma_0 & = \phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
+  \Leftrightarrow \vec(\Gamma_0) &= (\phi_1 \otimes \phi_1) \cdot \vec(\Gamma_0) + \vec(\Sigma_a) \\
+  \Leftrightarrow \vec(\Gamma_0) &= (I_{K^2} - \phi_1 \otimes \phi_1) \cdot \vec(\Sigma_a) \\
+ \Rrightarrow \Gamma_1 & = \phi_1 \Gamma_0\\
+ \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
+\end{align*}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# First define parameters/coefficients:}
 \NormalTok{Phi <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.2}\NormalTok{, }\FloatTok{-0.6}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{1.1}\NormalTok{), }
               \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# VAR coefficients}
+\NormalTok{k <-}\StringTok{ }\KeywordTok{ncol}\NormalTok{(Phi)}
 \NormalTok{Sigma_a <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{2.0}\NormalTok{), }
                   \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# innovations' covariances}
 
 \NormalTok{Phi_kron <-}\StringTok{ }\KeywordTok{kronecker}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ Phi, }\DataTypeTok{Y =}\NormalTok{ Phi) }\CommentTok{# kronecker product}
 \CommentTok{# Phi %x% Phi # alternative command}
 
-\NormalTok{Ident <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)}\OperatorTok{^}\DecValTok{2}\NormalTok{) }\CommentTok{# identity matrix with the same dimensions as Phi_kron}
+\NormalTok{Ident <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi_kron)) }
+\CommentTok{# identity matrix with the same dimensions as Phi_kron}
+
 \NormalTok{Gamma0.vec <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(Ident }\OperatorTok{-}\StringTok{ }\NormalTok{Phi_kron) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{c}\NormalTok{(Sigma_a) }
 \CommentTok{# c() works like the "vec" operator}
 
 \NormalTok{Gamma0.mat <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Gamma0.vec, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{)}
-\NormalTok{Gamma0.mat}
 \end{Highlighting}
 \end{Shaded}
+
+The \(\Gamma_0\) matrix is than:
 
 \begin{verbatim}
 ##          [,1]     [,2]
@@ -276,53 +290,263 @@ Take the model from Example 2.4 on Slide 2-6:
 ## [2,] 3.511111 8.622222
 \end{verbatim}
 
-\begin{itemize}  
-  \item[] \textit{Hint: A glance at the slides and a loop might save you some time}
-  \item[b)] Based on your results, compute the cross-correlation matrices
+To derive the \(\Gamma_1\) matrix, we can apply the following formula:
+
+\begin{align*}
+  \Gamma_1 & = \phi_1 \Gamma_0\\
+\end{align*}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Gamma1.mat <-}\StringTok{ }\NormalTok{Phi }\OperatorTok{%*%}\StringTok{ }\NormalTok{Gamma0.mat}
+\end{Highlighting}
+\end{Shaded}
+
+\(\Gamma_1\) is than:
+
+\begin{verbatim}
+##          [,1]     [,2]
+## [1,] 1.511111 3.288889
+## [2,] 2.488889 7.377778
+\end{verbatim}
+
+To derive all desired \(l^{Th}\) laged covariance matrices we can use
+the general equation and program a loop over all desired lags:
+
+\begin{align*}
+  \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
+\end{align*}
+
+To derive the correlation matrices \(\rho_l\) we devide the covariances
+by the standard deviations:
+
+\begin{align*}
+  \rho_l = 
+  \begin{pmatrix}
+    \dfrac{\Cov(x_t , x_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(x_{t- l})}} &
+    \dfrac{cov(x_t , y_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(y_{t- l})}}\\
+    \dfrac{cov(y_t , x_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(x_{t- l})}} &
+    \dfrac{cov(y_t , y_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(y_{t- l})}}
+  \end{pmatrix}\\
+\end{align*}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# compute further (lagged) cross-covariance-functions}
+\CommentTok{# preparing the variables to store the matrices into: covariance}
+\NormalTok{ccovf.list <-}\StringTok{ }\KeywordTok{list}\NormalTok{() }
+\CommentTok{# """ : correlation}
+\NormalTok{ccorf.list <-}\StringTok{ }\KeywordTok{list}\NormalTok{() }
+
+\CommentTok{# obtaining standard deviations for the single variables (parts of z) }
+\CommentTok{#and putting them in a diagonal matrix}
+\NormalTok{D.inv <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(Gamma0.mat }\OperatorTok{*}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)))) }
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)\{}
+\NormalTok{  ccovf.list[[i]] <-}\StringTok{ }\NormalTok{Phi}\OperatorTok{%^%}\NormalTok{i }\OperatorTok{%*%}\StringTok{ }\NormalTok{Gamma0.mat}
+\NormalTok{  ccorf.list[[i]] <-}\StringTok{ }\NormalTok{D.inv }\OperatorTok{%*%}\StringTok{ }\NormalTok{ccovf.list[[i]] }\OperatorTok{%*%}\StringTok{ }\NormalTok{D.inv}
+\NormalTok{\}}
+\NormalTok{ccovf.list }\CommentTok{# cross lagged covariances}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+##          [,1]     [,2]
+## [1,] 1.511111 3.288889
+## [2,] 2.488889 7.377778
+## 
+## [[2]]
+##          [,1]     [,2]
+## [1,] 1.048889 2.871111
+## [2,] 1.831111 6.142222
+## 
+## [[3]]
+##           [,1]     [,2]
+## [1,] 0.7591111 2.416889
+## [2,] 1.3848889 5.033778
+## 
+## [[4]]
+##           [,1]     [,2]
+## [1,] 0.5672889 1.993511
+## [2,] 1.0679111 4.087022
+## 
+## [[5]]
+##           [,1]     [,2]
+## [1,] 0.4338311 1.624809
+## [2,] 0.8343289 3.299618
+## 
+## [[6]]
+##           [,1]     [,2]
+## [1,] 0.3370649 1.314847
+## [2,] 0.6574631 2.654694
+## 
+## [[7]]
+##           [,1]     [,2]
+## [1,] 0.2646519 1.059378
+## [2,] 0.5209705 2.131255
+## 
+## [[8]]
+##           [,1]      [,2]
+## [1,] 0.2092215 0.8512522
+## [2,] 0.4142764 1.7087543
+## 
+## [[9]]
+##           [,1]      [,2]
+## [1,] 0.1661272 0.6828767
+## [2,] 0.3301711 1.3688784
+## 
+## [[10]]
+##           [,1]      [,2]
+## [1,] 0.1322768 0.5472389
+## [2,] 0.2635119 1.0960403
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ccorf.list }\CommentTok{# cross lagged correlations}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [[1]]
+##           [,1]      [,2]
+## [1,] 0.6601942 0.7403332
+## [2,] 0.5602522 0.8556701
+## 
+## [[2]]
+##           [,1]      [,2]
+## [1,] 0.4582524 0.6462909
+## [2,] 0.4121855 0.7123711
+## 
+## [[3]]
+##           [,1]      [,2]
+## [1,] 0.3316505 0.5440449
+## [2,] 0.3117403 0.5838144
+## 
+## [[4]]
+##           [,1]      [,2]
+## [1,] 0.2478447 0.4487420
+## [2,] 0.2403882 0.4740103
+## 
+## [[5]]
+##           [,1]      [,2]
+## [1,] 0.1895379 0.3657466
+## [2,] 0.1878085 0.3826876
+## 
+## [[6]]
+##           [,1]      [,2]
+## [1,] 0.1472614 0.2959738
+## [2,] 0.1479958 0.3078898
+## 
+## [[7]]
+##           [,1]      [,2]
+## [1,] 0.1156246 0.2384673
+## [2,] 0.1172711 0.2471817
+## 
+## [[8]]
+##            [,1]      [,2]
+## [1,] 0.09140746 0.1916180
+## [2,] 0.09325416 0.1981803
+## 
+## [[9]]
+##            [,1]      [,2]
+## [1,] 0.07257985 0.1537165
+## [2,] 0.07432195 0.1587617
+## 
+## [[10]]
+##            [,1]      [,2]
+## [1,] 0.05779083 0.1231842
+## [2,] 0.05931687 0.1271181
+\end{verbatim}
+
+\begin{itemize}
   \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions
   \item[] \textit{Hint: 'mvrnorm' and 'for' are still allowed}
+\end{itemize}
+
+\emph{Solution:}\\
+
+\begin{enumerate}
+  \item Set $T$ (in code $N$)
+  \item Draw $\left\{ a_1, \ldots , a_T \right\} \sim \left[ \mu , \Sigma_a \right]$
+  \item Set $z_0 = \mathbb{E} \left( z_t\right)$
+  \item $z_1 = \phi_1 z_0 + a_1$
+  \item Repeat Sep 4 $(T - 1)$ times
+  \item (Discard first few observations to minimise effects of $z_0$ on the results)
+  \begin{itemize}
+    \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
+  \end{itemize}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# i) Set sample size and further coefficients}
+\NormalTok{N <-}\StringTok{ }\DecValTok{300}
+\CommentTok{# ii) The Basis: Innovations}
+\KeywordTok{set.seed}\NormalTok{(}\DecValTok{2}\OperatorTok{^}\DecValTok{9-1}\NormalTok{) }\CommentTok{# for replication: the 'random' numbers drawn }
+\CommentTok{# up from this point will always be the same (given you use }
+\CommentTok{# the same command to draw them....)}
+\NormalTok{a <-}\StringTok{ }\KeywordTok{mvrnorm}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ N, }\DataTypeTok{mu =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\DataTypeTok{Sigma =}\NormalTok{ Sigma_a)}
+\CommentTok{# iii) Writing a function to generate 'z' realisations from 'a' using Phi}
+\NormalTok{var1gen <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(coef.mat, z.lag, innovation)\{}
+\NormalTok{  z.current <-}\StringTok{ }\NormalTok{coef.mat }\OperatorTok{%*%}\StringTok{ }\NormalTok{z.lag }\OperatorTok{+}\StringTok{ }\NormalTok{innovation }
+  \CommentTok{# z_(t) = phi * z_(t-1) + a_(t)}
+  \KeywordTok{return}\NormalTok{(z.current)}
+\NormalTok{\}}
+\CommentTok{# iv) Prepare variable for 'z'}
+\NormalTok{z <-}\StringTok{ }\KeywordTok{ts}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \OtherTok{NA}\NormalTok{, }\DataTypeTok{nrow =}\NormalTok{ (N), }\DataTypeTok{ncol =}\NormalTok{ k)}
+\NormalTok{        ,}\DataTypeTok{start =} \DecValTok{1}\NormalTok{, }\DataTypeTok{names =} \KeywordTok{c}\NormalTok{(}\StringTok{"z_1"}\NormalTok{, }\StringTok{"z_2"}\NormalTok{))}
+\CommentTok{# v) Set starting values for z (at mean + innovation)}
+\NormalTok{z[}\DecValTok{1}\NormalTok{,] <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{a[}\DecValTok{1}\NormalTok{,]}
+\CommentTok{# vi) Generate z repeatedly and store it}
+\ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{2}\OperatorTok{:}\NormalTok{(N))\{}
+\NormalTok{  z[i,] <-}\StringTok{ }\KeywordTok{var1gen}\NormalTok{(}\DataTypeTok{coef.mat =}\NormalTok{ Phi, }\DataTypeTok{z.lag =}\NormalTok{ z[(i}\DecValTok{-1}\NormalTok{),], }\DataTypeTok{innovation =}\NormalTok{ a[i,])}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
   \item[d)] Plot the multivariate time series you have just created. Does it look stationary?
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# The ordinary 'plot' command works because 'z' is already }
+\CommentTok{# a 'ts'-class object (among other classes) and NOT a data frame!}
+\KeywordTok{plot}\NormalTok{(z)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{exercise_2_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+At least it looks stable hence we cannot rule out stationarity.
+
+\begin{itemize}
   \item[e)] Estimate the sample cross-covariance and cross-correlation matrices. Compare these with the population moment matrices from task a)
 \end{itemize}
 
-\hypertarget{exercise-2-checking-var1-stationarity}{%
-\section{Exercise 2: Checking VAR(1)
-Stationarity}\label{exercise-2-checking-var1-stationarity}}
+\begin{align*}
+  \widehat{\Gamma_0} & = \tilde{z}_T^{'} \tilde{z}_{T-1} \cdot (T - 1)^{-1} \\
+  \tilde{z}_T^{'} & = z_T - \widehat{\mu}_z\\
+  Z & \ \text{is a} \ T \times 2 \ \text{matrix}\\
+  z_t &\  \text{is a} \ 2 \times 1 \ \text{vector}\\
+  z_t & := 
+  \begin{pmatrix}
+    x_t \\
+    y_t
+  \end{pmatrix} \; \leftarrow \text{variables}\\
+  Z_t & := 
+  \begin{pmatrix}
+    X_{t} & Y_{t} \\
+    X_{t-1} & Y_{t-1} \\
+    X_{t-2} & Y_{t-2} \\
+    \vdots & \vdots \\
+    X_{t-t} & Y_{t-t} \\
+  \end{pmatrix} \; \leftarrow \text{sample data}\\
+\end{align*}
 
-Recall the conditions to check if a VAR(1) process is stationary. Now
-assume the VAR(1) model \(z_t = \phi_1 z_{t-1} + a_t\) with \(a_t\) as
-asequences of \(i.i.d.\) innovations:
-
-\begin{itemize}
-  \item[a)] Do you need to make further assumptions on the cross-correlations of $a_t$ to ensure stationarity
-  \item[b)] Which of the following processes are stationary? $\phi_1 = \ldots$
-  \begin{align*}
-    \text{i)} 
-    \begin{pmatrix}
-      0.2 & 0.3 \\
-      -0.6 & 1.1
-    \end{pmatrix}
-    \text{ii)} 
-    \begin{pmatrix}
-      0.5 & 0.3 \\
-      0 & -0.3
-    \end{pmatrix}
-    \text{iii)} 
-    \begin{pmatrix}
-      1 & 0 \\
-      0 & 1
-    \end{pmatrix}
-    \text{iv)} 
-    \begin{pmatrix}
-      1 & -1 \\
-      1 & -1
-    \end{pmatrix}
-    \text{v)} 
-    \begin{pmatrix}
-      1 & -0.5 \\
-      -0.5 & 0
-    \end{pmatrix}
-  \end{align*}
-\end{itemize}
+\begin{align*}
+  \widehat{\Cov(x_t, y_{t-1})}
+\end{align*}
 
 \end{document}

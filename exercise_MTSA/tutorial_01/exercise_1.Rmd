@@ -37,9 +37,8 @@ source(here::here("packages/packages.R"))
 # Exercise 1: Matrix Operations
 
 
-Prove properties 3,4 and 5 from Proposition 1.2 (Slide 1-11). Are there any requirements regarding
+Prove properties 3, 4 and 5 from Proposition 1.2 (Slide 1-11). Are there any requirements regarding
 the matrix dimensions?
-
 
 _Solution:_ \
 
@@ -57,14 +56,14 @@ _Solution:_ \
       f_{11} & \ldots & f_{1n}\\
       \vdots & \ddots & \vdots \\
       f_{m1} & \ldots & f_{mn}\\
-      \end{pmatrix}\\
+      \end{pmatrix},\\
       \text{hence} (A \otimes B) & = 
       \begin{pmatrix}
       a_{11}B & \ldots & a_{1q}B\\
       \vdots & \ddots & \vdots \\
       a_{p1}B & \ldots & a_{pq}B\\
       \end{pmatrix}
-      \text{and} \ (F \otimes G) \ \text{analsgously}
+      \text{and} \ (F \otimes G) \ \text{analogously}. 
     \end{align*}
     \begin{align*}
     (A \otimes B)(F \otimes G) & = 
@@ -115,20 +114,20 @@ _Solution:_ \
     \item[ii)] Property 4: $(A \otimes B)^{-1} = A^{-1} \otimes B^{-1}$ \\
     $\Rightarrow$ Claim and verify \\
     The inverse is defined as following: \\
-    $(A \otimes B)(A \otimes B)^{-1} = I$ where $I$ is the identitiy matrix\\
-    Then $(A \otimes B)(A^{-1} \otimes B^{-1}) = I$ must hold if the claim was true\\
-    We know from Property 3 that $(A \otimes B)(A^{-1} \otimes B^{-1}) = (AA^{-1} \otimes BB^{-1}) =  I \otimes I = I$ \\
-    Dimensions: $A$ and $B$ must be non-singular square matrices
-    \item[iii)] Property 3: $tr(A \otimes C ) = tr(A) \cdot tr( C)$ for square matrices $A$ and $C$
+    $(A \otimes B)(A \otimes B)^{-1} = I$, where $I$ is the identitiy matrix.\\
+    Then $(A \otimes B)(A^{-1} \otimes B^{-1}) = I$ must hold if the claim was true.\\
+    We know from Property 3 that $(A \otimes B)(A^{-1} \otimes B^{-1}) = (AA^{-1} \otimes BB^{-1}) =  I \otimes I = I$. \\
+    Dimensions: $A$ and $B$ must be non-singular square matrices.
+    \item[iii)] Property 3: $\tr(A \otimes C ) = \tr(A) \cdot \tr( C)$ for square matrices $A$ and $C$
     \begin{align*}
-      tr(A \otimes C) = 
-      tr 
+      \tr(A \otimes C) = 
+      \tr 
       \begin{pmatrix}
         a_{11}C & \ldots & a_{1n}C \\
         \vdots & \ddots & \vdots \\
         a_{n1}C & \ldots & a_{nn}C
       \end{pmatrix}
-      = \sum_{i = 1}^{n}\left( a_{ii} tr(C) \right) = tr(C) \sum_{i=1}^{n} a_{ii} = tr(C) tr(A)
+      = \sum_{i = 1}^{n}\left( a_{ii} \tr(C) \right) = \tr(C) \sum_{i=1}^{n} a_{ii} = \tr(C) \tr(A)
     \end{align*}
 \end{itemize}
 
@@ -146,9 +145,9 @@ _Solution:_
 Solution concept:
 \begin{enumerate}
     \item FOC: first derivatives $\overset{!}{=} 0$
-    \item SOC: Inspectthe Hessian matrix
+    \item SOC: Inspect the Hessian matrix
     \begin{itemize}
-      \item[$\Rightarrow$] $f_{xx}, f_{yy} < (>) \ 0$ for maxima (minima), but also $f_{xy}, f_{yx}$ matter. Ultimatley, eigenvalues are need to judge correctly in complex situations. 
+      \item[$\Rightarrow$] $f_{xx}, f_{yy} < (>) \ 0$ for maxima (minima), but also $f_{xy}, f_{yx}$ matter. Ultimatley, eigenvalues are needed to judge correctly in complex situations. 
     \end{itemize}
 \end{enumerate}
 
@@ -181,14 +180,14 @@ Solution concept:
       \end{pmatrix}
     \end{align*}
     \begin{itemize}
-      \item[1.] $f_{xx}, f_{yy} > 0 \Rightarrow$ minimum is possible
-      \item[2.] $\left| H(x,y) \right|_{x = x^{*}, y = y^{*}} = 2 \cdot 2 - 1 \cdot 1 = 3 \; \Rightarrow$ That constitutes a minimum
-      \item[3.] $\lambda_1 = 3, \lambda_2 = 1 \; \Rightarrow$ both eigenvalues are positive which is nor surpising since the determinant is also positive
-      \item[$\Rightarrow$] \underline{\textit{Note}} that 1. and 2. are sufficient arguments in this case where $\left| H(x,y) \right|$ is \underline{positive definite}
+      \item[1.] $f_{xx}, f_{yy} > 0 \Rightarrow$ Minimum is possible.
+      \item[2.] $\left| H(x,y) \right|_{x = x^{*}, y = y^{*}} = 2 \cdot 2 - 1 \cdot 1 = 3 \; \Rightarrow$ That constitutes a minimum.
+      \item[3.] $\lambda_1 = 3, \lambda_2 = 1 \; \Rightarrow$ Both eigenvalues are positive which is not surpising since the determinant is also positive.
+      \item[$\Rightarrow$] \underline{\textit{Note}} that 1. and 2. are sufficient arguments in this case where $\left| H(x,y) \right|$ is \underline{positive definite}. 
     \end{itemize}
     \item[b)] $g(x,y) = (x -1)^2 - (4y + 1)^2$
     \begin{align*}
-      g(x,y) & = (x -1)^3 + (4y - 1)^2\\
+      g(x,y) & = (x -1)^2 + (4y - 1)^2\\
       & \\
       \dfrac{\partial g(x,y)}{\partial x} & = 2(x - 1) \overset{!}{=} 0 \Leftrightarrow x^{*} = 1 \\
       \dfrac{\partial g(x,y)}{\partial y} & = - 2 \cdot 4 (4y + 1) + x \overset{!}{=} 0 \Leftrightarrow y^{*} = - \dfrac{1}{4} 
@@ -208,16 +207,16 @@ Solution concept:
       \end{pmatrix}
     \end{align*}
     \begin{itemize}
-      \item[1.] $f_{xx}, f_{yy} < 0 \; \Rightarrow$ no clear minimum / maximum
-      \item[2.] $|H| = 2 \cdot (-32) - 0 \cdot 0 = - 64 < 0 \; \Rightarrow$ indicates a saddle point in the case of two variables!
-      \item[3.] $\lambda_1 = 2, \lambda_2 = -32 \; \Rightarrow$ One postive eigenvalue, one negative eigenvalue is sufficient for a saddle point 
+      \item[1.] $f_{xx}, f_{yy} < 0 \; \Rightarrow$ No clear minimum or maximum.
+      \item[2.] $|H| = 2 \cdot (-32) - 0 \cdot 0 = - 64 < 0 \; \Rightarrow$ Indicates a saddle point in the case of two variables.
+      \item[3.] $\lambda_1 = 2, \lambda_2 = -32 \; \Rightarrow$ One postive eigenvalue, one negative eigenvalue is sufficient for a saddle point.  
     \end{itemize}
 \end{itemize}
 
 # Exercise 3:  Stationarity
 
 \begin{itemize}
-    \item[a)] Are weakly stationary processes always strictly stationary? Construct an example to support your argument
+    \item[a)] Are weakly stationary processes always strictly stationary? Construct an example to support your argument.
     \item[b)] Is weak stationarity a necessary condition for strict stationarity? Bring an example.
     \item[] \textit{Hint: How many moments does a distribution require?}
 \end{itemize}
@@ -225,7 +224,7 @@ Solution concept:
 _Solution:_ 
 
 \begin{itemize}
-    \item[a)] No. A time series of length $T$ drawing from $N(0, 1)$ for $t \in \left[0, \dfrac{T}{2} \right]$ and drawing from Student’s t-distribution for $t \in \left(\dfrac{T}{2}, T \right]$ has a constant mean $\mu = 0$ and variance $\sigma^2 = 1$, but the kurtosis ($4^{th}$ moment) changes throughout time. In consequence the joint distribution of a subsequence $x_{t-p}, \ldots , x_{t+p}$ is not independent of $t$. Therefore it is not strictly stationary
+    \item[a)] No. A time series of length $T$ drawing from $N(0, 1)$ for $t \in \left[0, \dfrac{T}{2} \right]$ and drawing from Student’s $t$-distribution for $t \in \left(\dfrac{T}{2}, T \right]$ has a constant mean $\mu = 0$ and variance $\sigma^2 = 1$, but the kurtosis ($4^{th}$ moment) changes throughout time. In consequence the joint distribution of a subsequence $x_{t-p}, \ldots , x_{t+p}$ is not independent of $t$. Therefore it is not strictly stationary
     \item[b)] No. Take the Cauchy distribution as an example: $f(x) = \dfrac{1}{\pi} \cdot \dfrac{s}{s^2 + (x -t)^2}$. Any $i.i.d.$ sample from this distribution would be obviously strictly stationary. Yet this distribution has no existing moments at all (the integral diverges), hence it cannot exhibit a constant expected value or variance over time. Therefore it is only strictly stationary, but not weakly stationary! (Other example: $t_1$ distribution, where only the mean but not the variance exists).
 \end{itemize}
 
@@ -273,13 +272,13 @@ Firstly, we need to importe the example datasets from the _MTS_ package, which i
 data("mts-examples")
 ```
 
-If we take a look at the description of the _tenstock_ dataset^[To access help-file: `?tenstock()`], we can see that it contains `r ncol(tenstocks)` variables and `r nrow(tenstocks)` observations on  monthly simple returns from January 2001 to December 2011 for each of the `r ncol(tenstocks) -1` companies (first variable is the time vector).   
+If we take a look at the description of the _tenstock_ dataset^[To access help-file: `?tenstock()`], we can see it contains `r ncol(tenstocks)` variables and `r nrow(tenstocks)` observations on  monthly simple returns from January 2001 till December 2011 for each of the `r ncol(tenstocks) -1` companies (first variable is the time vector).   
 
 \begin{itemize}
-  \item[a)] $\quad$
+  \item[a)] First apply the Ljung-Box test on each time series individually. What do the results imply?
 \end {itemize}
 
-First, we will performe the Ljung-Box-test for the simple returns of _JP-Morgan Chase & Co. (JPM)_ company. 
+First, we will performe the Ljung-Box-test for the simple returns of _JP-Morgan Chase_ & _Co. (JPM)_ company. 
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 mq(x = tenstocks$JPM, lag = 20) 
@@ -288,7 +287,7 @@ mq(x = tenstocks$JPM, lag = 20)
 \FloatBarrier
 The simple returns for _JP-Morgan Chase & Co. (JPM)_ show no autocorrelation for the first 20 lags to a significance level of 5 percent.   
 
-Next, we will have a look at the test for the time series for _Morgan Stanley (MS)_.
+Next, we will have a look at the test for the time series of _Morgan Stanley (MS)_.
 \FloatBarrier
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
@@ -298,16 +297,16 @@ mq(x = tenstocks$MS, lag = 20)
 The results for the _MS_ time series are similar to those of _JPM_.
 
 
-Lastly, there is only the time series from _Goldman Sachs Group Inc (GS)_ left to be analysed. 
+Lastly, there is only the time series from _Goldman Sachs Group Inc. (GS)_ left to be analysed. 
 
 ```{r, message = FALSE, warning = FALSE, fig.height = 4}
 mq(x = tenstocks$GS, lag = 20)
 ```
 
-Only the first lag is _relatively_ close to be significant at a 5 percent significance level.
+Only the first lag is _relatively_ close to be significant to a 5 percent significance level.
 
 \begin{itemize}
-  \item[b)] $\quad$
+  \item[b)] Now apply the multivariate Ljung-Box test on all three time series together. Compare the results with those from the univariate test and comment on it.
 \end {itemize}
 
 Now we take a look at the combined Ljung-Box test. 
@@ -316,9 +315,9 @@ Now we take a look at the combined Ljung-Box test.
 mq(x = cbind(tenstocks$JPM, tenstocks$MS, tenstocks$GS), lag = 20)
 ```
 
-All p-values are below 5%. Since the time series are not much autocorrelated (univariate!), there must be cross-correlations which cause the Null hypothesis to be rejected. So there is a dynamic pattern which might be explained using multivariate time series models.
+All p-values are below 5%. Since the time series are not much autocorrelated (univariate!), as we have shown in part a, there must be cross-correlations which cause the Null hypothesis to be rejected. So there is a dynamic pattern which might be explained using multivariate time series models.
 
-Lets have a look at the correlation as a second look. 
+Secondly, we can also take a look at the correlations. 
 
 ```{r, eval = FALSE}
 ccf(x = tenstocks$JPM, y = tenstocks$MS, lag.max = 20)
