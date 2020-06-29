@@ -248,7 +248,7 @@ Take the model from Example 2.4 on Slide 2-6:
   \item[b)] Based on your results, compute the cross-correlation matrices.
 \end{itemize}
 
-\emph{Solution:}\\
+\emph{Solution:}
 
 \begin{align*}
   z_t & = \phi_1 z_{t-1} + a_t\\
@@ -310,7 +310,7 @@ To derive the \(\Gamma_1\) matrix, we can apply the following formula:
 ## [2,] 2.488889 7.377778
 \end{verbatim}
 
-To derive all desired \(l^{Th}\) laged covariance matrices we can use
+To derive all desired \(l^{th}\) laged covariance matrices we can use
 the general equation and program a loop over all desired lags:
 
 \begin{align*}
@@ -324,22 +324,23 @@ by the standard deviations:
   \rho_l = 
   \begin{pmatrix}
     \dfrac{\Cov(x_t , x_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(x_{t- l})}} &
-    \dfrac{cov(x_t , y_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(y_{t- l})}}\\
-    \dfrac{cov(y_t , x_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(x_{t- l})}} &
-    \dfrac{cov(y_t , y_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(y_{t- l})}}
+    \dfrac{\Cov(x_t , y_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(y_{t- l})}}\\
+    \dfrac{\Cov(y_t , x_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(x_{t- l})}} &
+    \dfrac{\Cov(y_t , y_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(y_{t- l})}}
   \end{pmatrix}\\
 \end{align*}
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# compute further (lagged) cross-covariance-functions}
-\CommentTok{# preparing the variables to store the matrices into: covariance}
+\CommentTok{# preparing the variables to store the matrices into }
+\CommentTok{#covariance}
 \NormalTok{ccovf.list <-}\StringTok{ }\KeywordTok{list}\NormalTok{() }
-\CommentTok{# """ : correlation}
+\CommentTok{#correlation}
 \NormalTok{ccorf.list <-}\StringTok{ }\KeywordTok{list}\NormalTok{() }
 
 \CommentTok{# obtaining standard deviations for the single variables (parts of z) }
-\CommentTok{#and putting them in a diagonal matrix}
+\CommentTok{# and putting them in a diagonal matrix}
 \NormalTok{D.inv <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(Gamma0.mat }\OperatorTok{*}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)))) }
 \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)\{}
 \NormalTok{  ccovf.list[[i]] <-}\StringTok{ }\NormalTok{Phi}\OperatorTok{%^%}\NormalTok{i }\OperatorTok{%*%}\StringTok{ }\NormalTok{Gamma0.mat}
@@ -460,23 +461,26 @@ by the standard deviations:
 \end{verbatim}
 
 \begin{itemize}
-  \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions
+  \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions.
   \item[] \textit{Hint: 'mvrnorm' and 'for' are still allowed}
 \end{itemize}
 
 \emph{Solution:}\\
 
-\begin{enumerate}
-  \item Set $T$ (in code $N$)
-  \item Draw $\left\{ a_1, \ldots , a_T \right\} \sim \left[ \mu , \Sigma_a \right]$
-  \item Set $z_0 = \mathbb{E} \left( z_t\right)$
-  \item $z_1 = \phi_1 z_0 + a_1$
-  \item Repeat Sep 4 $(T - 1)$ times
-  \item (Discard first few observations to minimise effects of $z_0$ on the results)
-  \begin{itemize}
-    \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
-  \end{itemize}
-\end{enumerate}
+\begin{itemize}
+  \item Steps:
+  \begin{enumerate}
+    \item Set $T$ (in code $N$)
+    \item Draw $\left\{ a_1, \ldots , a_T \right\} \sim \left[ \mu , \Sigma_a \right]$
+    \item Set $z_0 = \mathbb{E} \left( z_t\right)$
+    \item $z_1 = \phi_1 z_0 + a_1$
+    \item Repeat Sep 4 $(T - 1)$ times
+    \item (Discard first few observations to minimise effects of $z_0$ on the results)
+    \begin{itemize}
+      \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
+    \end{itemize}
+  \end{enumerate}
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -509,6 +513,8 @@ by the standard deviations:
   \item[d)] Plot the multivariate time series you have just created. Does it look stationary?
 \end{itemize}
 
+\emph{Solution:}\\
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# The ordinary 'plot' command works because 'z' is already }
@@ -524,6 +530,8 @@ At least it looks stable hence we cannot rule out stationarity.
 \begin{itemize}
   \item[e)] Estimate the sample cross-covariance and cross-correlation matrices. Compare these with the population moment matrices from task a)
 \end{itemize}
+
+\emph{Solution:}
 
 \begin{align*}
   \widehat{\Gamma_0} & = \tilde{z}_T^{'} \tilde{z}_{T-1} \cdot (T - 1)^{-1} \\
@@ -543,10 +551,277 @@ At least it looks stable hence we cannot rule out stationarity.
     \vdots & \vdots \\
     X_{t-t} & Y_{t-t} \\
   \end{pmatrix} \; \leftarrow \text{sample data}\\
+  \widehat{\Cov(x_t, y_{t-1})} & = \dfrac{1}{(T - 1)} \sum_{t = 1}^{T}  \left( \tilde{X}_t \cdot \tilde{Y}_{t- 1} \right)\\
+  \Rightarrow & \ \text{is part of:} \dfrac{1}{T -1} \cdot \tilde{Z}_t^{'} \tilde{Z}_{t-1} = \widehat{\Gamma_1}
 \end{align*}
 
+To estimate moments from simulates data, we first do it by
+\enquote{hand} to get a surrow understanding and see the conection to
+the Yule-Walker equation.
+
+First we need to demeaning the multivariate time series. Therefore, we
+calculate the colum means.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# compute the individual vector means}
+\NormalTok{mu <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(z)}
+\end{Highlighting}
+\end{Shaded}
+
+To demeaning the series we habe now two choicesto proceed, one would be
+to itterating over the rows and subtracting the mean vector everytime.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z.demeaned <-}\StringTok{ }\KeywordTok{t}\NormalTok{(}\KeywordTok{apply}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ z, }\DataTypeTok{MARGIN =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{), }\DataTypeTok{FUN =} \ControlFlowTok{function}\NormalTok{(x) x }\OperatorTok{-}\StringTok{ }\NormalTok{mu))}
+\end{Highlighting}
+\end{Shaded}
+
+The other option would be to subtracting the column means from each
+column individually.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{z.demeaned <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(z[,}\DecValTok{1}\NormalTok{]}\OperatorTok{-}\NormalTok{mu[}\DecValTok{1}\NormalTok{], z[,}\DecValTok{2}\NormalTok{]}\OperatorTok{-}\NormalTok{mu[}\DecValTok{2}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+Now we are able to compute \(\hat{\Gamma_0}\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Gamma0.hat <-}\StringTok{ }\KeywordTok{t}\NormalTok{(z.demeaned) }\OperatorTok{%*%}\StringTok{ }\NormalTok{z.demeaned }\OperatorTok{/}\StringTok{ }\NormalTok{(N}\DecValTok{-1}\NormalTok{) }\CommentTok{# sample covariance with  }
+\CommentTok{# correction for degrees of freedom (we've demeaned the series!)}
+\end{Highlighting}
+\end{Shaded}
+
+Please also note that now the first entry is transposed!
+(\texttt{z.demeaned} is a data matrix and not a random vector anymore!)
+
+To obtain \(\hat{\rho}_0\) we have to standardise \(\hat{\Gamma}_0\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{standardisation <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(Gamma0.hat[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{], }
+                                   \KeywordTok{sqrt}\NormalTok{( Gamma0.hat[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{] }\OperatorTok{*}\StringTok{ }\NormalTok{Gamma0.hat[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]),}
+                                   \KeywordTok{sqrt}\NormalTok{(Gamma0.hat[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{] }\OperatorTok{*}\StringTok{ }\NormalTok{Gamma0.hat[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]),}
+\NormalTok{                                   Gamma0.hat[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]),}
+                       \DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{) }
+\CommentTok{# just another way to program it, }
+\CommentTok{# maybe it is more visible what's inside D.inv %*% D.inv }
+\NormalTok{Rho0.hat <-}\StringTok{ }\NormalTok{Gamma0.hat }\OperatorTok{/}\StringTok{ }\NormalTok{standardisation}
+\end{Highlighting}
+\end{Shaded}
+
+Then \(\rho_0\) is:
+
+\begin{verbatim}
+##          z_1      z_2
+## z_1 1.000000 0.809102
+## z_2 0.809102 1.000000
+\end{verbatim}
+
+Since we simulated the trajectory we know the true values and can
+compare the results. The estimated mean values for the two series are
+slightly negativ \((\)-0.1107541, -0.084682 \()^{'}\) so the differences
+are also slighlty negative since we simulated the time series without a
+mean.
+
+For the covariance \(\Gamma_0\) we computed the analytical solution in
+part \emph{b} of this exercise. The differences
+\((\widehat{\Gamma}_0 - \Gamma_0)\) are:
+
+\begin{verbatim}
+##            z_1       z_2
+## z_1 -0.2899134 -0.354941
+## z_2 -0.3549410 -1.010082
+\end{verbatim}
+
+The same applies for the comparison of the correlations \(\rho_0\) and
+the estimated correlations. The differences
+\((\widehat{\rho}_0 - \rho_0 )\) are:
+
+\begin{verbatim}
+##              z_1          z_2
+## z_1 1.110223e-16 1.874622e-02
+## z_2 1.874622e-02 2.220446e-16
+\end{verbatim}
+
+\hypertarget{exercise-2-checking-var1-stationarity}{%
+\section{Exercise 2: Checking VAR(1)
+Stationarity}\label{exercise-2-checking-var1-stationarity}}
+
+Recall the conditions to check if a VAR(1) process is stationary. Now
+assume the VAR(1) model \(z_{t} = \phi_{1} z_{t-1} + a_{t}\) with
+\(a_{t}\) as a sequence of i.i.d innovations:
+
+\begin{itemize}
+\item[a)] Do you need to make further assumptions on the cross-correlations of $a_{t}$ to ensure stationarity?
+\end{itemize}
+
+\emph{Solution:}
+
 \begin{align*}
-  \widehat{\Cov(x_t, y_{t-1})}
+  Z_t & = \phi_1 Z_{t-1} + a_t\\
+  a_t & \overset{i.i.d.}{\sim} \left[ \mu_a , \Sigma_a \right]\\
+  i.i.d.: & \Cov (a_t , a_{t-1}) = 0
+\end{align*}
+
+Generally not, since i.i.d. errors induce no dynamic strucutre. Still,
+finite \(1^{st}\) and \(2^{nd}\) moments are required for weak
+stationarity! (Gaussian innovations fulfill that condition, of course).
+
+\begin{itemize}
+ \item[b)] Which of the following processes are stationary? $\phi_{1} = \dots $ \\
+\begin{itemize} 
+    \item[i)] $ \begin{pmatrix}
+    0.2 & 0.3 \\ 
+    -0.6 & 1.1
+    \end{pmatrix} $
+    \hspace{8em}
+    \item[ii)] $ \begin{pmatrix}
+    0.5 & 0.3 \\ 
+    0 & -0.3
+    \end{pmatrix} $
+    %\hspace{8em}
+    \item[iii)] $ \begin{pmatrix}
+    1 & 0 \\ 
+    0 & 1
+    \end{pmatrix} $
+    \hspace{8em}
+    \item[iv)] $ \begin{pmatrix}
+    1 & -1 \\ 
+    1 & -1
+    \end{pmatrix} $
+    \hspace{8em}
+    \item[v)] $ \begin{pmatrix}
+    1 & -0.5 \\ 
+    -0.5 & 0
+    \end{pmatrix} $
+\end{itemize}
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  Z_t & = \phi_1 z_{t-1} + a_t\\
+  & = \phi_1 \cdot(\phi_1 z_{t-2} + a_{t-1}) + a_t \\
+    & = \underbrace{ \phi_1^p \ z_{t-p}}_{\text{stable ?}} + \underbrace{\sum_{i = 0}^{p} \phi_1^{i} \ a_{t -1} }_{\text{summable ?}}
+\end{align*} \begin{align*}
+  & \lim_{p \rightarrow \infty} \phi_1^p \longrightarrow 0_{k \times k} \\
+  & \Rightarrow \text{eigenvalues !} \\
+  & \Rightarrow \phi_1 x = \lambda x \Rightarrow \phi_1^{p} x = \lambda^p x\\
+  & \Rightarrow \text{solve:} \left( \phi_1 - I_K \lambda \right) x = 0\\
+  & \text{for} \ x \neq 0: \left| \phi_1 - I_K \lambda \right| \overset{!}{=} 0 \\
+  & \text{stability (for stationarity)}  \left| \lambda_1 \right|, \ldots,  \left| \lambda_k \right| < 1 \\
+\end{align*}
+
+\begin{itemize} 
+    \item[i)] $\begin{pmatrix}
+        0.2 & 0.3 \\ 
+        -0.6 & 1.1 \\
+      \end{pmatrix} $
+\end{itemize}
+
+\begin{align*}
+   = & \begin{pmatrix}
+        0.2 & 0.3 \\ 
+        -0.6 & 1.1 \\
+      \end{pmatrix} - 
+      \begin{pmatrix}
+       \lambda & 0 \\ 
+       0 & \lambda
+      \end{pmatrix}\\
+      = &  
+      \left|
+      \begin{matrix}
+      (0.2 - \lambda) & 0.3 \\ 
+        -0.6 & (1.1 - \lambda)
+      \end{matrix}
+      \right| \\
+      = & (0.2 -\lambda)(1.1 - \lambda) - (-0.6) (0.3)\\
+      = & \lambda^2 - 1.3 \lambda + 0.4 \overset{!}{=} 0 \\
+      \text{pq-Formel} \Rightarrow  \lambda_{1,2} = & - \left( \dfrac{-1.3}{2} \right) \pm \sqrt{ \left( \dfrac{-1.3}{2} \right)^2 - 0.4 }\\
+       = & 0.65 \pm 0.15 \\
+      \lambda_1 = & 0.8 \\
+      \lambda_2 = & 0.5 \\
+      & |\lambda_1| < 1 , |\lambda_2| < 1,  \; \text{stationary}
+\end{align*}
+
+\begin{itemize} 
+    \item[ii)] $ \begin{pmatrix}
+    0.5 & 0.3 \\ 
+    0 & -0.3
+    \end{pmatrix} $
+\end{itemize}
+
+\begin{align*}
+  & \left|
+  \begin{matrix}
+    0.5 - \lambda & 0.3 \\ 
+    0 &  -0.3 - \lambda
+    \end{matrix}
+    \right| \\
+    = & (0.5 - \lambda)(-0.3 - \lambda) - 0.3 \cdot 0 \overset{!}{=} 0 \\
+    \Rightarrow & \lambda_1 = 0.5, \; \lambda_2 = 0.3 \Rightarrow \text{stationary} 
+\end{align*}
+
+\begin{itemize}     
+        \item[iii)] $ \begin{pmatrix}
+    1 & 0 \\ 
+    0 & 1
+    \end{pmatrix} $
+\end{itemize}
+
+\begin{align*}
+  & \left|
+  \begin{matrix}
+    1 - \lambda & 0 \\ 
+    0 &  1 - \lambda
+    \end{matrix}
+    \right| \\
+    = & (1 - \lambda)(1 - \lambda) - 0 \cdot 0 \overset{!}{=} 0 \\
+    \Rightarrow & \lambda_1 = 1, \; \lambda_2 = 1 \Rightarrow \text{not stationary} 
+\end{align*}
+
+\begin{itemize}
+    \item[iv)] $ \begin{pmatrix}
+    1 & -1 \\ 
+    1 & -1
+    \end{pmatrix} $
+\end{itemize}
+
+\begin{align*}
+  & \left|
+  \begin{matrix}
+    1 - \lambda & -1 \\ 
+    1 &  -1 - \lambda
+    \end{matrix}
+    \right| \\
+    = & (1 - \lambda)(-1 - \lambda) - 0 \cdot 0 \overset{!}{=} 0 \\
+    = & \lambda^2 + \lambda - \lambda - 1 +1 \\
+    = & \lambda^2 \overset{!}{=} 0\\
+    \Rightarrow & \lambda_1 = 0, \; \lambda_2 = 0 \Rightarrow \text{ stationary} 
+\end{align*}
+
+\begin{itemize}
+    \item[v)] $ \begin{pmatrix}
+    1 & -0.5 \\ 
+    -0.5 & 0
+    \end{pmatrix} $
+\end{itemize}
+
+\begin{align*}
+  & \left|
+  \begin{matrix}
+    1 - \lambda & -0.5 \\ 
+    -0.5 &  0 - \lambda
+    \end{matrix}
+    \right| \\
+    = & (1 - \lambda)( - \lambda) - 0.5 \cdot 0.5 \overset{!}{=} 0 \\
+    = & \lambda^2 + \lambda - \lambda - 0.25 \overset{!}{=} 0\\
+    \Rightarrow & \lambda_1 = 0.207, \; \lambda_2 = 1.207 \Rightarrow \text{not stationary} 
 \end{align*}
 
 \end{document}
