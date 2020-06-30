@@ -47,7 +47,7 @@
 \newcommand{\Var}{\operatorname{Var}}
 \newcommand{\Cov}{\operatorname{Cov}}
 
-
+\allowdisplaybreaks
 
 \titleformat{\section}
 {\normalfont\large\bfseries}{\thesection}{1em}{}
@@ -244,8 +244,7 @@ Take the model from Example 2.4 on Slide 2-6:
 
 \begin{itemize}
   \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R.
-  \item[] \textit{Hint: A glance at the slides and a loop might save you some time.}
-  \item[b)] Based on your results, compute the cross-correlation matrices.
+  \item[] \textit{Hint: A glance at the slides might save you some time.}
 \end{itemize}
 
 \emph{Solution:}
@@ -260,17 +259,24 @@ Take the model from Example 2.4 on Slide 2-6:
  \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
 \end{align*}
 
+\begin{itemize}
+  \item[b)] Based on your results, compute the cross-correlation matrices.
+  \item[] \textit{Hint: A loop might save you some time.}
+\end{itemize}
+
+\emph{Solution:}
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# First define parameters/coefficients:}
-\NormalTok{Phi <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.2}\NormalTok{, }\FloatTok{-0.6}\NormalTok{, }\FloatTok{0.3}\NormalTok{, }\FloatTok{1.1}\NormalTok{), }
+\NormalTok{Phi <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.8}\NormalTok{, }\FloatTok{-0.3}\NormalTok{, }\FloatTok{0.4}\NormalTok{, }\FloatTok{0.6}\NormalTok{), }
               \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# VAR coefficients}
-\NormalTok{k <-}\StringTok{ }\KeywordTok{ncol}\NormalTok{(Phi)}
-\NormalTok{Sigma_a <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{2.0}\NormalTok{), }
+
+\NormalTok{Sigma_a <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\FloatTok{1.0}\NormalTok{), }
                   \DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{# innovations' covariances}
 
 \NormalTok{Phi_kron <-}\StringTok{ }\KeywordTok{kronecker}\NormalTok{(}\DataTypeTok{X =}\NormalTok{ Phi, }\DataTypeTok{Y =}\NormalTok{ Phi) }\CommentTok{# kronecker product}
-\CommentTok{# Phi %x% Phi # alternative command}
+ \CommentTok{# alternative command: Phi %x% Phi}
 
 \NormalTok{Ident <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi_kron)) }
 \CommentTok{# identity matrix with the same dimensions as Phi_kron}
@@ -279,18 +285,23 @@ Take the model from Example 2.4 on Slide 2-6:
 \CommentTok{# c() works like the "vec" operator}
 
 \NormalTok{Gamma0.mat <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ Gamma0.vec, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{)}
+
+\NormalTok{mat_names <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{'z_1'}\NormalTok{, }\StringTok{'z_2'}\NormalTok{) }\CommentTok{# setting names of the series}
+\KeywordTok{colnames}\NormalTok{(Gamma0.mat) <-}\StringTok{ }\NormalTok{mat_names }\CommentTok{# passing column names}
+\KeywordTok{rownames}\NormalTok{(Gamma0.mat) <-}\StringTok{ }\NormalTok{mat_names }\CommentTok{# assig row names}
 \end{Highlighting}
 \end{Shaded}
 
 The \(\Gamma_0\) matrix is than:
 
 \begin{verbatim}
-##          [,1]     [,2]
-## [1,] 2.288889 3.511111
-## [2,] 3.511111 8.622222
+##           z_1   z_2
+## z_1  5.933333 -0.45
+## z_2 -0.450000  2.65
 \end{verbatim}
 
-To derive the \(\Gamma_1\) matrix, we can apply the following formula:
+To derive the \(\Gamma_1\) matrix, we can simply apply the following
+formula.
 
 \begin{align*}
   \Gamma_1 & = \phi_1 \Gamma_0\\
@@ -305,20 +316,20 @@ To derive the \(\Gamma_1\) matrix, we can apply the following formula:
 \(\Gamma_1\) is than:
 
 \begin{verbatim}
-##          [,1]     [,2]
-## [1,] 1.511111 3.288889
-## [2,] 2.488889 7.377778
+##           z_1   z_2
+## z_1  4.566667 0.700
+## z_2 -2.050000 1.725
 \end{verbatim}
 
-To derive all desired \(l^{th}\) laged covariance matrices we can use
-the general equation and program a loop over all desired lags:
+To derive all \(l^{th}\) lagged covariance matrices we can use the more
+general equation and program a loop over all desired lags.
 
 \begin{align*}
   \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
 \end{align*}
 
-To derive the correlation matrices \(\rho_l\) we devide the covariances
-by the standard deviations:
+To derive the correlation matrices \(\rho_l\) we divide the covariances
+by the standard deviations.
 
 \begin{align*}
   \rho_l = 
@@ -343,8 +354,16 @@ by the standard deviations:
 \CommentTok{# and putting them in a diagonal matrix}
 \NormalTok{D.inv <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(Gamma0.mat }\OperatorTok{*}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)))) }
 \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)\{}
-\NormalTok{  ccovf.list[[i]] <-}\StringTok{ }\NormalTok{Phi}\OperatorTok{%^%}\NormalTok{i }\OperatorTok{%*%}\StringTok{ }\NormalTok{Gamma0.mat}
-\NormalTok{  ccorf.list[[i]] <-}\StringTok{ }\NormalTok{D.inv }\OperatorTok{%*%}\StringTok{ }\NormalTok{ccovf.list[[i]] }\OperatorTok{%*%}\StringTok{ }\NormalTok{D.inv}
+    
+    \CommentTok{# covariance}
+\NormalTok{    ccovf <-}\StringTok{ }\NormalTok{Phi}\OperatorTok{%^%}\NormalTok{i }\OperatorTok{%*%}\StringTok{ }\NormalTok{Gamma0.mat}
+    \KeywordTok{rownames}\NormalTok{(ccovf) <-}\StringTok{ }\NormalTok{mat_names}
+\NormalTok{  ccovf.list[[i]] <-}\StringTok{ }\NormalTok{ccovf}
+    
+    \CommentTok{# correlation}
+\NormalTok{    ccorf <-}\StringTok{  }\NormalTok{D.inv }\OperatorTok{%*%}\StringTok{ }\NormalTok{ccovf.list[[i]] }\OperatorTok{%*%}\StringTok{ }\NormalTok{D.inv}
+    \KeywordTok{rownames}\NormalTok{(ccorf) <-}\StringTok{ }\NormalTok{mat_names}
+\NormalTok{  ccorf.list[[i]] <-}\StringTok{ }\NormalTok{ccorf}
 \NormalTok{\}}
 \NormalTok{ccovf.list }\CommentTok{# cross lagged covariances}
 \end{Highlighting}
@@ -352,54 +371,54 @@ by the standard deviations:
 
 \begin{verbatim}
 ## [[1]]
-##          [,1]     [,2]
-## [1,] 1.511111 3.288889
-## [2,] 2.488889 7.377778
+##           z_1   z_2
+## z_1  4.566667 0.700
+## z_2 -2.050000 1.725
 ## 
 ## [[2]]
-##          [,1]     [,2]
-## [1,] 1.048889 2.871111
-## [2,] 1.831111 6.142222
+##           z_1   z_2
+## z_1  2.833333 1.250
+## z_2 -2.600000 0.825
 ## 
 ## [[3]]
-##           [,1]     [,2]
-## [1,] 0.7591111 2.416889
-## [2,] 1.3848889 5.033778
+##           z_1  z_2
+## z_1  1.226667 1.33
+## z_2 -2.410000 0.12
 ## 
 ## [[4]]
-##           [,1]     [,2]
-## [1,] 0.5672889 1.993511
-## [2,] 1.0679111 4.087022
+##             z_1    z_2
+## z_1  0.01733333  1.112
+## z_2 -1.81400000 -0.327
 ## 
 ## [[5]]
-##           [,1]     [,2]
-## [1,] 0.4338311 1.624809
-## [2,] 0.8343289 3.299618
+##            z_1     z_2
+## z_1 -0.7117333  0.7588
+## z_2 -1.0936000 -0.5298
 ## 
 ## [[6]]
-##           [,1]     [,2]
-## [1,] 0.3370649 1.314847
-## [2,] 0.6574631 2.654694
+##           z_1      z_2
+## z_1 -1.006827  0.39512
+## z_2 -0.442640 -0.54552
 ## 
 ## [[7]]
-##           [,1]     [,2]
-## [1,] 0.2646519 1.059378
-## [2,] 0.5209705 2.131255
+##            z_1       z_2
+## z_1 -0.9825173  0.097888
+## z_2  0.0364640 -0.445848
 ## 
 ## [[8]]
-##           [,1]      [,2]
-## [1,] 0.2092215 0.8512522
-## [2,] 0.4142764 1.7087543
+##            z_1        z_2
+## z_1 -0.7714283 -0.1000288
+## z_2  0.3166336 -0.2968752
 ## 
 ## [[9]]
-##           [,1]      [,2]
-## [1,] 0.1661272 0.6828767
-## [2,] 0.3301711 1.3688784
+##            z_1        z_2
+## z_1 -0.4904892 -0.1987731
+## z_2  0.4214086 -0.1481165
 ## 
 ## [[10]]
-##           [,1]      [,2]
-## [1,] 0.1322768 0.5472389
-## [2,] 0.2635119 1.0960403
+##            z_1         z_2
+## z_1 -0.2238279 -0.21826509
+## z_2  0.3999919 -0.02923795
 \end{verbatim}
 
 \begin{Shaded}
@@ -410,58 +429,58 @@ by the standard deviations:
 
 \begin{verbatim}
 ## [[1]]
-##           [,1]      [,2]
-## [1,] 0.6601942 0.7403332
-## [2,] 0.5602522 0.8556701
+##            z_1       z_2
+## z_1  0.7696629 0.1765329
+## z_2 -0.5169893 0.6509434
 ## 
 ## [[2]]
-##           [,1]      [,2]
-## [1,] 0.4582524 0.6462909
-## [2,] 0.4121855 0.7123711
+##            z_1       z_2
+## z_1  0.4775281 0.3152374
+## z_2 -0.6556937 0.3113208
 ## 
 ## [[3]]
-##           [,1]      [,2]
-## [1,] 0.3316505 0.5440449
-## [2,] 0.3117403 0.5838144
+##            z_1        z_2
+## z_1  0.2067416 0.33541257
+## z_2 -0.6077777 0.04528302
 ## 
 ## [[4]]
-##           [,1]      [,2]
-## [1,] 0.2478447 0.4487420
-## [2,] 0.2403882 0.4740103
+##              z_1        z_2
+## z_1  0.002921348  0.2804352
+## z_2 -0.457472478 -0.1233962
 ## 
 ## [[5]]
-##           [,1]      [,2]
-## [1,] 0.1895379 0.3657466
-## [2,] 0.1878085 0.3826876
+##            z_1        z_2
+## z_1 -0.1199551  0.1913617
+## z_2 -0.2757949 -0.1999245
 ## 
 ## [[6]]
-##           [,1]      [,2]
-## [1,] 0.1472614 0.2959738
-## [2,] 0.1479958 0.3078898
+##            z_1         z_2
+## z_1 -0.1696899  0.09964527
+## z_2 -0.1116293 -0.20585660
 ## 
 ## [[7]]
-##           [,1]      [,2]
-## [1,] 0.1156246 0.2384673
-## [2,] 0.1172711 0.2471817
+##              z_1         z_2
+## z_1 -0.165592809  0.02468636
+## z_2  0.009195853 -0.16824453
 ## 
 ## [[8]]
-##            [,1]      [,2]
-## [1,] 0.09140746 0.1916180
-## [2,] 0.09325416 0.1981803
+##            z_1         z_2
+## z_1 -0.1300160 -0.02522625
+## z_2  0.0798518 -0.11202838
 ## 
 ## [[9]]
-##            [,1]      [,2]
-## [1,] 0.07257985 0.1537165
-## [2,] 0.07432195 0.1587617
+##             z_1         z_2
+## z_1 -0.08266671 -0.05012857
+## z_2  0.10627500 -0.05589301
 ## 
 ## [[10]]
-##            [,1]      [,2]
-## [1,] 0.05779083 0.1231842
-## [2,] 0.05931687 0.1271181
+##            z_1         z_2
+## z_1 -0.0377238 -0.05504425
+## z_2  0.1008739 -0.01103319
 \end{verbatim}
 
 \begin{itemize}
-  \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions.
+  \item[c)] Draw a corresponding innovation sequence $a_t$ for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions.
   \item[] \textit{Hint: 'mvrnorm' and 'for' are still allowed}
 \end{itemize}
 
@@ -474,8 +493,8 @@ by the standard deviations:
     \item Draw $\left\{ a_1, \ldots , a_T \right\} \sim \left[ \mu , \Sigma_a \right]$
     \item Set $z_0 = \mathbb{E} \left( z_t\right)$
     \item $z_1 = \phi_1 z_0 + a_1$
-    \item Repeat Sep 4 $(T - 1)$ times
-    \item (Discard first few observations to minimise effects of $z_0$ on the results)
+    \item Repeat Step 4 $(T - 1)$ times
+    \item (Discard first few observations to minimize effects of $z_0$ on the results)
     \begin{itemize}
       \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
     \end{itemize}
@@ -489,7 +508,7 @@ by the standard deviations:
 \CommentTok{# ii) The Basis: Innovations}
 \KeywordTok{set.seed}\NormalTok{(}\DecValTok{2}\OperatorTok{^}\DecValTok{9-1}\NormalTok{) }\CommentTok{# for replication: the 'random' numbers drawn }
 \CommentTok{# up from this point will always be the same (given you use }
-\CommentTok{# the same command to draw them....)}
+\CommentTok{# the same command to draw them...)}
 \NormalTok{a <-}\StringTok{ }\KeywordTok{mvrnorm}\NormalTok{(}\DataTypeTok{n =}\NormalTok{ N, }\DataTypeTok{mu =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{), }\DataTypeTok{Sigma =}\NormalTok{ Sigma_a)}
 \CommentTok{# iii) Writing a function to generate 'z' realisations from 'a' using Phi}
 \NormalTok{var1gen <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(coef.mat, z.lag, innovation)\{}
@@ -498,8 +517,8 @@ by the standard deviations:
   \KeywordTok{return}\NormalTok{(z.current)}
 \NormalTok{\}}
 \CommentTok{# iv) Prepare variable for 'z'}
-\NormalTok{z <-}\StringTok{ }\KeywordTok{ts}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \OtherTok{NA}\NormalTok{, }\DataTypeTok{nrow =}\NormalTok{ (N), }\DataTypeTok{ncol =}\NormalTok{ k)}
-\NormalTok{        ,}\DataTypeTok{start =} \DecValTok{1}\NormalTok{, }\DataTypeTok{names =} \KeywordTok{c}\NormalTok{(}\StringTok{"z_1"}\NormalTok{, }\StringTok{"z_2"}\NormalTok{))}
+\NormalTok{z <-}\StringTok{ }\KeywordTok{ts}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \OtherTok{NA}\NormalTok{, }\DataTypeTok{nrow =}\NormalTok{ (N), }\DataTypeTok{ncol =} \KeywordTok{ncol}\NormalTok{(Phi))}
+\NormalTok{        ,}\DataTypeTok{start =} \DecValTok{1}\NormalTok{, }\DataTypeTok{names =}\NormalTok{ mat_names)}
 \CommentTok{# v) Set starting values for z (at mean + innovation)}
 \NormalTok{z[}\DecValTok{1}\NormalTok{,] <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{0}\NormalTok{) }\OperatorTok{+}\StringTok{ }\NormalTok{a[}\DecValTok{1}\NormalTok{,]}
 \CommentTok{# vi) Generate z repeatedly and store it}
@@ -515,15 +534,17 @@ by the standard deviations:
 
 \emph{Solution:}\\
 
+The ordinary organic \texttt{plot} command works because \(z\) is
+already a \emph{ts}-class object (among other classes) and not a data
+frame.
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# The ordinary 'plot' command works because 'z' is already }
-\CommentTok{# a 'ts'-class object (among other classes) and NOT a data frame!}
 \KeywordTok{plot}\NormalTok{(z)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{exercise_2_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{exercise_2_files/figure-latex/unnamed-chunk-7-1.pdf}
 
 At least it looks stable hence we cannot rule out stationarity.
 
@@ -555,22 +576,23 @@ At least it looks stable hence we cannot rule out stationarity.
   \Rightarrow & \ \text{is part of:} \dfrac{1}{T -1} \cdot \tilde{Z}_t^{'} \tilde{Z}_{t-1} = \widehat{\Gamma_1}
 \end{align*}
 
-To estimate moments from simulates data, we first do it by
-\enquote{hand} to get a surrow understanding and see the conection to
+To estimate moments from simulated data one can simply uses the command
+\texttt{cov()} respectively \texttt{cor()} , but we do it by
+\enquote{hand} to get a thoroughly understanding and see the relation to
 the Yule-Walker equation.
 
 First we need to demeaning the multivariate time series. Therefore, we
-calculate the colum means.
+calculate the column means.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# compute the individual vector means}
 \NormalTok{mu <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(z)}
 \end{Highlighting}
 \end{Shaded}
 
-To demeaning the series we habe now two choicesto proceed, one would be
-to itterating over the rows and subtracting the mean vector everytime.
+To demeaning the series we have now two coding options to proceed, one
+would be to iterating over the rows and subtracting the mean vector
+every time.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -587,19 +609,21 @@ column individually.
 \end{Highlighting}
 \end{Shaded}
 
-Now we are able to compute \(\hat{\Gamma_0}\).
+Now we are able to compute \(\widehat{\Gamma_0}\).
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{Gamma0.hat <-}\StringTok{ }\KeywordTok{t}\NormalTok{(z.demeaned) }\OperatorTok{%*%}\StringTok{ }\NormalTok{z.demeaned }\OperatorTok{/}\StringTok{ }\NormalTok{(N}\DecValTok{-1}\NormalTok{) }\CommentTok{# sample covariance with  }
-\CommentTok{# correction for degrees of freedom (we've demeaned the series!)}
+\NormalTok{Gamma0.hat <-}\StringTok{ }\KeywordTok{t}\NormalTok{(z.demeaned) }\OperatorTok{%*%}\StringTok{ }\NormalTok{z.demeaned }\OperatorTok{/}\StringTok{ }\NormalTok{(N}\DecValTok{-1}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
-Please also note that now the first entry is transposed!
-(\texttt{z.demeaned} is a data matrix and not a random vector anymore!)
+Since we already demeaned the series we need to correct the degrees of
+freedom \((N - 1)\). Please also note that now the first entry is
+transposed! ( \emph{z.demeaned} is a data matrix and not a random vector
+anymore!)
 
-To obtain \(\hat{\rho}_0\) we have to standardise \(\hat{\Gamma}_0\).
+To compute \(\widehat{\rho}_0\) we just need to standardizing
+\(\widehat{\Gamma}_0\).
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -608,44 +632,45 @@ To obtain \(\hat{\rho}_0\) we have to standardise \(\hat{\Gamma}_0\).
                                    \KeywordTok{sqrt}\NormalTok{(Gamma0.hat[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{] }\OperatorTok{*}\StringTok{ }\NormalTok{Gamma0.hat[}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{]),}
 \NormalTok{                                   Gamma0.hat[}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{]),}
                        \DataTypeTok{nrow =} \DecValTok{2}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{FALSE}\NormalTok{) }
-\CommentTok{# just another way to program it, }
-\CommentTok{# maybe it is more visible what's inside D.inv %*% D.inv }
 \NormalTok{Rho0.hat <-}\StringTok{ }\NormalTok{Gamma0.hat }\OperatorTok{/}\StringTok{ }\NormalTok{standardisation}
 \end{Highlighting}
 \end{Shaded}
 
-Then \(\rho_0\) is:
+This is just another way to program it, maybe it makes it more visible
+what is inside \(D.inv \ \%*\% \ D.inv\) (from the lecture slides).
+
+Then \(\widehat{\rho_0}\) is:
 
 \begin{verbatim}
-##          z_1      z_2
-## z_1 1.000000 0.809102
-## z_2 0.809102 1.000000
+##             z_1         z_2
+## z_1  1.00000000 -0.04910251
+## z_2 -0.04910251  1.00000000
 \end{verbatim}
 
-Since we simulated the trajectory we know the true values and can
-compare the results. The estimated mean values for the two series are
-slightly negativ \((\)-0.1107541, -0.084682 \()^{'}\) so the differences
-are also slighlty negative since we simulated the time series without a
-mean.
+Since we simulated the trajectory with the \enquote{true} values we can
+compare the estimations with these values. The estimated mean values for
+the two series are slightly negative \((0.1762664, -0.1272957 )^{'}\) so
+the differences are also slightly negative since we simulated the time
+series without a mean \(\mu_{1,2} = 0\).
 
-For the covariance \(\Gamma_0\) we computed the analytical solution in
+For the covariance \(\Gamma_0\) we calculated the analytical solution in
 part \emph{b} of this exercise. The differences
 \((\widehat{\Gamma}_0 - \Gamma_0)\) are:
 
 \begin{verbatim}
-##            z_1       z_2
-## z_1 -0.2899134 -0.354941
-## z_2 -0.3549410 -1.010082
+##            z_1        z_2
+## z_1 -0.5964760  0.2778575
+## z_2  0.2778575 -0.3470556
 \end{verbatim}
 
 The same applies for the comparison of the correlations \(\rho_0\) and
-the estimated correlations. The differences
+the estimated correlations \(\widehat{\rho_0}\). The differences
 \((\widehat{\rho}_0 - \rho_0 )\) are:
 
 \begin{verbatim}
-##              z_1          z_2
-## z_1 1.110223e-16 1.874622e-02
-## z_2 1.874622e-02 2.220446e-16
+##            z_1          z_2
+## z_1 0.00000000 6.438295e-02
+## z_2 0.06438295 2.220446e-16
 \end{verbatim}
 
 \hypertarget{exercise-2-checking-var1-stationarity}{%
@@ -654,7 +679,7 @@ Stationarity}\label{exercise-2-checking-var1-stationarity}}
 
 Recall the conditions to check if a VAR(1) process is stationary. Now
 assume the VAR(1) model \(z_{t} = \phi_{1} z_{t-1} + a_{t}\) with
-\(a_{t}\) as a sequence of i.i.d innovations:
+\(a_{t}\) as a sequence of i.i.d. innovations:
 
 \begin{itemize}
 \item[a)] Do you need to make further assumptions on the cross-correlations of $a_{t}$ to ensure stationarity?
@@ -668,7 +693,7 @@ assume the VAR(1) model \(z_{t} = \phi_{1} z_{t-1} + a_{t}\) with
   i.i.d.: & \Cov (a_t , a_{t-1}) = 0
 \end{align*}
 
-Generally not, since i.i.d. errors induce no dynamic strucutre. Still,
+Generally not, since i.i.d. errors induce no dynamic structure. Still,
 finite \(1^{st}\) and \(2^{nd}\) moments are required for weak
 stationarity! (Gaussian innovations fulfill that condition, of course).
 
@@ -742,7 +767,7 @@ stationarity! (Gaussian innovations fulfill that condition, of course).
       \right| \\
       = & (0.2 -\lambda)(1.1 - \lambda) - (-0.6) (0.3)\\
       = & \lambda^2 - 1.3 \lambda + 0.4 \overset{!}{=} 0 \\
-      \text{pq-Formel} \Rightarrow  \lambda_{1,2} = & - \left( \dfrac{-1.3}{2} \right) \pm \sqrt{ \left( \dfrac{-1.3}{2} \right)^2 - 0.4 }\\
+      pq \text{-formula} \Rightarrow  \lambda_{1,2} = & - \left( \dfrac{-1.3}{2} \right) \pm \sqrt{ \left( \dfrac{-1.3}{2} \right)^2 - 0.4 }\\
        = & 0.65 \pm 0.15 \\
       \lambda_1 = & 0.8 \\
       \lambda_2 = & 0.5 \\
@@ -820,7 +845,7 @@ stationarity! (Gaussian innovations fulfill that condition, of course).
     \end{matrix}
     \right| \\
     = & (1 - \lambda)( - \lambda) - 0.5 \cdot 0.5 \overset{!}{=} 0 \\
-    = & \lambda^2 + \lambda - \lambda - 0.25 \overset{!}{=} 0\\
+    = & \lambda^2 - \lambda - 0.25 \overset{!}{=} 0\\
     \Rightarrow & \lambda_1 = 0.207, \; \lambda_2 = 1.207 \Rightarrow \text{not stationary} 
 \end{align*}
 

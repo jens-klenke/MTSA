@@ -38,8 +38,7 @@ Take the model from Example 2.4 on Slide 2-6:
 
 \begin{itemize}
   \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R.
-  \item[] \textit{Hint: A glance at the slides and a loop might save you some time.}
-  \item[b)] Based on your results, compute the cross-correlation matrices.
+  \item[] \textit{Hint: A glance at the slides might save you some time.}
 \end{itemize}
 
 _Solution:_ 
@@ -54,17 +53,23 @@ _Solution:_
  \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
 \end{align*}
 
+\begin{itemize}
+  \item[b)] Based on your results, compute the cross-correlation matrices.
+  \item[] \textit{Hint: A loop might save you some time.}
+\end{itemize}
+
+_Solution:_ 
 
 ```{r}
 # First define parameters/coefficients:
-Phi <- matrix(data = c(0.2, -0.6, 0.3, 1.1), 
+Phi <- matrix(data = c(0.8, -0.3, 0.4, 0.6), 
               byrow = FALSE, nrow = 2) # VAR coefficients
-k <- ncol(Phi)
-Sigma_a <- matrix(data = c(1, 0.8, 0.8, 2.0), 
+
+Sigma_a <- matrix(data = c(2, 0.5, 0.5, 1.0), 
                   byrow = FALSE, nrow = 2) # innovations' covariances
 
 Phi_kron <- kronecker(X = Phi, Y = Phi) # kronecker product
-# Phi %x% Phi # alternative command
+ # alternative command: Phi %x% Phi
 
 Ident <- diag(ncol(Phi_kron)) 
 # identity matrix with the same dimensions as Phi_kron
@@ -73,6 +78,10 @@ Gamma0.vec <- solve(Ident - Phi_kron) %*% c(Sigma_a)
 # c() works like the "vec" operator
 
 Gamma0.mat <- matrix(data = Gamma0.vec, nrow = 2, byrow = FALSE)
+
+mat_names <- c('z_1', 'z_2') # setting names of the series
+colnames(Gamma0.mat) <- mat_names # passing column names
+rownames(Gamma0.mat) <- mat_names # assig row names
 ```
 
 The $\Gamma_0$ matrix is than:  
@@ -81,7 +90,7 @@ The $\Gamma_0$ matrix is than:
 Gamma0.mat
 ```
 
-To derive the $\Gamma_1$ matrix, we can apply the following formula: 
+To derive the $\Gamma_1$ matrix, we can simply apply the following formula. 
 
 \begin{align*}
   \Gamma_1 & = \phi_1 \Gamma_0\\
@@ -94,16 +103,18 @@ Gamma1.mat <- Phi %*% Gamma0.mat
 $\Gamma_1$ is than: 
 
 ```{r, echo = FALSE}
+colnames(Gamma1.mat) <- mat_names
+rownames(Gamma1.mat) <- mat_names
 Gamma1.mat
 ```
 
-To derive all desired $l^{th}$ laged covariance matrices we can use the general equation and program a loop over all desired lags:
+To derive all $l^{th}$ lagged covariance matrices we can use the more general equation and program a loop over all desired lags.
 
 \begin{align*}
   \Rrightarrow \Gamma_l & = \phi_{l-1} \Gamma_{l-1} = \phi_1^{l} \Gamma_0\\
 \end{align*}
 
-To derive the correlation matrices $\rho_l$ we devide the covariances by the standard deviations:
+To derive the correlation matrices $\rho_l$ we divide the covariances by the standard deviations.
 
 \begin{align*}
   \rho_l = 
@@ -126,16 +137,25 @@ ccorf.list <- list()
 # obtaining standard deviations for the single variables (parts of z) 
 # and putting them in a diagonal matrix
 D.inv <- solve(sqrt(Gamma0.mat * diag(ncol(Phi)))) 
+
 for (i in 1:10){
-  ccovf.list[[i]] <- Phi%^%i %*% Gamma0.mat
-  ccorf.list[[i]] <- D.inv %*% ccovf.list[[i]] %*% D.inv
+    
+    # covariance
+    ccovf <- Phi%^%i %*% Gamma0.mat
+    rownames(ccovf) <- mat_names
+  ccovf.list[[i]] <- ccovf
+    
+    # correlation
+    ccorf <-  D.inv %*% ccovf.list[[i]] %*% D.inv
+    rownames(ccorf) <- mat_names
+  ccorf.list[[i]] <- ccorf
 }
 ccovf.list # cross lagged covariances
 ccorf.list # cross lagged correlations
 ```
 
 \begin{itemize}
-  \item[c)] Draw a corresponding innovation sequence at for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions.
+  \item[c)] Draw a corresponding innovation sequence $a_t$ for 300 periods from a (multivariate) Gaussian distribution and simulate the given VAR(1) process without any further built-in functions.
   \item[] \textit{Hint: 'mvrnorm' and 'for' are still allowed}
 \end{itemize}
 
@@ -148,21 +168,21 @@ _Solution:_ \
     \item Draw $\left\{ a_1, \ldots , a_T \right\} \sim \left[ \mu , \Sigma_a \right]$
     \item Set $z_0 = \mathbb{E} \left( z_t\right)$
     \item $z_1 = \phi_1 z_0 + a_1$
-    \item Repeat Sep 4 $(T - 1)$ times
-    \item (Discard first few observations to minimise effects of $z_0$ on the results)
+    \item Repeat Step 4 $(T - 1)$ times
+    \item (Discard first few observations to minimize effects of $z_0$ on the results)
     \begin{itemize}
       \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
     \end{itemize}
   \end{enumerate}
 \end{itemize}
 
-```{r}
+```{r simulation study}
 # i) Set sample size and further coefficients
 N <- 300
 # ii) The Basis: Innovations
 set.seed(2^9-1) # for replication: the 'random' numbers drawn 
 # up from this point will always be the same (given you use 
-# the same command to draw them....)
+# the same command to draw them...)
 a <- mvrnorm(n = N, mu = c(0,0), Sigma = Sigma_a)
 # iii) Writing a function to generate 'z' realisations from 'a' using Phi
 var1gen <- function(coef.mat, z.lag, innovation){
@@ -171,8 +191,8 @@ var1gen <- function(coef.mat, z.lag, innovation){
   return(z.current)
 }
 # iv) Prepare variable for 'z'
-z <- ts(data = matrix(data = NA, nrow = (N), ncol = k)
-        ,start = 1, names = c("z_1", "z_2"))
+z <- ts(data = matrix(data = NA, nrow = (N), ncol = ncol(Phi))
+        ,start = 1, names = mat_names)
 # v) Set starting values for z (at mean + innovation)
 z[1,] <- c(0,0) + a[1,]
 # vi) Generate z repeatedly and store it
@@ -187,9 +207,9 @@ for (i in 2:(N)){
 
 _Solution:_ \
 
+The ordinary organic `plot` command works because $z$ is already a *ts*-class object (among other classes) and not a data frame.
+
 ```{r}
-# The ordinary 'plot' command works because 'z' is already 
-# a 'ts'-class object (among other classes) and NOT a data frame!
 plot(z)
 ```
 
@@ -225,16 +245,15 @@ _Solution:_
 \end{align*}
 
 
-To estimate moments from simulates data, we first do it by 'hand' to get a surrow understanding and see the conection to the Yule-Walker equation. 
+To estimate moments from simulated data one can simply uses the command `cov()` respectively `cor()` , but we do it by 'hand' to get a thoroughly understanding and see the relation to the Yule-Walker equation. 
 
+First we need to demeaning the multivariate time series. Therefore, we calculate the column means. 
 
-First we need to demeaning the multivariate time series. Therefore, we calculate the colum means. 
 ```{r}
-# compute the individual vector means
 mu <- colMeans(z)
 ```
 
-To demeaning the series we habe now two choicesto proceed, one would be to itterating over the rows and subtracting the mean vector everytime. 
+To demeaning the series we have now two coding options to proceed, one would be to iterating over the rows and subtracting the mean vector every time. 
 
 ```{r}
 z.demeaned <- t(apply(X = z, MARGIN = c(1), FUN = function(x) x - mu))
@@ -246,16 +265,15 @@ The other option would be to subtracting the column means from each column indiv
 z.demeaned <- cbind(z[,1]-mu[1], z[,2]-mu[2])
 ```
 
-Now we are able to compute $\hat{\Gamma_0}$. 
+Now we are able to compute $\widehat{\Gamma_0}$. 
 
 ```{r}
-Gamma0.hat <- t(z.demeaned) %*% z.demeaned / (N-1) # sample covariance with  
-# correction for degrees of freedom (we've demeaned the series!)
+Gamma0.hat <- t(z.demeaned) %*% z.demeaned / (N-1) 
 ```
 
-Please also note that now the first entry is transposed! (`z.demeaned` is a data matrix and not a random vector anymore!)
+Since we already demeaned the series we need to correct the degrees of freedom $(N - 1)$. Please also note that now the first entry is transposed! ( _z.demeaned_ is a data matrix and not a random vector anymore!)
 
-To obtain $\hat{\rho}_0$ we have to standardise $\hat{\Gamma}_0$. 
+To compute $\widehat{\rho}_0$ we just need to standardizing $\widehat{\Gamma}_0$. 
 
 ```{r}
 standardisation <- matrix(data = c(Gamma0.hat[1,1], 
@@ -263,12 +281,12 @@ standardisation <- matrix(data = c(Gamma0.hat[1,1],
                                    sqrt(Gamma0.hat[2,2] * Gamma0.hat[1,1]),
                                    Gamma0.hat[2,2]),
                        nrow = 2, byrow = FALSE) 
-# just another way to program it, 
-# maybe it is more visible what's inside D.inv %*% D.inv 
 Rho0.hat <- Gamma0.hat / standardisation
 ```
 
-Then $\rho_0$ is: 
+This is just another way to program it, maybe it makes it more visible what is inside $D.inv \ \%*\% \ D.inv$ (from the lecture slides).
+
+Then $\widehat{\rho_0}$ is: 
 
 ```{r, echo = FALSE}
 colnames(Rho0.hat) <- c('z_1', 'z_2')
@@ -276,9 +294,9 @@ rownames(Rho0.hat) <- c('z_1', 'z_2')
 Rho0.hat
 ```
 
-Since we simulated the trajectory we know the true values and can compare the results. The estimated mean values for the two series are slightly negativ $($`r mu - c(0,0)` $)^{'}$ so the differences are also slighlty negative since we simulated the time series without a mean.  
+Since we simulated the trajectory with the 'true' values we can compare the estimations with these values. The estimated mean values for the two series are slightly negative $(`r mu - c(0,0)` )^{'}$ so the differences are also slightly negative since we simulated the time series without a mean $\mu_{1,2} = 0$.  
 
-For the covariance $\Gamma_0$ we computed the analytical solution in part _b_ of this exercise. The differences $(\widehat{\Gamma}_0 - \Gamma_0)$ are: 
+For the covariance $\Gamma_0$ we calculated the analytical solution in part _b_ of this exercise. The differences $(\widehat{\Gamma}_0 - \Gamma_0)$ are: 
 
 ```{r, echo = FALSE}
 gamma_0.dif <- Gamma0.hat - Gamma0.mat
@@ -287,7 +305,7 @@ rownames(gamma_0.dif) <- c('z_1', 'z_2')
 gamma_0.dif
 ```
 
-The same applies for the comparison of the correlations $\rho_0$ and the estimated correlations. The differences $(\widehat{\rho}_0 - \rho_0 )$ are: 
+The same applies for the comparison of the correlations $\rho_0$ and the estimated correlations $\widehat{\rho_0}$. The differences $(\widehat{\rho}_0 - \rho_0 )$ are: 
 
 ```{r, echo = FALSE}
 Rho0.mat <- D.inv %*% Gamma0.mat %*% D.inv
@@ -299,7 +317,7 @@ rho_0.dif
 
 # Exercise 2: Checking VAR(1) Stationarity
 
-Recall the conditions to check if a VAR(1) process is stationary. Now assume the VAR(1) model $z_{t} = \phi_{1} z_{t-1} + a_{t}$ with $a_{t}$ as a sequence of i.i.d innovations:
+Recall the conditions to check if a VAR(1) process is stationary. Now assume the VAR(1) model $z_{t} = \phi_{1} z_{t-1} + a_{t}$ with $a_{t}$ as a sequence of i.i.d. innovations:
 
 \begin{itemize}
 \item[a)] Do you need to make further assumptions on the cross-correlations of $a_{t}$ to ensure stationarity?
@@ -313,7 +331,7 @@ _Solution:_
   i.i.d.: & \Cov (a_t , a_{t-1}) = 0
 \end{align*}
 
-Generally not, since i.i.d. errors induce no dynamic strucutre. Still, finite $1^{st}$ and $2^{nd}$ moments are required for weak stationarity! (Gaussian innovations fulfill that condition, of course).
+Generally not, since i.i.d. errors induce no dynamic structure. Still, finite $1^{st}$ and $2^{nd}$ moments are required for weak stationarity! (Gaussian innovations fulfill that condition, of course).
 
 
 \begin{itemize}
@@ -388,7 +406,7 @@ _Solution:_
 	  \right| \\
 	  = & (0.2 -\lambda)(1.1 - \lambda) - (-0.6) (0.3)\\
 	  = & \lambda^2 - 1.3 \lambda + 0.4 \overset{!}{=} 0 \\
-	  \text{pq-Formel} \Rightarrow  \lambda_{1,2} = & - \left( \dfrac{-1.3}{2} \right) \pm \sqrt{ \left( \dfrac{-1.3}{2} \right)^2 - 0.4 }\\
+	  pq \text{-formula} \Rightarrow  \lambda_{1,2} = & - \left( \dfrac{-1.3}{2} \right) \pm \sqrt{ \left( \dfrac{-1.3}{2} \right)^2 - 0.4 }\\
 	   = & 0.65 \pm 0.15 \\
 	  \lambda_1 = & 0.8 \\
 	  \lambda_2 = & 0.5 \\
@@ -467,7 +485,7 @@ _Solution:_
 	\end{matrix}
 	\right| \\
 	= & (1 - \lambda)( - \lambda) - 0.5 \cdot 0.5 \overset{!}{=} 0 \\
-	= & \lambda^2 + \lambda - \lambda - 0.25 \overset{!}{=} 0\\
+	= & \lambda^2 - \lambda - 0.25 \overset{!}{=} 0\\
 	\Rightarrow & \lambda_1 = 0.207, \; \lambda_2 = 1.207 \Rightarrow \text{not stationary} 
 \end{align*}
 
