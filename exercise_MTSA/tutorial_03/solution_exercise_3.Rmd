@@ -42,6 +42,19 @@ Take the VAR(1) model $z_t = \phi_0 + \phi_1 z_{t-1} + a_t$ with the following p
 
 \begin{itemize}
     \item[a)] Compute the mean of the process.
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu}  = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
+  \left[ \text{Key assumption?}  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]
+\end{align*}
+
+
+
+
+\begin{itemize}
     \item[b)] Show that the process is stationary.
     \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ and show that the solution for $\Gamma_0$ coincides with equation (2.3) on slide 2-15.
     \item[d)] Compute $\Gamma_0$ and $\Gamma_1$ by hand based on your results from c).
@@ -51,6 +64,26 @@ Take the VAR(1) model $z_t = \phi_0 + \phi_1 z_{t-1} + a_t$ with the following p
 
 Using the notation of Slide 2-27, prove that $|I_{kp} - \pmb{\Phi_1} z| = |I_k - \phi_1 z - \ldots - \phi_p z^p|$. Recall that $|A|$ denotes the determinant od the matrix $A$
 
+_Hint: Derive_ $\pmb{\Phi}_1$ _and keep it mind that adding multiplies of columns/rows to other columns/rows does not affect the determinate! The plan is to end up with a special matrix._ 
+
+# Exercise 3: VAR(2) Moments and Stationarity
+
+Consider the following VAR(2) model with i.i.d. innovations: 
+
+\begin{align*}
+    \phi_0 = \begin{pmatrix} 2 \\ 1 \end{pmatrix}, \quad \phi_1 = \begin{pmatrix} 0.5 & 0.1 \\ 0.4 & 0.5 \end{pmatrix}, \quad \phi_2 = \begin{pmatrix} 0 & 0 \\ 0.25 & 0 \end{pmatrix}, \quad \Sigma_a = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+\end{align*}
+
+\begin{itemize}
+    \item[a)] Show that the process is stationary.
+    \item[b)] Determine the mean vector.
+    \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ for a general VAR(2) process.
+    \item[d)] Suppose we only $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
+    \item[e)] Write the process as a VAR(1) and calculate the mean vector again.
+    \item[f)] Compute $\Gamma_0$ based on the VAR(1) formulation.
+    \item[] \textit{Hint: You can use R for the calculations.}
+
+\end{itemize}
 
 
 
