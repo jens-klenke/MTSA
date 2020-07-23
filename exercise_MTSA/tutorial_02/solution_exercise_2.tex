@@ -46,6 +46,7 @@
 \newcommand{\tr}{\operatorname{tr}}
 \newcommand{\Var}{\operatorname{Var}}
 \newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\diag}{\operatorname{diag}}
 
 \allowdisplaybreaks
 
@@ -155,7 +156,7 @@
   \title{Multivariate Time Series Analysis}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-\subtitle{Exercise Sheet 2}
+\subtitle{Solution Exercise Sheet 2}
   \author{Dr.~Yannick Hoga}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
@@ -227,7 +228,7 @@ Chair of Econometrics\\
 	\vspace{.25cm}
 	\textbf{\Large{Multivariate Time Series Analysis}}\\
 	\vspace{.25cm}
-	\textbf{\large{Exercise Sheet 2}}\\
+	\textbf{\large{Solution Exercise Sheet 2}}\\
 	\vspace{.125cm}
 \end{center}
 
@@ -243,7 +244,7 @@ Process}\label{exercise-1-moments-and-simulation-of-a-var1-process}}
 Take the model from Example 2.4 on Slide 2-6:
 
 \begin{itemize}
-  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R.
+  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags $1$ to $10$ and compute them using R.
   \item[] \textit{Hint: A glance at the slides might save you some time.}
 \end{itemize}
 
@@ -252,7 +253,9 @@ Take the model from Example 2.4 on Slide 2-6:
 \begin{align*}
   z_t & = \phi_1 z_{t-1} + a_t\\
   \\
-  \Gamma_0 & = \phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
+  \Gamma_0 & = E \left( z_t - \mu  \right) \left( z_t - \mu  \right)^{'}\\
+  & = E \left[ \phi_1 \left( z_{t -1} - \mu \right) \left( z_{t -1} - \mu \right)^{'} \phi_1^{'} \right] + E \left[a_t a_t^{'} \right]\\
+    & =\phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
   \Leftrightarrow \vec(\Gamma_0) &= (\phi_1 \otimes \phi_1) \cdot \vec(\Gamma_0) + \vec(\Sigma_a) \\
   \Leftrightarrow \vec(\Gamma_0) &= (I_{K^2} - \phi_1 \otimes \phi_1) \cdot \vec(\Sigma_a) \\
  \Rrightarrow \Gamma_1 & = \phi_1 \Gamma_0\\
@@ -292,7 +295,7 @@ Take the model from Example 2.4 on Slide 2-6:
 \end{Highlighting}
 \end{Shaded}
 
-The \(\Gamma_0\) matrix is than:
+The \(\Gamma_0\) matrix is then:
 
 \begin{verbatim}
 ##           z_1   z_2
@@ -313,7 +316,7 @@ formula.
 \end{Highlighting}
 \end{Shaded}
 
-\(\Gamma_1\) is than:
+\(\Gamma_1\) is then:
 
 \begin{verbatim}
 ##           z_1   z_2
@@ -332,7 +335,9 @@ To derive the correlation matrices \(\rho_l\) we divide the covariances
 by the standard deviations.
 
 \begin{align*}
-  \rho_l = 
+ \rho_l & = \left( \rho_{ij} (l)\right)_{i,j = 1}^{K} = D^{-1} \Gamma_l D^{-1}  \\
+ \\
+   & = 
   \begin{pmatrix}
     \dfrac{\Cov(x_t , x_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(x_{t- l})}} &
     \dfrac{\Cov(x_t , y_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(y_{t- l})}}\\
@@ -340,6 +345,10 @@ by the standard deviations.
     \dfrac{\Cov(y_t , y_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(y_{t- l})}}
   \end{pmatrix}\\
 \end{align*}
+
+\begin{itemize}
+  \item where $D  = \diag \left\{ \sqrt{\Gamma_{11} (0)}, \ldots , \sqrt{\Gamma_{kk} (0)} \right\}$ 
+\end{itemize}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -353,6 +362,7 @@ by the standard deviations.
 \CommentTok{# obtaining standard deviations for the single variables (parts of z) }
 \CommentTok{# and putting them in a diagonal matrix}
 \NormalTok{D.inv <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{sqrt}\NormalTok{(Gamma0.mat }\OperatorTok{*}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\KeywordTok{ncol}\NormalTok{(Phi)))) }
+
 \ControlFlowTok{for}\NormalTok{ (i }\ControlFlowTok{in} \DecValTok{1}\OperatorTok{:}\DecValTok{10}\NormalTok{)\{}
     
     \CommentTok{# covariance}
@@ -494,7 +504,7 @@ by the standard deviations.
     \item Set $z_0 = \mathbb{E} \left( z_t\right)$
     \item $z_1 = \phi_1 z_0 + a_1$
     \item Repeat Step 4 $(T - 1)$ times
-    \item (Discard first few observations to minimize effects of $z_0$ on the results)
+    \item (Discard the first few observations to minimize effects of $z_0$ on the results)
     \begin{itemize}
       \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
     \end{itemize}
@@ -544,7 +554,7 @@ frame.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{exercise_2_files/figure-latex/unnamed-chunk-7-1.pdf}
+\includegraphics{solution_exercise_2_files/figure-latex/unnamed-chunk-7-1.pdf}
 
 At least it looks stable hence we cannot rule out stationarity.
 
@@ -576,12 +586,12 @@ At least it looks stable hence we cannot rule out stationarity.
   \Rightarrow & \ \text{is part of:} \dfrac{1}{T -1} \cdot \tilde{Z}_t^{'} \tilde{Z}_{t-1} = \widehat{\Gamma_1}
 \end{align*}
 
-To estimate moments from simulated data one can simply uses the command
+To estimate moments from simulated data one can simply use the command
 \texttt{cov()} respectively \texttt{cor()} , but we do it by
-\enquote{hand} to get a thoroughly understanding and see the relation to
+\enquote{hand} to get a thorough understanding and see the relation to
 the Yule-Walker equation.
 
-First we need to demeaning the multivariate time series. Therefore, we
+First we need to demean the multivariate time series. Therefore, we
 calculate the column means.
 
 \begin{Shaded}
@@ -590,9 +600,9 @@ calculate the column means.
 \end{Highlighting}
 \end{Shaded}
 
-To demeaning the series we have now two coding options to proceed, one
-would be to iterating over the rows and subtracting the mean vector
-every time.
+To demean the series we now have two coding options to proceed with, one
+would be to iterate over the rows and subtracte the mean vector every
+time.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -600,8 +610,8 @@ every time.
 \end{Highlighting}
 \end{Shaded}
 
-The other option would be to subtracting the column means from each
-column individually.
+The other option would be to subtracte the column means from each column
+individually.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -622,7 +632,7 @@ freedom \((N - 1)\). Please also note that now the first entry is
 transposed! ( \emph{z.demeaned} is a data matrix and not a random vector
 anymore!)
 
-To compute \(\widehat{\rho}_0\) we just need to standardizing
+To compute \(\widehat{\rho}_0\) we just need to standardize
 \(\widehat{\Gamma}_0\).
 
 \begin{Shaded}

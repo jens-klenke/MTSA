@@ -44,10 +44,10 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \renewcommand{\vec}{\operatorname{vec}}
 \newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Cov}{\operatorname{Cov}}
 
-
-
-
+\allowdisplaybreaks
 
 \titleformat{\section}
 {\normalfont\large\bfseries}{\thesection}{1em}{}
@@ -155,7 +155,7 @@
   \title{Multivariate Time Series Analysis}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-\subtitle{Exercise Sheet 1}
+\subtitle{Solution Exercise Sheet 1}
   \author{Dr.~Yannick Hoga}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
@@ -227,7 +227,7 @@ Chair of Econometrics\\
 	\vspace{.25cm}
 	\textbf{\Large{Multivariate Time Series Analysis}}\\
 	\vspace{.25cm}
-	\textbf{\large{Exercise Sheet 1}}\\
+	\textbf{\large{Solution Exercise Sheet 1}}\\
 	\vspace{.125cm}
 \end{center}
 
@@ -538,7 +538,7 @@ First, we will performe the Ljung-Box-test for the simple returns of
 ## [20,] 20.000    17.334  20.000     0.63
 \end{verbatim}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-3-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-3-1.pdf}
 
 \FloatBarrier
 
@@ -580,7 +580,7 @@ Next, we will have a look at the test for the time series of
 ## [20,] 20.00000  17.73024 20.00000     0.61
 \end{verbatim}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-4-1.pdf}
 
 The results for the \emph{MS} time series are similar to those of
 \emph{JPM}.
@@ -619,7 +619,7 @@ Inc.~(GS)} left to be analysed.
 ## [20,] 20.00     24.28   20.00     0.23
 \end{verbatim}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-5-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-5-1.pdf}
 
 Only the first lag is \emph{relatively} close to be significant to a 5
 percent significance level.
@@ -661,7 +661,7 @@ Now we take a look at the combined Ljung-Box test.
 ## [20,]  20.0     244.1   180.0     0.00
 \end{verbatim}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-6-1.pdf}
 
 All p-values are below 5\%. Since the time series are not much
 autocorrelated (univariate!), as we have shown in part a, there must be
@@ -680,7 +680,7 @@ Secondly, we can also take a look at the correlations.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-8-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-8-1.pdf}
 
 But keep in mind that the \emph{Ljung-Box} test does not take \(\rho_0\)
 into consideration.
@@ -694,6 +694,6 @@ Lastly, we will plot the times series with the command
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{exercise_1_files/figure-latex/unnamed-chunk-9-1.pdf}
+\includegraphics{solution_exercise_1_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 \end{document}

@@ -2,7 +2,7 @@
 title: 'Multivariate Time Series Analysis'
 author: 'Dr. Yannick Hoga'
 author2: 'Thilo Reinschlüssel'
-subtitle: 'Exercise Sheet 2'
+subtitle: 'Solution Exercise Sheet 2'
 semester: "Winter Term 2019/2020"
 output:
   pdf_document:
@@ -37,7 +37,7 @@ source(here::here("packages/packages.R"))
 Take the model from Example 2.4 on Slide 2-6:
 
 \begin{itemize}
-  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags 1 to 10 and compute them using R.
+  \item[a)] Derive a formula to obtain the population cross-covariance matrices for the lags $1$ to $10$ and compute them using R.
   \item[] \textit{Hint: A glance at the slides might save you some time.}
 \end{itemize}
 
@@ -46,7 +46,9 @@ _Solution:_
 \begin{align*}
   z_t & = \phi_1 z_{t-1} + a_t\\
   \\
-  \Gamma_0 & = \phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
+  \Gamma_0 & = E \left( z_t - \mu  \right) \left( z_t - \mu  \right)^{'}\\
+  & = E \left[ \phi_1 \left( z_{t -1} - \mu \right) \left( z_{t -1} - \mu \right)^{'} \phi_1^{'} \right] + E \left[a_t a_t^{'} \right]\\
+    & =\phi_1  \ \Gamma_0 \ \phi_1^{'} + \Sigma_a\\
   \Leftrightarrow \vec(\Gamma_0) &= (\phi_1 \otimes \phi_1) \cdot \vec(\Gamma_0) + \vec(\Sigma_a) \\
   \Leftrightarrow \vec(\Gamma_0) &= (I_{K^2} - \phi_1 \otimes \phi_1) \cdot \vec(\Sigma_a) \\
  \Rrightarrow \Gamma_1 & = \phi_1 \Gamma_0\\
@@ -84,7 +86,7 @@ colnames(Gamma0.mat) <- mat_names # passing column names
 rownames(Gamma0.mat) <- mat_names # assig row names
 ```
 
-The $\Gamma_0$ matrix is than:  
+The $\Gamma_0$ matrix is then:  
 
 ```{r, echo = FALSE}
 Gamma0.mat
@@ -100,7 +102,7 @@ To derive the $\Gamma_1$ matrix, we can simply apply the following formula.
 Gamma1.mat <- Phi %*% Gamma0.mat
 ```
 
-$\Gamma_1$ is than: 
+$\Gamma_1$ is then: 
 
 ```{r, echo = FALSE}
 colnames(Gamma1.mat) <- mat_names
@@ -117,7 +119,9 @@ To derive all $l^{th}$ lagged covariance matrices we can use the more general eq
 To derive the correlation matrices $\rho_l$ we divide the covariances by the standard deviations.
 
 \begin{align*}
-  \rho_l = 
+ \rho_l & = \left( \rho_{ij} (l)\right)_{i,j = 1}^{K} = D^{-1} \Gamma_l D^{-1}  \\
+ \\
+   & = 
   \begin{pmatrix}
     \dfrac{\Cov(x_t , x_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(x_{t- l})}} &
     \dfrac{\Cov(x_t , y_{t-l})}{\sqrt{\Var(x_t) \cdot \Var(y_{t- l})}}\\
@@ -125,6 +129,12 @@ To derive the correlation matrices $\rho_l$ we divide the covariances by the sta
     \dfrac{\Cov(y_t , y_{t-l})}{\sqrt{\Var(y_t) \cdot \Var(y_{t- l})}}
   \end{pmatrix}\\
 \end{align*}
+
+\begin{itemize}
+  \item where $D  = \diag \left\{ \sqrt{\Gamma_{11} (0)}, \ldots , \sqrt{\Gamma_{kk} (0)} \right\}$ 
+\end{itemize}
+
+
 
 ```{r}
 # compute further (lagged) cross-covariance-functions
@@ -169,7 +179,7 @@ _Solution:_ \
     \item Set $z_0 = \mathbb{E} \left( z_t\right)$
     \item $z_1 = \phi_1 z_0 + a_1$
     \item Repeat Step 4 $(T - 1)$ times
-    \item (Discard first few observations to minimize effects of $z_0$ on the results)
+    \item (Discard the first few observations to minimize effects of $z_0$ on the results)
     \begin{itemize}
       \item[$\Rightarrow$] \textit{Note} that it is generally advised to discard the first few observations to eliminate the influence of the arbitrary starting point! In our case we skipped this step to keep things short and clear.
     \end{itemize}
@@ -245,21 +255,21 @@ _Solution:_
 \end{align*}
 
 
-To estimate moments from simulated data one can simply uses the command `cov()` respectively `cor()` , but we do it by 'hand' to get a thoroughly understanding and see the relation to the Yule-Walker equation. 
+To estimate moments from simulated data one can simply use the command `cov()` respectively `cor()` , but we do it by 'hand' to get a thorough understanding and see the relation to the Yule-Walker equation. 
 
-First we need to demeaning the multivariate time series. Therefore, we calculate the column means. 
+First we need to demean the multivariate time series. Therefore, we calculate the column means. 
 
 ```{r}
 mu <- colMeans(z)
 ```
 
-To demeaning the series we have now two coding options to proceed, one would be to iterating over the rows and subtracting the mean vector every time. 
+To demean the series we now have two coding options to proceed with, one would be to iterate over the rows and subtracte the mean vector every time. 
 
 ```{r}
 z.demeaned <- t(apply(X = z, MARGIN = c(1), FUN = function(x) x - mu))
 ```
 
-The other option would be to subtracting the column means from each column individually.
+The other option would be to subtracte the column means from each column individually.
 
 ```{r}
 z.demeaned <- cbind(z[,1]-mu[1], z[,2]-mu[2])
@@ -273,7 +283,7 @@ Gamma0.hat <- t(z.demeaned) %*% z.demeaned / (N-1)
 
 Since we already demeaned the series we need to correct the degrees of freedom $(N - 1)$. Please also note that now the first entry is transposed! ( _z.demeaned_ is a data matrix and not a random vector anymore!)
 
-To compute $\widehat{\rho}_0$ we just need to standardizing $\widehat{\Gamma}_0$. 
+To compute $\widehat{\rho}_0$ we just need to standardize $\widehat{\Gamma}_0$. 
 
 ```{r}
 standardisation <- matrix(data = c(Gamma0.hat[1,1], 

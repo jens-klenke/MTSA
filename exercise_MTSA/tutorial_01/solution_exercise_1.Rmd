@@ -2,7 +2,7 @@
 title: 'Multivariate Time Series Analysis'
 author: 'Dr. Yannick Hoga'
 author2: 'Thilo Reinschlüssel'
-subtitle: 'Exercise Sheet 1'
+subtitle: 'Solution Exercise Sheet 1'
 semester: "Winter Term 2019/2020"
 output:
   pdf_document:
