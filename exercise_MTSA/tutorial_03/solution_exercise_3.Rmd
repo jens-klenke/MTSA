@@ -47,8 +47,9 @@ Take the VAR(1) model $z_t = \phi_0 + \phi_1 z_{t-1} + a_t$ with the following p
 _Solution:_
 
 \begin{align*}
-  \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu}  = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
-  \left[ \text{Key assumption?}  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]
+  \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
+  \left[ \text{Key assumption?} \;  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]\\
+  \Leftrightarrow \left( I - \phi_1 \right) \cdot \mu & = \phi_0
 \end{align*}
 
 
