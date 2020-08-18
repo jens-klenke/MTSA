@@ -35,3 +35,13 @@ Sigma_b <- rbind( cbind(Sigma_a, O2x2), cbind(O2x2, O2x2) )
 Gamma0ast.vec <- solve(diag(16) - Phi %x% Phi) %*% as.vector(Sigma_b)
 Gamma0ast.mat <- matrix(data = Gamma0ast.vec, nrow = 4)
 Gamma0ast.mat
+
+
+
+
+A <- matrix(c(0.75, 0, -0.25, 0.5 ), ncol = 2, byrow = TRUE)
+B <- matrix(c(2.285714, -0.6857143, -0.6857143, 1.752381 ), ncol = 2, byrow = TRUE)
+
+
+
+A%*%B

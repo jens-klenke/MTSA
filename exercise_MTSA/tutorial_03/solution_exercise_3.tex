@@ -217,14 +217,132 @@ following parameterisation:
 \begin{align*}
   \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
   \left[ \text{Key assumption?} \;  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]\\
-  \Leftrightarrow \left( I - \phi_1 \right) \cdot \mu & = \phi_0
+  \Leftrightarrow \left( I - \phi_1 \right) \cdot \mu & = \phi_0\\
+  \Leftrightarrow \mu & = \left( I - \phi_1 \right)^{-1} \cdot \phi_0\\
+  \text{plugging in} \ \phi_1 \text{and} \ \phi_0:\\
+  \mu & = \begin{pmatrix} 
+  0.25 & 0 \\
+  0.25 & 0.5
+  \end{pmatrix}^{-1} 
+  \begin{pmatrix} 
+  1 \\
+  0
+  \end{pmatrix}\\
+  & = 
+  \begin{pmatrix} 
+  -4 \\
+  2
+  \end{pmatrix}\\
 \end{align*}
 
 \begin{itemize}
     \item[b)] Show that the process is stationary.
+\end{itemize}
+
+\emph{Solution:}
+
+Eigenvalues of \(\phi_1:\)
+
+\begin{align*}
+  \left| \phi_1 - I \lambda \right| & \overset{!}{=} 0 \\
+  & = \begin{vmatrix}
+  0.75 - \lambda & 0 \\
+  -0.25 & 0.5 - \lambda 
+  \end{vmatrix}\\
+  & = (0.75 - \lambda)(0.5 - \lambda) \overset{!}{=}  0 \\
+  \Rightarrow \lambda_1 & = 0.75 \\
+  \lambda_2 & = 0.5\\
+\end{align*}
+
+Both Eigenvalues are inside the unit circle therefore the process is
+stationary.
+
+\begin{itemize}
     \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ and show that the solution for $\Gamma_0$ coincides with equation (2.3) on slide 2-15.
+\end{itemize}
+
+\begin{align*}
+  \tilde{z}_t & := z_t - \mu \\
+  \Rightarrow \tilde{z}_t & =  \phi_1 \tilde{z}_{t-1} + a_t \qquad & | \cdot \tilde{z}_{t-1}^{'}   \\
+  \Leftrightarrow \tilde{z}_t \tilde{z}_t^{'} & = \phi_1 \tilde{z}_t \tilde{z}_t^{'} + a_t \tilde{z}_t^{'}\\
+  \overset{\mathbb{E} (\cdot)}{\Rightarrow} \Gamma_l & = \phi_1 \cdot \Gamma_{l- 1} + \begin{cases} 
+  l & = 0: \Sigma_a \\
+  l & \neq 0: 0_k\\
+  \end{cases}\\
+  l & = 0: \Gamma_0 = \phi_1 \cdot \Gamma_{-1} + \Sigma_a\\
+  l & = 1: \Gamma_1 = \phi_1 \cdot \Gamma_{0} + 0_K \\
+  l & = 2: \Gamma_2 = \phi_1 \cdot \Gamma_{1} + 0_K \\
+  \text{using} \ \Gamma_{-1} & = \Gamma_{1}^{'}\\ 
+  \Gamma_0 & = \phi_1 \cdot \left( \phi_1 \Gamma_0 \right)^{'} + \Sigma_a\\
+  \Leftrightarrow \Gamma_0 & = \phi_1 \Gamma_0^{'} \phi_1^{'}  + \Sigma_a\\
+   \text{and} \ \Gamma_0^{'} & = \Gamma_0 \ \text{since}  \ \Gamma_0 \ \text{is symmetric !}
+\end{align*}
+
+\begin{itemize}
     \item[d)] Compute $\Gamma_0$ and $\Gamma_1$ by hand based on your results from c).
 \end{itemize}
+
+\begin{align*}
+  \begin{pmatrix} 
+  \gamma_{11} & \gamma_{12}\\
+  \gamma_{21} & \gamma_{22}
+  \end{pmatrix} & =
+  \begin{pmatrix} 
+  \gamma_{11} & \gamma_{12}\\
+  \gamma_{12} & \gamma_{22}
+  \end{pmatrix}\\ 
+\end{align*}
+
+\begin{align*}
+  & =
+  \begin{pmatrix} 
+  0.75 & 0\\
+  -0.25 & 0.5
+  \end{pmatrix} 
+  \begin{pmatrix} 
+  \gamma_{11} & \gamma_{12}\\
+  \gamma_{12} & \gamma_{22}
+  \end{pmatrix}
+  \begin{pmatrix} 
+  0.75 & -0.25\\
+  0 & 0.5
+  \end{pmatrix} +
+  \begin{pmatrix} 
+  1 & 0\\
+  0 & 1
+  \end{pmatrix}\\
+  & = 
+  \begin{pmatrix}
+  (0.75)^2 \gamma_{11} & (-0.75 \cdot 0.25 \gamma_{11}) + 0.5 \cdot 0.75 \gamma_{12} \\
+  (0.75 \cdot 0.25 \gamma_{11}) + 0.5 \cdot 0.75 \gamma_{12} & (-0.25)^2 \gamma_{11} - 0.25 \cdot 0.5 \gamma_{12} - 0.5 \cdot 0.25 \gamma_{12} + (0.5)^2 \gamma_{22}
+  \end{pmatrix} +
+  \begin{pmatrix}
+  1 & 0\\
+  0 & 1
+  \end{pmatrix}
+  \end{align*}
+
+\begin{align*}
+  \Rightarrow \gamma_{11} & = (0.75)^2 \gamma_{11} + 1\\
+  \Leftrightarrow \gamma_{11} & = \dfrac{16}{7}\\
+  \Rightarrow \gamma_{12} & = \dfrac{1}{4} \cdot \left( - \dfrac{3}{4} \right) \cdot \dfrac{16}{7} + \dfrac{2}{4} \cdot \dfrac{3}{4} \gamma_{12} \\
+  \Leftrightarrow \gamma_{12} & = - \dfrac{24}{35}\\
+  \Rightarrow \gamma_{22} & = \dfrac{1}{16} \gamma_{11} - 2 \cdot \dfrac{1}{2} \cdot \dfrac{1}{4} \gamma_{12} + \dfrac{1}{4} \gamma_{22} + 1 \\
+  & =  \dfrac{1}{16} \cdot \dfrac{16}{7} - 2 \cdot \dfrac{1}{2} \cdot \dfrac{1}{4} \left(- \dfrac{24}{35} \right) + \dfrac{1}{4} \gamma_{22} + 1\\
+  \gamma_{22} & = \dfrac{184}{105}\\
+  \\
+  \Gamma_1 & = \phi_1 \cdot \Gamma_0\\
+  & = 
+  \begin{pmatrix} 
+  0.75 & 0 \\
+  -0.25 & 0.5
+  \end{pmatrix}
+  \cdot 
+  \begin{pmatrix} 
+  \frac{16}{7} & \frac{-24}{35}\\
+  \frac{-24}{35} & \frac{184}{105}
+  \end{pmatrix}
+\end{align*}
 
 \hypertarget{exercise-2-stationarity-of-varp-processes}{%
 \section{Exercise 2: Stationarity of VAR(p)
@@ -238,6 +356,91 @@ Recall that \(|A|\) denotes the determinant od the matrix \(A\)
 multiplies of columns/rows to other columns/rows does not affect the
 determinate! The plan is to end up with a special matrix.}
 
+\emph{Solution:}
+
+\begin{align*}
+  z_t = & \phi_0  + \phi_1 z_{t-1} + \ldots + \phi_p z_{t - p} + a_t\\
+  \text{as VAR (1):} & Z_t = \begin{pmatrix} \phi_0 \\ 
+  0\\
+  \vdots \\
+  \end{pmatrix} + 
+  \Phi_1 Z_{t - 1} +
+  \begin{pmatrix} 
+  a_t \\  
+  0\\
+  \vdots 
+  \end{pmatrix}\\
+  \text{with} & Z_t =   
+  \begin{pmatrix} 
+   z_t \\
+   z_{t-1} \\
+   \vdots \\
+   z_{t-p+1}
+  \end{pmatrix}
+  \text{and} \ Z_{t-1} = 
+  \begin{pmatrix} 
+   z_t \\
+   z_{t-1} \\
+   \vdots \\
+   z_{t-p+1}
+  \end{pmatrix}\\
+  \Phi_1 = &
+  \begin{pmatrix}
+  \phi_1 & \phi_2 & \ldots  & \ldots & \phi_p \\
+  I_K & 0_K & \ldots & \ldots & 0_k\\
+  0_K & I_K & 0_k & \ldots & 0_k\\
+  \vdots & \ddots & \ddots &  & \vdots\\
+  0_k & \ldots &  0_k & I_k & 0_k
+  \end{pmatrix}
+\end{align*}
+
+\(\Rightarrow\) Now one can apply the formulas for a VAR(1) to check
+stationarity.
+
+\begin{align*}
+\left| \Phi_1 - \lambda I \right| & \overset{!}{=} 0 \\
+\Leftrightarrow (-1)^k \left| \Phi_1 - \lambda I \right| & \overset{!}{=} 0 \\
+\Leftrightarrow \left| \lambda \left( I -  \Phi_1 \dfrac{1}{\lambda} \right)  \right| & \overset{!}{=} 0 \quad &  \text{since} \ \lambda \ \text{is a scalar} \ I = I_{kp} \\ 
+\Leftrightarrow  \lambda^{kp} \left| I - \Phi_{1} \dfrac{1}{\lambda} \right|  & \overset{!}{=} 0 \quad & \text{and let} \dfrac{1}{\lambda} =: z \\
+\Rightarrow \left| I - \Phi_1 z \right| & \overset{!}{=} 0 
+\end{align*}
+
+\(\Rightarrow\) Stationarity if all \(|z_i| > 1 (|\lambda_i| < 1)\)
+
+\begin{align*}
+  I_{kp} - \Phi_1 z & = 
+  \begin{pmatrix}
+    I_k - \phi_1 z & - \phi_2 z & - \phi_3 z & \ldots & - \phi_{p - 1} z & - \phi_{p} z \\
+    - I_k z        & I_k        &  0_k       & \ldots & 0_k & 0_k \\
+    0_k   & - I_k z        & I_k & \ldots & 0_k & \vdots\\
+    \vdots & 0_k   & - I_k z        & \ldots & \vdots & \vdots \\
+    0_k & 0_k & 0_k & \ldots &  - I_k z        & I_k
+  \end{pmatrix}
+\end{align*}
+
+\(\Rightarrow -I_k \cdot z + I_k \cdot z = 0_k\)
+
+Since adding multiplies of columns to other columns does not affect the
+determinant:\\
+
+\(\Rightarrow\) column \enquote{i} \(\cdot z\) + column \enquote{i - 1}
+\(\forall i \in \left\{ p, \ldots, 2\right\}\) yields a traingluar
+matrix
+
+\begin{align*}
+  \Rightarrow
+  \begin{pmatrix}
+    I_k - \phi_1 z & - \phi_2 z^2 & \ldots & - \phi_{p} z & -\phi_1 & -\phi_2 z - \ldots -\phi_p z^{p-1}  \\
+    & 0_k & & & I_k & &\\
+    & 0_k & & & & I_k &\\
+  \end{pmatrix}
+\end{align*}
+
+\begin{align*}
+  \Rightarrow \left| I_{kp} - \Phi_1 z \right| & = \left( I_K - \phi_1 z - \ldots - \phi_p z^p \right) \cdot \prod_{i = 1}^{p-1} I_k & \text{since it is a triangular matrix}\\
+  & = \left| I_k - \phi_1 z - \ldots - \phi_p z^p \right| 
+\end{align*}
+
 \hypertarget{exercise-3-var2-moments-and-stationarity}{%
 \section{Exercise 3: VAR(2) Moments and
 Stationarity}\label{exercise-3-var2-moments-and-stationarity}}
@@ -250,13 +453,36 @@ Consider the following VAR(2) model with i.i.d. innovations:
 
 \begin{itemize}
     \item[a)] Show that the process is stationary.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \left| I_2 - \phi_1 z - \phi_2 z^2 \right| & \overset{!}{=} 0 \\
+  \Rightarrow \begin{pmatrix} 1 & 0 \\ 
+  0 & 1 \end{pmatrix} - \begin{pmatrix}  0.5 z & 0.1 z \\
+  0.4 z & 0.5 z
+  \end{pmatrix} - 
+  \begin{pmatrix}  0 & 0 \\
+  0.25 z & 0
+  \end{pmatrix} & \overset{!}{=} 0\\
+  \Leftrightarrow
+  \left|
+    \begin{pmatrix}  1- 0.5 z & -0.1 z \\
+      -0.4 z - 0.25z^2 & 1- 0.5z
+  \end{pmatrix}
+  \right| & \overset{!}{=} 0\\
+  = (1 - 0.5 z)^2 - (0.4z + 0.25z^2) \cdot 0.1z  & \overset{!}{=} 0 \\
+  = 1 - z + 0.21 z^2 -0.025 z^3 & \overset{!}{=} 0
+\end{align*}
+
+\begin{itemize}
     \item[b)] Determine the mean vector.
     \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ for a general VAR(2) process.
     \item[d)] Suppose we only $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
     \item[e)] Write the process as a VAR(1) and calculate the mean vector again.
     \item[f)] Compute $\Gamma_0$ based on the VAR(1) formulation.
     \item[] \textit{Hint: You can use R for the calculations.}
-
 \end{itemize}
 
 \end{document}
