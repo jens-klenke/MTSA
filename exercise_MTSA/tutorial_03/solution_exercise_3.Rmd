@@ -47,7 +47,7 @@ Take the VAR(1) model $z_t = \phi_0 + \phi_1 z_{t-1} + a_t$ with the following p
 _Solution:_
 
 \begin{align*}
-  \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
+  \underset{\Rightarrow}{E(\cdot)} \quad \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
   \left[ \text{Key assumption?} \;  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]\\
   \Leftrightarrow \left( I - \phi_1 \right) \cdot \mu & = \phi_0\\
   \Leftrightarrow \mu & = \left( I - \phi_1 \right)^{-1} \cdot \phi_0\\
@@ -278,8 +278,6 @@ Consider the following VAR(2) model with i.i.d. innovations:
 
 _Solution:_ 
 
-
-
 \begin{align*}
   \left| I_2 - \phi_1 z - \phi_2 z^2 \right| & \overset{!}{=} 0 \\
   \Rightarrow \begin{pmatrix} 1 & 0 \\ 
@@ -300,27 +298,136 @@ _Solution:_
 \end{align*}
 
 
+```{r }
+roots <- polyroot(c(1, -1, 0.21, 0.025))
+roots # there are some imaginary parts attached to it
+sum(abs(roots) < 1) # count how many roots lie inside the unit circle
+```
+Since all roots are outside the unit circle the process ist stationary.
 
+Alternativetly, we could also use the VAR(1) approach and compute the eigenvalues.
 
+```{r }
+phi_1 <- matrix(data = c(0.5, 0.4, 0.1, 0.5), nrow = 2)
+phi_2 <- matrix(data = c(0, 0.25, 0, 0), nrow = 2)
+I2x2 <- diag(2)
+O2x2 <- matrix(data = rep(0, 4), nrow = 2)
+Phi <- rbind( cbind(phi_1, phi_2), cbind(I2x2, O2x2) )
+Phi
+var1.eigen <- eigen(Phi)
+sum(abs(var1.eigen$values) < 1) # How many eigenvalues lie inside the unit circle?
+```
 
+All `r sum(abs(var1.eigen$values) < 1)` eigenvalues lie inside the unit circle and we get the same results.
 
+\begin{itemize}
+    \item[b)] Determine the mean vector.
+\end{itemize}
 
+\begin{align*}
+  z_t & = \phi_0 + \phi_1 z_{t-1} + \phi_2 z_{t-2} +a_t\\
+  \overset{E(\cdot)}{\Rightarrow} \ldots  \Rightarrow \mu & = \left( I - \phi_1 - \phi_2 \right)^{-1} \phi_0 \\  
+  & = \begin{pmatrix}
+  1 - 0.5 &  -0.1\\
+  -0.4 - 0.25 & 1 - 0.5
+  \end{pmatrix}^{-1}
+   \begin{pmatrix}
+  2\\
+  1
+  \end{pmatrix}
+\end{align*}
+
+```{r }
+phi_0 <- c(2,1)
+mu <- solve((I2x2 - phi_1 - phi_2)) %*% phi_0
+fractions(mu)
+```
+
+\begin{itemize}
+    \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ for a general VAR(2) process.
+\end{itemize}
+
+\begin{align*}
+  \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) & =  \phi_1 \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) + \phi_2 \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) + \mathbb{E} \left( a_{t} \tilde{z}_{t-l}^{'} \right)\\
+  \\
+  \Rightarrow l & = 0: \Gamma_0 = \phi_1 \Gamma_{-1} + \phi_2 \Gamma_{-2} + \Sigma_a \\
+  l & = 1: \Gamma_1 = \phi_1 \Gamma_{0} + \phi_2 \Gamma_{-1} + 0_{2 \times 2}\\
+  l & = 2: \Gamma_1 = \phi_1 \Gamma_{1} + \phi_2 \Gamma_{0} + 0_{2 \times 2}
+\end{align*}
 
 
 
 \begin{itemize}
-    \item[b)] Determine the mean vector.
-    \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ for a general VAR(2) process.
-    \item[d)] Suppose we only $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
+    \item[d)] Suppose we only knew $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
+\end{itemize}
+
+\begin{align*}
+  \overbrace{\begin{pmatrix} \Gamma_1 & \Gamma_2 \end{pmatrix}}^{\text{row vector}} & = \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix} \begin{pmatrix} \Gamma_0 & \Gamma_1\\
+  \Gamma_1^{'} & \Gamma_0 \end{pmatrix}\\
+  \Rightarrow \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix} & = \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix}^{-1} \begin{pmatrix} \Gamma_1 & \Gamma_2 \end{pmatrix} 
+\end{align*}
+
+\begin{itemize}
     \item[e)] Write the process as a VAR(1) and calculate the mean vector again.
+\end{itemize}
+
+\begin{align*}
+  Z_t = \begin{pmatrix}  z_{t} \\ z_{t-1} \end{pmatrix}\\
+  \\
+  \begin{pmatrix} z_t  \\ z_{t-1} \end{pmatrix} & = \begin{pmatrix} \phi_0  \\ 0_{2 \times 1 }\end{pmatrix} + \begin{pmatrix} \phi_1 & \phi_2  \\ I_{2 \times 2}  & 0_{2 \times 2} \end{pmatrix} \begin{pmatrix} z_{t-1}  \\ z_{t-2} \end{pmatrix} + \begin{pmatrix} a_t  \\ 0_{2 \times 1} \end{pmatrix} \\
+  \overset{\mathbb{E} (\cdot)}{\Rightarrow} \begin{pmatrix} \mu  \\ \mu \end{pmatrix} & =\begin{pmatrix} \phi_0  \\ 0_{2 \times 1} \end{pmatrix} + \begin{pmatrix} \phi_1 & \phi_2 \\ I_{2 \times 2} & 0_{2 \times 2} \end{pmatrix} \begin{pmatrix} \mu  \\ \mu \end{pmatrix} + \begin{pmatrix} 0_{2 \times 2} \\ 0_{2 \times 2} \end{pmatrix}\\
+  \begin{pmatrix} \mu  \\ \mu \end{pmatrix} & = \left[  \begin{pmatrix} I_{2 \times 2} & 0_{2 \times 2}\\ 0_{2 \times 2} & I_{2 \times 2} \end{pmatrix} - \begin{pmatrix} \phi_1 & \phi_2 \\ I_{2 \times 2} & 0_{2 \times 2} \end{pmatrix} \right]^{-1} \begin{pmatrix} \phi_0 \\ 0_{2 \times 2} \end{pmatrix} \\
+  & = \begin{pmatrix} 
+  1-0.5 & -0.1 & 0 & 0 \\
+  -0.4 & 1-0.5 & -0.25 & 0 \\
+  -1 & 0 & 1 & 0 \\
+  0 & -1 & 0 & 1 
+  \end{pmatrix}^{-1}
+  \begin{pmatrix} 
+  2 \\ 1 \\ 0 \\ 0 
+  \end{pmatrix}
+\end{align*}
+
+
+```{r }
+# Alternative solution to b) using the VAR(1) representation:
+mu2 <- solve(diag(4) - Phi) %*% c(phi_0, rep(0,2))
+fractions(mu2)
+```
+
+
+\begin{itemize}
     \item[f)] Compute $\Gamma_0$ based on the VAR(1) formulation.
     \item[] \textit{Hint: You can use R for the calculations.}
 \end{itemize}
+ 
+ 
+\begin{align*}
+  \Gamma_0 & = \Phi \Gamma_0 \Phi + \Sigma_b \\
+  \\
+  \text{with} & \Phi = \begin{pmatrix} \phi_1 & \phi_2 \\
+  I_{2 \times 2} & 0_{2 \times 2}
+  \end{pmatrix}
+  \end{align*}
+  
+\begin{align*}
+  \text{and} \ \tilde{Z}_t \tilde{Z}_t & = \begin{pmatrix} \tilde{z}_t \\ \tilde{z}_{t -1} \end{pmatrix}   \begin{pmatrix} \tilde{z}_t & \tilde{z}_{t -1} \end{pmatrix} \\
+  & =  \begin{pmatrix} \tilde{z}_t \tilde{z}_t^{'} & \tilde{z}_t \tilde{z}_{t -1}^{'} \\
+   \tilde{z}_{t -1} \tilde{z}_t^{'} & \tilde{z}_{t -1} \tilde{z}_{t -1}^{'} \end{pmatrix} \\
+   & = \underbrace{\begin{pmatrix} \Gamma_0 & \Gamma_1 \\ \Gamma_1^{'} & \Gamma_0 \end{pmatrix}}_{=: \Gamma_0^{*}}\\
+   \\
+   \text{gives:} & \left( I_{4 \times 4} - \Phi \otimes \Phi  \right) \ \vec(\Gamma_0^{*}) = \ \vec(\Sigma_b)\\
+   \Leftrightarrow \vec(\Gamma_0^{*}) & = \left( I_{4 \times 4} - \Phi \otimes \Phi  \right)^{-1}  \ \vec(\Sigma_b)
+\end{align*}
 
+$\Rightarrow$ extract top left or bootom right matrix
 
-
-
-
+```{r }
+Sigma_a <- diag(2)
+Sigma_b <- rbind( cbind(Sigma_a, O2x2), cbind(O2x2, O2x2) )
+Gamma0ast.mat <- matrix(solve(diag(16) - Phi %x% Phi) %*% as.vector(Sigma_b)
+                        , nrow = 4)
+```
 
 
 

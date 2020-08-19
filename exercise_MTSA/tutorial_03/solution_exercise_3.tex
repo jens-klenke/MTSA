@@ -67,6 +67,46 @@
 \usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
 \addbibresource{R_packages.bib}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -215,7 +255,7 @@ following parameterisation:
 \emph{Solution:}
 
 \begin{align*}
-  \underset{\Rightarrow}{E(\cdot)} \; \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
+  \underset{\Rightarrow}{E(\cdot)} \quad \underbrace{ \mathbb{E} (z_t)}_{\mu} & = \mathbb{E} \left(  \underbrace{\phi_0}_{\phi_0} + \underbrace{\phi_1 z_{t -1}}_{\phi_1 \cdot \mu}+ \underbrace{a_t}_{0}\right)\\
   \left[ \text{Key assumption?} \;  \mathbb{E} (z_t)  = \mathbb{E} (z_{t-1}) \right]\\
   \Leftrightarrow \left( I - \phi_1 \right) \cdot \mu & = \phi_0\\
   \Leftrightarrow \mu & = \left( I - \phi_1 \right)^{-1} \cdot \phi_0\\
@@ -476,13 +516,186 @@ Consider the following VAR(2) model with i.i.d. innovations:
   = 1 - z + 0.21 z^2 -0.025 z^3 & \overset{!}{=} 0
 \end{align*}
 
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{roots <-}\StringTok{ }\KeywordTok{polyroot}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{-1}\NormalTok{, }\FloatTok{0.21}\NormalTok{, }\FloatTok{0.025}\NormalTok{))}
+\NormalTok{roots }\CommentTok{# there are some imaginary parts attached to it}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1]   1.804197+0.27546i   1.804197-0.27546i -12.008393+0.00000i
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sum}\NormalTok{(}\KeywordTok{abs}\NormalTok{(roots) }\OperatorTok{<}\StringTok{ }\DecValTok{1}\NormalTok{) }\CommentTok{# count how many roots lie inside the unit circle}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0
+\end{verbatim}
+
+Since all roots are outside the unit circle the process ist stationary.
+
+Alternativetly, we could also use the VAR(1) approach and compute the
+eigenvalues.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{phi_}\DecValTok{1}\NormalTok{ <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{, }\FloatTok{0.4}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.5}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{)}
+\NormalTok{phi_}\DecValTok{2}\NormalTok{ <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FloatTok{0.25}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{)}
+\NormalTok{I2x2 <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\NormalTok{O2x2 <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{4}\NormalTok{), }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{)}
+\NormalTok{Phi <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{( }\KeywordTok{cbind}\NormalTok{(phi_}\DecValTok{1}\NormalTok{, phi_}\DecValTok{2}\NormalTok{), }\KeywordTok{cbind}\NormalTok{(I2x2, O2x2) )}
+\NormalTok{Phi}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1] [,2] [,3] [,4]
+## [1,]  0.5  0.1 0.00    0
+## [2,]  0.4  0.5 0.25    0
+## [3,]  1.0  0.0 0.00    0
+## [4,]  0.0  1.0 0.00    0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var1.eigen <-}\StringTok{ }\KeywordTok{eigen}\NormalTok{(Phi)}
+\KeywordTok{sum}\NormalTok{(}\KeywordTok{abs}\NormalTok{(var1.eigen}\OperatorTok{$}\NormalTok{values) }\OperatorTok{<}\StringTok{ }\DecValTok{1}\NormalTok{) }\CommentTok{# How many eigenvalues lie inside the unit circle?}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4
+\end{verbatim}
+
+All 4 eigenvalues lie inside the unit circle and we get the same
+results.
+
 \begin{itemize}
     \item[b)] Determine the mean vector.
+\end{itemize}
+
+\begin{align*}
+  z_t & = \phi_0 + \phi_1 z_{t-1} + \phi_2 z_{t-2} +a_t\\
+  \overset{E(\cdot)}{\Rightarrow} \ldots  \Rightarrow \mu & = \left( I - \phi_1 - \phi_2 \right)^{-1} \phi_0 \\  
+  & = \begin{pmatrix}
+  1 - 0.5 &  -0.1\\
+  -0.4 - 0.25 & 1 - 0.5
+  \end{pmatrix}^{-1}
+   \begin{pmatrix}
+  2\\
+  1
+  \end{pmatrix}
+\end{align*}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{phi_}\DecValTok{0}\NormalTok{ <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{mu <-}\StringTok{ }\KeywordTok{solve}\NormalTok{((I2x2 }\OperatorTok{-}\StringTok{ }\NormalTok{phi_}\DecValTok{1} \OperatorTok{-}\StringTok{ }\NormalTok{phi_}\DecValTok{2}\NormalTok{)) }\OperatorTok{%*%}\StringTok{ }\NormalTok{phi_}\DecValTok{0}
+\KeywordTok{fractions}\NormalTok{(mu)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1]  
+## [1,] 220/37
+## [2,] 360/37
+\end{verbatim}
+
+\begin{itemize}
     \item[c)] Derive the Yule-Walker equations for the lage $l = \{0,1,2 \}$ for a general VAR(2) process.
-    \item[d)] Suppose we only $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
+\end{itemize}
+
+\begin{align*}
+  \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) & =  \phi_1 \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) + \phi_2 \mathbb{E} \left( \tilde{z}_{t} \tilde{z}_{t-l}^{'} \right) + \mathbb{E} \left( a_{t} \tilde{z}_{t-l}^{'} \right)\\
+  \\
+  \Rightarrow l & = 0: \Gamma_0 = \phi_1 \Gamma_{-1} + \phi_2 \Gamma_{-2} + \Sigma_a \\
+  l & = 1: \Gamma_1 = \phi_1 \Gamma_{0} + \phi_2 \Gamma_{-1} + 0_{2 \times 2}\\
+  l & = 2: \Gamma_1 = \phi_1 \Gamma_{1} + \phi_2 \Gamma_{0} + 0_{2 \times 2}
+\end{align*}
+
+\begin{itemize}
+    \item[d)] Suppose we only knew $\Gamma_0 , \Gamma_1$ and $\Gamma_2$ - how can we estimate $\phi_1$ and $\phi_2$ from it?
+\end{itemize}
+
+\begin{align*}
+  \overbrace{\begin{pmatrix} \Gamma_1 & \Gamma_2 \end{pmatrix}}^{\text{row vector}} & = \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix} \begin{pmatrix} \Gamma_0 & \Gamma_1\\
+  \Gamma_1^{'} & \Gamma_0 \end{pmatrix}\\
+  \Rightarrow \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix} & = \begin{pmatrix} \phi_1 & \phi_2 \end{pmatrix}^{-1} \begin{pmatrix} \Gamma_1 & \Gamma_2 \end{pmatrix} 
+\end{align*}
+
+\begin{itemize}
     \item[e)] Write the process as a VAR(1) and calculate the mean vector again.
+\end{itemize}
+
+\begin{align*}
+  Z_t = \begin{pmatrix}  z_{t} \\ z_{t-1} \end{pmatrix}\\
+  \\
+  \begin{pmatrix} z_t  \\ z_{t-1} \end{pmatrix} & = \begin{pmatrix} \phi_0  \\ 0_{2 \times 1 }\end{pmatrix} + \begin{pmatrix} \phi_1 & \phi_2  \\ I_{2 \times 2}  & 0_{2 \times 2} \end{pmatrix} \begin{pmatrix} z_{t-1}  \\ z_{t-2} \end{pmatrix} + \begin{pmatrix} a_t  \\ 0_{2 \times 1} \end{pmatrix} \\
+  \overset{\mathbb{E} (\cdot)}{\Rightarrow} \begin{pmatrix} \mu  \\ \mu \end{pmatrix} & =\begin{pmatrix} \phi_0  \\ 0_{2 \times 1} \end{pmatrix} + \begin{pmatrix} \phi_1 & \phi_2 \\ I_{2 \times 2} & 0_{2 \times 2} \end{pmatrix} \begin{pmatrix} \mu  \\ \mu \end{pmatrix} + \begin{pmatrix} 0_{2 \times 2} \\ 0_{2 \times 2} \end{pmatrix}\\
+  \begin{pmatrix} \mu  \\ \mu \end{pmatrix} & = \left[  \begin{pmatrix} I_{2 \times 2} & 0_{2 \times 2}\\ 0_{2 \times 2} & I_{2 \times 2} \end{pmatrix} - \begin{pmatrix} \phi_1 & \phi_2 \\ I_{2 \times 2} & 0_{2 \times 2} \end{pmatrix} \right]^{-1} \begin{pmatrix} \phi_0 \\ 0_{2 \times 2} \end{pmatrix} \\
+  & = \begin{pmatrix} 
+  1-0.5 & -0.1 & 0 & 0 \\
+  -0.4 & 1-0.5 & -0.25 & 0 \\
+  -1 & 0 & 1 & 0 \\
+  0 & -1 & 0 & 1 
+  \end{pmatrix}^{-1}
+  \begin{pmatrix} 
+  2 \\ 1 \\ 0 \\ 0 
+  \end{pmatrix}
+\end{align*}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Alternative solution to b) using the VAR(1) representation:}
+\NormalTok{mu2 <-}\StringTok{ }\KeywordTok{solve}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\DecValTok{4}\NormalTok{) }\OperatorTok{-}\StringTok{ }\NormalTok{Phi) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{c}\NormalTok{(phi_}\DecValTok{0}\NormalTok{, }\KeywordTok{rep}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+\KeywordTok{fractions}\NormalTok{(mu2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      [,1]  
+## [1,] 220/37
+## [2,] 360/37
+## [3,] 220/37
+## [4,] 360/37
+\end{verbatim}
+
+\begin{itemize}
     \item[f)] Compute $\Gamma_0$ based on the VAR(1) formulation.
     \item[] \textit{Hint: You can use R for the calculations.}
 \end{itemize}
+
+\begin{align*}
+  \Gamma_0 & = \Phi \Gamma_0 \Phi + \Sigma_b \\
+  \\
+  \text{with} & \Phi = \begin{pmatrix} \phi_1 & \phi_2 \\
+  I_{2 \times 2} & 0_{2 \times 2}
+  \end{pmatrix}
+  \end{align*}
+
+\begin{align*}
+  \text{and} \ \tilde{Z}_t \tilde{Z}_t & = \begin{pmatrix} \tilde{z}_t \\ \tilde{z}_{t -1} \end{pmatrix}   \begin{pmatrix} \tilde{z}_t & \tilde{z}_{t -1} \end{pmatrix} \\
+  & =  \begin{pmatrix} \tilde{z}_t \tilde{z}_t^{'} & \tilde{z}_t \tilde{z}_{t -1}^{'} \\
+   \tilde{z}_{t -1} \tilde{z}_t^{'} & \tilde{z}_{t -1} \tilde{z}_{t -1}^{'} \end{pmatrix} \\
+   & = \underbrace{\begin{pmatrix} \Gamma_0 & \Gamma_1 \\ \Gamma_1^{'} & \Gamma_0 \end{pmatrix}}_{=: \Gamma_0^{*}}\\
+   \\
+   \text{gives:} & \left( I_{4 \times 4} - \Phi \otimes \Phi  \right) \ \vec(\Gamma_0^{*}) = \ \vec(\Sigma_b)\\
+   \Leftrightarrow \vec(\Gamma_0^{*}) & = \left( I_{4 \times 4} - \Phi \otimes \Phi  \right)^{-1}  \ \vec(\Sigma_b)
+\end{align*}
+
+\(\Rightarrow\) extract top left or bootom right matrix
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{Sigma_a <-}\StringTok{ }\KeywordTok{diag}\NormalTok{(}\DecValTok{2}\NormalTok{)}
+\NormalTok{Sigma_b <-}\StringTok{ }\KeywordTok{rbind}\NormalTok{( }\KeywordTok{cbind}\NormalTok{(Sigma_a, O2x2), }\KeywordTok{cbind}\NormalTok{(O2x2, O2x2) )}
+\NormalTok{Gamma0ast.mat <-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\KeywordTok{solve}\NormalTok{(}\KeywordTok{diag}\NormalTok{(}\DecValTok{16}\NormalTok{) }\OperatorTok{-}\StringTok{ }\NormalTok{Phi }\OperatorTok{%x%}\StringTok{ }\NormalTok{Phi) }\OperatorTok{%*%}\StringTok{ }\KeywordTok{as.vector}\NormalTok{(Sigma_b) , }\DataTypeTok{nrow =} \DecValTok{4}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
 
 \end{document}
