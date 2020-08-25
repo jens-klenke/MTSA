@@ -25,7 +25,7 @@
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-\usepackage[lmargin = 2cm, rmargin = 2.5cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
+\usepackage[lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
 
 
 % Figure Placement:
@@ -44,9 +44,13 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \renewcommand{\vec}{\operatorname{vec}}
 \newcommand{\tr}{\operatorname{tr}}
-\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\Var}{\operatorname{Var}} % Variance
+\newcommand{\VAR}{\operatorname{VAR}} % Vector autoregression
+\renewcommand{\L}{\operatorname{L}} % Lag operator
+\newcommand{\Lag}{\operatorname{L}} % Lag operator
 \newcommand{\Cov}{\operatorname{Cov}}
 \newcommand{\diag}{\operatorname{diag}}
+\newcommand{\adj}{\operatorname{adj}}
 
 \allowdisplaybreaks
 
@@ -201,12 +205,65 @@ Chair of Econometrics\\
 \section{Exercise 1: Implied Models for
 Components}\label{exercise-1-implied-models-for-components}}
 
+Consider the VAR(1) model \(z_t = \phi_0 + \phi_1 z_{t-1} + a_t\) from
+the Exercise Sheet 3 again:
+
 \begin{align*}
-    \phi_0 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \phi_1 = \begin{pmatrix} 0.75 & 0 \\ -0.25 & 0.5 \end{pmatrix}, \quad \Sigma_a = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+    \phi_0 = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \phi_1 = \begin{pmatrix} 0.75 & 0 \\ -0.25 & 0.5 \end{pmatrix}, \quad \Sigma_a = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix} \ \text{.}
 \end{align*}
 
 \begin{itemize}
-    \item[a)] Compute the mean of the process.
+    \item[a)] Write down the model using lag operator notation. Then rearrange the equation such that
+all parts based on $z_t$ are on the left-hand side and the remainder is on the right-hand side. 
 \end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \text{Model:} z_t & = \phi_0 + \phi_1 z_{t-1} + a_t\\  
+  \text{Lag notation:} \ z_t & = \phi_0 + \phi_1 \Lag z_t + a_t\\
+  \\
+  \Leftrightarrow z_t - \phi_1 \Lag Z_t & = \phi_0 + a_t
+\end{align*}
+
+\begin{itemize}
+    \item[b)] By factoring out $z_t$ on the left, we obtain the lag polynomial $\phi (\Lag)$. Compute its adjoint matrix by hand.
+    \item[]  \textit{Hint: Treat the lag operator as some scalar. The adjoint matrix can be computed like the inverse matrix but \textbf{without} the scaling by}  $\dfrac{1}{\det (\phi (\Lag))} \text{.}$
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \underbrace{\left( I - \phi_1 \Lag \right)}_{=: \phi \Lag} z_t & = \phi_0 + a_t\\
+  \Leftrightarrow \phi (\Lag) & = \begin{pmatrix} 1- 0.75 \Lag & 0 \\ -0.25 \Lag & 1 - 0.5 \Lag  \end{pmatrix}\\
+  \Leftrightarrow  \phi^{\adj} & = \begin{pmatrix} 1- 0.5 \Lag & 0 \\ 0.25 \Lag & 1 - 0.75 \Lag  \end{pmatrix}\\
+\end{align*}
+
+\begin{itemize}
+    \item[c)]Pre-multiply the model equation you got in part a) with the adjoint matrix you computed in part b).
+    \item[]  \textit{Hint: You are supposed to end up with a diagonal matrix.}
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{tiny}
+\begin{align*}
+  \begin{pmatrix} 1- 0.5 \Lag & 0 \\ 0.25 \Lag & 1 - 0.75 \Lag  \end{pmatrix} \begin{pmatrix} 1- 0.75 \Lag & 0 \\ -0.25 \Lag & 1 - 0.5 \Lag  \end{pmatrix} z_t & = \begin{pmatrix} 1 - 0.75 \Lag & 0 \\ 0.25 \Lag & 1 - 0.75 \Lag \end{pmatrix} \cdot \left( \phi_0 + a_t \right) \\
+  \Leftrightarrow \begin{pmatrix} (1- 0.5 \Lag) (1- 0.75 \Lag) & 0 \\
+  (0.25 \Lag) (1 - 0.75 \Lag) + (1 - 0.75 \Lag) (-0.25 \Lag) & (1 - 0.75 \Lag) (1 - 0.5 \Lag)
+  \end{pmatrix} z_t  & = 
+  \begin{pmatrix} (1 - 0.5 \Lag) \cdot 1 \\ 0.25 \Lag \cdot 1 +(1- 0.75 \Lag) \cdot 0 \end{pmatrix} +  
+  \begin{pmatrix} (1 - 0.5 \Lag) \cdot a_{1,t} \\ (0.25 \Lag ) a_{1,t} + 1 (1- 0.75 \Lag) a_{2,t}\end{pmatrix} \\
+  \Leftrightarrow \begin{pmatrix} z_{1,t} - 1.25 z_{1, t-1} + 0.375 z_{1, t-2} \\ z_{2,t} - 1.25 z_{2, t-1} + 0.375 z_{2, t-2} \end{pmatrix} 
+  & = \begin{pmatrix} 0.5 \\ 0.25 \end{pmatrix} + \begin{pmatrix} a_{1,t} - 0.5 a_{1, t-1} \\ 
+  0 + 0.25 a_{1, t-1} + a_{2,t} - 0.75 a_{2, t-1}\end{pmatrix}  
+\end{align*}
+\end{tiny}
+
+\begin{itemize}
+    \item[d)] The result of part c) should be a collection of two univariate ARMA(p,q) models. What is the lag order of both models?
+\end{itemize}
+
+\emph{Solution:}
 
 \end{document}
