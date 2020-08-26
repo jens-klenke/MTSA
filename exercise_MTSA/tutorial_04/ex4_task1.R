@@ -15,11 +15,13 @@ phi_1.adj <- matrix(data = c(0.5, 0.25, 0, 0.75), nrow = 2) # coefficients of th
 # c)
 (diag(2) - phi_1.adj) %*% (diag(2) - phi_1) # pre-multiplying the adjoint matrix; no difference between the procedures
 # e)
-T <- 10^3
+N <- 10^3
 burn_in <- 250 # extra periods, the first 250 are then cut away from the simulated to reduce the impact of starting point selection
 set.seed(42)
 var1_data <- VARMAsim(nobs = T, arlags = c(1), malags = NULL, cnst = phi_0, phi = phi_1, skip = burn_in, sigma = Sigma_a)
 plot.ts(var1_data$series)
+
+
 # f)
 var1_fit <- VAR(x = var1_data$series, p = c(1), include.mean = TRUE) # least squares estimation
 mse_var <- colMeans(var1_fit$residuals^2) # MSEs of two sequences of residuals (a_1, a_2)

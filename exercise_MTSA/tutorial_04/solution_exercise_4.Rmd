@@ -97,3 +97,243 @@ _Solution:_
 
 The lag order of both models is ARMA(2,1)
 
+\begin{itemize}
+    \item[e)] Simulate a trajectory with T = 1000 of the original VAR(1) model.
+    \item[]  \textit{Hint:’VARMAsim’ on Slide 2–6.}
+\end{itemize}
+
+_Solution:_
+
+```{r 1_e}
+# Preparation: Define matrices
+phi_1 <- matrix(data = c(0.75, -0.25, 0, 0.5), nrow = 2)
+phi_0 <- c(1, 0)
+Sigma_a <- matrix(data = c(1, 0, 0, 1), nrow = 2)
+
+N <- 10^3 # length of trajectory 
+burn_in <- 250 # extra periods, are then cut away from the simulated
+#to reduce the impact of starting point selection
+
+set.seed(42) # set seed for reproducibility
+
+var1_data <- VARMAsim(nobs = N, arlags = c(1), malags = NULL, 
+                      cnst = phi_0, phi = phi_1, skip = burn_in, sigma = Sigma_a)
+
+plot.ts(var1_data$series)
+
+```
+
+\begin{itemize}
+    \item[f)] Fit a VAR(1) model to the data, store the results as a variable and estimate the predictions’ mean squared error for each variable in $z_t$
+\end{itemize}
+
+_Solution:_
+
+```{r 1_f_1}
+var1_fit <- VAR(x = var1_data$series, p = c(1), include.mean = TRUE) 
+
+mse_var <- colMeans(var1_fit$residuals^2) # MSEs of two sequences of residuals (a_1, a_2)
+mse_var
+```
+
+As we can see the estimation of a VAR(1) comes pretty close to the 'true' (simulated) values of $\phi_0$ and $\phi_1$
+
+```{r 1_f_2}
+
+mse_var <- colMeans(var1_fit$residuals^2) # MSEs of two sequences of residuals
+mse_var
+```
+
+The MSEs are as we would expected, given $\Sigma_a$.
+
+\begin{itemize}
+    \item[g)] Repeat the task by fitting the two ARMA(p,q) models from b) to the data. Again compute the mean squared error for $z_{1,t}$ and $z_{2,t}$ each.
+    \item[]  \textit{Hint:’arima’.}
+\end{itemize}
+
+_Solution:_
+```{r 1_g}
+z1_fit <- arima(x = var1_data$series[,1], order = c(2,0,1), include.mean = TRUE)
+z2_fit <- arima(x = var1_data$series[,2], order = c(2,0,1), include.mean = TRUE, 
+                optim.control = list(maxit = 10^3))
+
+mse_arma <- c( mean(z1_fit$residuals^2), mean(z2_fit$residuals^2) ) # (a_1, a_2)
+
+mse_arma
+```
+
+\begin{itemize}
+    \item[h)] Compare the MSEs of the VAR(1) estimates and the ARMA(p,q) estimates. Did the VAR(1) and the univariate ARMA(p,q) models perform similarly? If not, provide an intuition why. 
+\end{itemize}
+
+_Solution:_
+```{r 1_h}
+mse_arma / mse_var # element-wise ratio of MSEs
+```
+
+$z_{1,t}$ is predicted similarly well by both models, but $z_{2,t}$ is predicted much betterby the VAR(1).\\
+
+Reson: $z_{1,t}$ is a genuine AR(1) process independent of $a_{2,t}$, whereas $z_{2,t}$ depends on \underline{$a_{2,t}$ and $a_{1,t}$} through $z_{1,t}$. But a univariate model allows only to estimate the aggregated innovation sequence when the VAR estimated $k = 2$ sequences.
+
+\begin{itemize}
+    \item[i)] How can you manipulate the $\Sigma_a$ a matrix to equalise the MSEs of both the VAR(1) and the
+ARMA(p,q) models?
+\end{itemize}
+
+
+Two options:
+
+\begin{itemize}
+  \item Option 1: $a_{1,t} \overset{!}{=} a_{2,t} =: \tilde{a}_t$
+  \begin{align*}
+      \Rightarrow \Sigma_a = \begin{pmatrix} \sigma_a^2 & \sigma_a^2 \\ \sigma_a^2 & \sigma_a^2 \end{pmatrix} = \sigma_a^2 \cdot \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix} 
+  \end{align*}
+  \item Option 2: Let $a_{2,t}$ dominate $a_{1,t}$ by a larger varaince to mariginalise $a_{1,t}$. 
+  \begin{align*}
+      \overset{\text{example}}{\Rightarrow} \Sigma_a = \begin{pmatrix} 1 & 0 \\ 0 & 10 \end{pmatrix}
+  \end{align*}
+\end{itemize}
+
+# Exercise 2: Least Squares Estimation
+
+\begin{itemize}
+    \item[a)] Again use your simulated time series from exercise 1. Regress $z_{1,t}$ on $z_{1, t-1}$ and $z_{2,t-1}$, then repeat with $z_{2,t}$ as dependent variable (meaning you estimate each row of the VAR(1) specification separately). How similar are the coefficients to those obtained from the VAR(1) regression?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_a}
+# estimating the VAR regression by regression
+z1_reg <- lm(var1_data$series[-1,1] ~ var1_data$series[-N,]) # row 1
+z2_reg <- lm(var1_data$series[-1,2] ~ var1_data$series[-N,]) # row 2
+ols_coef_matrix <- cbind(z1_reg$coefficients, z2_reg$coefficients) # putting the coefficients together
+# comparing the coefficients
+
+ols_coef_matrix - var1_fit$coef # difference 
+```
+
+As we can see from the differences, the coefficients coincide pretty well. 
+
+\begin{itemize}
+    \item[b)]Show that you can generally estimate a VAR(p) by row-wise separate regressions using the derivations starting from Slide 3–3.
+    \item[]  \textit{Hint: Make sure you understand how the trick in equation (3.3) works.}
+\end{itemize}
+
+_Solution:_
+
+The trick: 
+
+\begin{align*}
+  \vec(ABC) = (C^{'} \otimes A) \vec(B)\\
+  \Rightarrow X \beta = X \beta I_k \Rightarrow \vec(X \beta) = \vec(X \beta I_k) = (I_k \otimes X) \vec(\beta)
+\end{align*}
+
+Here:
+
+$Z = X \beta + A, \widehat{\beta} = \left( X^{'} X \right)^{-1} X^{'} Z$ and $\beta$ is a $(K p +1) \times K$ matrix. If one wants to predict $z_j$ (column 'j' in Z), one can rewrite the estimat to: $\vec \left( \widehat{\beta} \right) = \left(I_K \otimes \left( X^{'} X \right)^{-1} X^{'} \right) \vec(z)$. One is interested in column 'j' of $Z$ and $\widehat{\beta}_1$ that means one has to look at the '$j^{th}$' row of matrices in $\left(I_K \otimes \left( X^{'} X \right)^{-1} X^{'} \right)$. This is done by inspecting $I_K (j,j)$. The result is just $\left( X^{'} X \right)^{-1} X^{'}$ since $I_K (j,l) = 0 \ \forall \ l \neq j$.  
+
+\begin{align*}
+  \vec \left( \widehat{\beta} \right) & = 
+  \begin{pmatrix}
+  \left( X^{'} X \right)^{-1} X^{'} & 0_{T- p} & \ldots & &  0_{T- p}\\
+  0_{T- p} &  \left( X^{'} X \right)^{-1} X^{'} & \ddots & & \vdots \\
+  \vdots &  &  \left( X^{'} X \right)^{-1} X^{'} &  &\vdots \\
+   \vdots & \ddots  &  \ddots &  & 0_{T-p} \\
+   0_{T-p} & \vdots & \vdots  & 0_{T-p} &\left( X^{'} X \right)^{-1} X^{'}
+  \end{pmatrix}
+  \begin{pmatrix}
+  z_{1,p+1}\\
+  \vdots \\
+  z_{1,T}\\
+  z_{2,p+1}\\
+  \vdots\\
+  z_{1,T}\\
+  \vdots\\
+  z_{j,p+1}\\
+  z_{j,T}\\
+  z_{j+1,p+1}\\
+  z_{j+1,T}\\
+  \vdots\\
+  z_{K,T}
+  \end{pmatrix}\\
+ &  = \begin{pmatrix}
+  \phi_{0,1 } & \phi_{0,2} & \ldots & \phi_{0,j}  & \ldots & \phi_{0,K}\\
+  \phi_{1,11} & \ldots     & \ldots & \phi_{1,1j} & \ldots & \phi_{0,1K}\\
+  \vdots      & \ldots     & \ldots & \vdots      & \vdots & \vdots\\
+  \phi_{1,K1} & \vdots     & \vdots & \phi_{1,Kj} & \ldots & \phi_{0,KK}\\
+  \vdots      & \ldots     & \ldots & \vdots      & \vdots & \vdots\\
+  \phi_{p,K1} & \ldots     & \ldots & \phi_{p,Kj} & \ldots & \phi_{p,KK}\\
+  \end{pmatrix}
+\end{align*}
+
+That's why $\widehat{\beta}_j = \left( X^{'} X \right)^{-1} X^{'} Z_j$.
+
+# Exercise 3: Maximum Likelihood Estimation
+
+
+
+\begin{itemize}
+    \item[a)] Let $\epsilon_1, \dots , \epsilon_T$ an i.i.d. sample from a normal distribution with unknown mean $\mu$ and variance $\sigma^2$. Find maximum likelihood estimators for $\mu$ and $\sigma^2$.
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  L & = \prod_{t = 1}^{T} f \left( \epsilon_t ; \mu , \sigma^2 \right)\\
+  \text{standard normal} & = \prod_{t = 1}^{T} \frac{1}{\sqrt{2 \pi \sigma^2}} \cdot e^{-\dfrac{1}{2} \left( \dfrac{\epsilon_t - \mu}{\sigma }\right)^2}\\
+  \overset{\log(\cdot)}{\Rightarrow} \loglik & =  \sum_{t = 1}^{T} \left[ -\dfrac{1}{2} \log (2 \pi \sigma^2) - \dfrac{1}{2}   \left( \dfrac{\epsilon_t - \mu}{\sigma}\right)^2\right]\\
+  & =  -\dfrac{T}{2} \log (2 \pi \sigma^2) - \dfrac{1}{2 \sigma^2} \cdot \sum_{t = 1}^{T} (\epsilon_t - \mu)^2 \\
+  \\
+  \text{FOCs}: \\
+  \\
+  \dfrac{\partial \loglik}{\partial \mu} & = - \dfrac{1}{2 \sigma^2} \cdot (-2) \cdot \sum_{t = 1}^{T} (\epsilon_t - \mu) \overset{!}{=} 0 \\
+  \Leftrightarrow 0 & \overset{!}{=}  \sum_{t = 1}^{T} \epsilon_t - \sum_{t = 1}^{T} \mu \\
+  \Leftrightarrow  \sum_{t = 1}^{T} \epsilon_t & \overset{!}{=} T \cdot \mu   \\
+  \Leftrightarrow  \mu & = \underline{ \dfrac{1}{T} \sum_{t = 1}^{T} \epsilon_t} \\
+  \\
+   \dfrac{\partial \loglik}{\partial \sigma^2} & = - \dfrac{T}{2} \cdot 2  \pi \cdot \dfrac{1}{2 \pi \sigma^2} - \dfrac{1}{2}  \cdot (-1) \cdot \sum_{t = 1}^{T}  \dfrac{(\epsilon_t - \mu)^2}{\sigma^4}  \overset{!}{=} 0 \\
+  \Leftrightarrow 0 & \overset{!}{=} - \dfrac{T}{2 \sigma^2} + \dfrac{1}{2}  \dfrac{1}{\sigma^4} \sum_{t = 1}^{T} (\epsilon_t - \mu)^2\\
+  \Leftrightarrow sum_{t = 1}^{T} (\epsilon_t - \mu)^2 & = \dfrac{2 T \sigma^4}{ 2 \sigma^2}\\
+  \Leftrightarrow \sigma^2 & = \underline{ \dfrac{1}{T} \sum_{t = 1}^{T} (\epsilon_t - \mu)^2}
+\end{align*}
+
+\begin{itemize}
+    \item[b)] Prove equation (3.12) in the lecture slides.
+\end{itemize}
+
+_Solution:_
+
+In general, let $f(x,y,z)$ be a joint density. 
+
+\begin{align*}
+  f(x,y,z) & = \underbrace{\dfrac{f(x,y,z)}{f(y,z)}}_{=: f(x)_{x|Y = y, Z = z}} \cdot f(y,z)\\
+  & = f_{x| Y,Z} (x) \cdot f_{y|Z} (y) \cdot f_{Z} (z)
+\\
+\text{Here:} \\
+\\
+ f_{z_{p+1_:T}| z_{1:p}}(z_{p+1}, \ldots , z_{T}) & = f_{z_{T}| z_{1:T-1}} (z_{T}) \cdot f_{z_{p+1_:T}-1| z_{1:p}}(z_{p+1}, \ldots , z_{T-1}) \\
+ & = f_{z_{T}| z_{1:T-1}} (z_{T})  \cdot f_{z_{T}| z_{1:T-2}} (z_{T-1}) \cdot \ldots \cdot f_{z_{p+1} | z_{1:p}} (z_{p+1}) \\
+ & = \prod_{t = p +1 }^{T} f_{z_t | z_{p:t-1}} (z_t) z_{p+1} - \mathbb{E} \left( z_{p+1}| z_{p}, \ldots , z_{1} \right)
+\end{align*}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
