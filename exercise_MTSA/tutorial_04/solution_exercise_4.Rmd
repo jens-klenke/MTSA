@@ -313,7 +313,7 @@ In general, let $f(x,y,z)$ be a joint density.
 \\
  f_{z_{p+1_:T}| z_{1:p}}(z_{p+1}, \ldots , z_{T}) & = f_{z_{T}| z_{1:T-1}} (z_{T}) \cdot f_{z_{p+1_:T}-1| z_{1:p}}(z_{p+1}, \ldots , z_{T-1}) \\
  & = f_{z_{T}| z_{1:T-1}} (z_{T})  \cdot f_{z_{T}| z_{1:T-2}} (z_{T-1}) \cdot \ldots \cdot f_{z_{p+1} | z_{1:p}} (z_{p+1}) \\
- & = \prod_{t = p +1 }^{T} f_{z_t | z_{p:t-1}} (z_t) z_{p+1} - \mathbb{E} \left( z_{p+1}| z_{p}, \ldots , z_{1} \right)
+ & = \prod_{t = p +1 }^{T} f_{z_t | z_{p:t-1}} 
 \end{align*}
 
 
