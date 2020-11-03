@@ -63,16 +63,16 @@ If i) and ii) hold, $C(l)$ chooses the optimal/correct model.
   \end{itemize}
   \item BIC: $c_T = \log(T)  \cdot K^2$
     \begin{align*}
-    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) \cdot K^2   \implies \infty
-    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{\log(T)}{T} K^2 \implies 0 
+    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) K^2   \implies \infty \\
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} & = \dfrac{\log(T)}{T} K^2 \implies 0 
   \end{align*}
   \begin{itemize}
     \item[$\Rightarrow$] consistent
   \end{itemize}
   \item HQ: $c_T = 2 \ \log(\log(T)) \ K^2$
   \begin{align*}
-    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty
-    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty  \\
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} & = \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
   \end{align*}
   \begin{itemize}
     \item[$\Rightarrow$] consistent
@@ -92,7 +92,7 @@ library(MTS)
 ```
 
 \begin{itemize}
-  \item[a] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
+  \item[a.)] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
 \end{itemize}
 
 _Solution:_
@@ -119,7 +119,7 @@ Note that the last observation of 'unemp' was dropped for conformable length. It
 
 
 \begin{itemize}
-  \item[b] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
+  \item[b.)] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
 \end{itemize}
 
 _Solution:_
@@ -139,8 +139,14 @@ Even without unemployment, there is some correlation in the dataset.
 
 
 \begin{itemize}
-  \item[c] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
+  \item[c.)] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
 \end{itemize}
+
+_Solution:_
+
+We have $T \cdot K$ data points and we estimate $K^2$ parameters for each lag. For the intercept we estimate $K$ parameters. Which leads to the following condition for the maximal number of lag(s) $p$: 
+
+$$ \dfrac{K \cdot (T -1)}{K^2} \geq p$$
 
 ```{r}
 data_dim <- dim(macdata) 
@@ -153,6 +159,49 @@ K <- data_dim[2] # variables
 `r floor(max.p)` lags can be estimated in addition to the intercept. 
 
 
+\begin{itemize}
+  \item[d.)] Consult the AIC, BIC and HQ to determine the optimal lag order for a $\VAR(p)$ model for the whole dataset. Plot the values of the three criteria for the lag orders p from 1 to 5 in one plot.
+\end{itemize}
 
+**Hint: ’VARorder’**
+
+_Solution:_
+
+```{r}
+M <- 10 # maximal p 
+VARorder(x = macdata, maxp = M)
+# so it's p = 1, 2 or 4.....
+var1to5.fit <- lapply(X = 1:M, function(i)
+  VAR(x = macdata, include.mean = TRUE, p = i, output = FALSE))
+var1to5.aic <- sapply(1:M, function(i) var1to5.fit[[i]]$aic)
+var1to5.bic <- sapply(1:M, function(i) var1to5.fit[[i]]$bic)
+var1to5.hq <- sapply(1:M, function(i) var1to5.fit[[i]]$hq)
+plot(x = 1:M, y = var1to5.aic, type = "b",
+     main = "Values of Information Criteria", xlab = "p",
+     ylim = c( min(c(var1to5.aic, var1to5.bic, var1to5.hq)), 
+               max(c(var1to5.aic, var1to5.bic, var1to5.hq)) ) )
+
+points(x = 1:M, y = var1to5.bic, pch = 11, col = "red")
+points(x = 1:M, y = var1to5.hq, col = "blue", pch = 25)
+legend("topleft", legend = c("AIC", "BIC", "HQ"), 
+       col = c("black", "red", "blue"), 
+       pch = c(NA, 11, 25), lwd = c(2, NA, NA))
+```
+
+
+- AIC and HQ are flat around the minima $\Rightarrow$ no distinct optimum visible. 
+- Conceivable reasons: persistence, omitted variables,  wrong functional form
+  - The $\VAR$ may just work as an approximation
+- BIC is the most conservative IC
+- Mimima at:
+
+\begin{align*}
+p = 
+  \begin{cases}
+  1 & BIC \\
+  2 & HQ \\
+  4 & AIC
+  \end{cases}
+\end{align*}
 
 

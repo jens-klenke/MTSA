@@ -274,16 +274,16 @@ If i) and ii) hold, \(C(l)\) chooses the optimal/correct model.
   \end{itemize}
   \item BIC: $c_T = \log(T)  \cdot K^2$
     \begin{align*}
-    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) \cdot K^2   \implies \infty
-    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{\log(T)}{T} K^2 \implies 0 
+    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) K^2   \implies \infty \\
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} & = \dfrac{\log(T)}{T} K^2 \implies 0 
   \end{align*}
   \begin{itemize}
     \item[$\Rightarrow$] consistent
   \end{itemize}
   \item HQ: $c_T = 2 \ \log(\log(T)) \ K^2$
   \begin{align*}
-    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty
-    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty  \\
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} & = \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
   \end{align*}
   \begin{itemize}
     \item[$\Rightarrow$] consistent
@@ -313,7 +313,7 @@ seasonally adjusted before downloaded from FRED.
 \end{Shaded}
 
 \begin{itemize}
-  \item[a] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
+  \item[a.)] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
 \end{itemize}
 
 \emph{Solution:}
@@ -350,7 +350,7 @@ conformable length. Its last and not first due to the date information:
 measurements are always from the first day of a quarter.
 
 \begin{itemize}
-  \item[b] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
+  \item[b.)] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
 \end{itemize}
 
 \emph{Solution:}
@@ -426,8 +426,16 @@ There is some correlation in the dataset.
 Even without unemployment, there is some correlation in the dataset.
 
 \begin{itemize}
-  \item[c] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
+  \item[c.)] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
 \end{itemize}
+
+\emph{Solution:}
+
+We have \(T \cdot K\) data points and we estimate \(K^2\) parameters for
+each lag. For the intercept we estimate \(K\) parameters. Which leads to
+the following condition for the maximal number of lag(s) \(p\):
+
+\[ \dfrac{K \cdot (T -1)}{K^2} \geq p\]
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -444,5 +452,91 @@ Even without unemployment, there is some correlation in the dataset.
 \end{verbatim}
 
 39 lags can be estimated in addition to the intercept.
+
+\begin{itemize}
+  \item[d.)] Consult the AIC, BIC and HQ to determine the optimal lag order for a $\VAR(p)$ model for the whole dataset. Plot the values of the three criteria for the lag orders p from 1 to 5 in one plot.
+\end{itemize}
+
+\textbf{Hint: 'VARorder'}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{M <-}\StringTok{ }\DecValTok{10} \CommentTok{# maximal p }
+\KeywordTok{VARorder}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ macdata, }\DataTypeTok{maxp =}\NormalTok{ M)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## selected order: aic =  4 
+## selected order: bic =  1 
+## selected order: hq =  2 
+## Summary table:  
+##        p      AIC      BIC       HQ     M(p) p-value
+##  [1,]  0 -34.8741 -34.8741 -34.8741   0.0000  0.0000
+##  [2,]  1 -40.1273 -39.7107 -39.9587 994.0213  0.0000
+##  [3,]  2 -40.4982 -39.6649 -40.1608 109.6255  0.0000
+##  [4,]  3 -40.6510 -39.4011 -40.1450  69.3340  0.0000
+##  [5,]  4 -40.7551 -39.0885 -40.0805  59.2354  0.0001
+##  [6,]  5 -40.6962 -38.6129 -39.8529  31.2764  0.1800
+##  [7,]  6 -40.5110 -38.0111 -39.4990  10.6681  0.9944
+##  [8,]  7 -40.5487 -37.6321 -39.3680  43.8714  0.0112
+##  [9,]  8 -40.5490 -37.2158 -39.1997  36.9772  0.0580
+## [10,]  9 -40.4934 -36.7436 -38.9754  27.8481  0.3149
+## [11,] 10 -40.4553 -36.2888 -38.7687  29.2269  0.2545
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# so it's p = 1, 2 or 4.....}
+\NormalTok{var1to5.fit <-}\StringTok{ }\KeywordTok{lapply}\NormalTok{(}\DataTypeTok{X =} \DecValTok{1}\OperatorTok{:}\NormalTok{M, }\ControlFlowTok{function}\NormalTok{(i)}
+  \KeywordTok{VAR}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ macdata, }\DataTypeTok{include.mean =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{p =}\NormalTok{ i, }\DataTypeTok{output =} \OtherTok{FALSE}\NormalTok{))}
+\NormalTok{var1to5.aic <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{M, }\ControlFlowTok{function}\NormalTok{(i) var1to5.fit[[i]]}\OperatorTok{$}\NormalTok{aic)}
+\NormalTok{var1to5.bic <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{M, }\ControlFlowTok{function}\NormalTok{(i) var1to5.fit[[i]]}\OperatorTok{$}\NormalTok{bic)}
+\NormalTok{var1to5.hq <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\NormalTok{M, }\ControlFlowTok{function}\NormalTok{(i) var1to5.fit[[i]]}\OperatorTok{$}\NormalTok{hq)}
+\KeywordTok{plot}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\NormalTok{M, }\DataTypeTok{y =}\NormalTok{ var1to5.aic, }\DataTypeTok{type =} \StringTok{"b"}\NormalTok{,}
+     \DataTypeTok{main =} \StringTok{"Values of Information Criteria"}\NormalTok{, }\DataTypeTok{xlab =} \StringTok{"p"}\NormalTok{,}
+     \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{( }\KeywordTok{min}\NormalTok{(}\KeywordTok{c}\NormalTok{(var1to5.aic, var1to5.bic, var1to5.hq)), }
+               \KeywordTok{max}\NormalTok{(}\KeywordTok{c}\NormalTok{(var1to5.aic, var1to5.bic, var1to5.hq)) ) )}
+
+\KeywordTok{points}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\NormalTok{M, }\DataTypeTok{y =}\NormalTok{ var1to5.bic, }\DataTypeTok{pch =} \DecValTok{11}\NormalTok{, }\DataTypeTok{col =} \StringTok{"red"}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(}\DataTypeTok{x =} \DecValTok{1}\OperatorTok{:}\NormalTok{M, }\DataTypeTok{y =}\NormalTok{ var1to5.hq, }\DataTypeTok{col =} \StringTok{"blue"}\NormalTok{, }\DataTypeTok{pch =} \DecValTok{25}\NormalTok{)}
+\KeywordTok{legend}\NormalTok{(}\StringTok{"topleft"}\NormalTok{, }\DataTypeTok{legend =} \KeywordTok{c}\NormalTok{(}\StringTok{"AIC"}\NormalTok{, }\StringTok{"BIC"}\NormalTok{, }\StringTok{"HQ"}\NormalTok{), }
+       \DataTypeTok{col =} \KeywordTok{c}\NormalTok{(}\StringTok{"black"}\NormalTok{, }\StringTok{"red"}\NormalTok{, }\StringTok{"blue"}\NormalTok{), }
+       \DataTypeTok{pch =} \KeywordTok{c}\NormalTok{(}\OtherTok{NA}\NormalTok{, }\DecValTok{11}\NormalTok{, }\DecValTok{25}\NormalTok{), }\DataTypeTok{lwd =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\OtherTok{NA}\NormalTok{, }\OtherTok{NA}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{solution_exercise_5_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\begin{itemize}
+\tightlist
+\item
+  AIC and HQ are flat around the minima \(\Rightarrow\) no distinct
+  optimum visible.
+\item
+  Conceivable reasons: persistence, omitted variables, wrong functional
+  form
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The \(\VAR\) may just work as an approximation
+  \end{itemize}
+\item
+  BIC is the most conservative IC
+\item
+  Mimima at:
+\end{itemize}
+
+\begin{align*}
+p = 
+  \begin{cases}
+  1 & BIC \\
+  2 & HQ \\
+  4 & AIC
+  \end{cases}
+\end{align*}
 
 \end{document}
