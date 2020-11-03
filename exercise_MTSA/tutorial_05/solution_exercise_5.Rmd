@@ -51,19 +51,106 @@ From Theorem 4.4:
   \item[ii)] $\lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \longrightarrow 0$
 \end{itemize}
 
+If i) and ii) hold, $C(l)$ chooses the optimal/correct model. 
+
+\begin{itemize}
+  \item AIC: $c_T  = 2K^2$
+  \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ K^2 \centernot\implies \infty
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] not consistent
+  \end{itemize}
+  \item BIC: $c_T = \log(T)  \cdot K^2$
+    \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) \cdot K^2   \implies \infty
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{\log(T)}{T} K^2 \implies 0 
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] consistent
+  \end{itemize}
+  \item HQ: $c_T = 2 \ \log(\log(T)) \ K^2$
+  \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] consistent
+  \end{itemize}
+\end{itemize}
 
 
+# Exercise 2: VAR(p): Data application
+  
+This exercise is concerned with finding an appropriate $\VAR(p)$ model for US macroeconomic data. You can find the dataset `us_macrodata.Rda` attached to this exercise sheet in the Moodle folder for this tutorial. Please use the `load` command to import the dataset from your directory into R.  There are 5 variables – CPI, Real GDP, the unemployment rate, general private investment and the debt-to-GDP ratio. All series have been sampled quarterly and were seasonally adjusted before downloaded from FRED.
+
+```{r}
+# loading data
+load(file = here::here("exercise_MTSA/00_data/us_macrodata.Rda"))
+# loading the MTS package
+library(MTS)
+```
+
+\begin{itemize}
+  \item[a] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
+\end{itemize}
+
+_Solution:_
+
+```{r}
+macmat <- data.matrix(us.macro_series)
+plot.ts(macmat)
+```
+
+Every series except unemployment looks non-stationary. Regarding the debt-to-gdp ratio, this is surprising, but we better difference it as well.
 
 
+```{r}
+macdata <- cbind(diff(log(us.macro_series$cpi)), 
+                 us.macro_series$unemprate[-(nrow(macmat))], 
+                 diff(log(us.macro_series$rgdp)),
+                 diff(log(us.macro_series$gp_investment)), 
+                 diff(log(us.macro_series$debt_gdp)))
+
+plot.ts(macdata)
+```
+
+Note that the last observation of 'unemp' was dropped for conformable length. Its last and not first due to the date information: measurements are always from the first day of a quarter.
 
 
+\begin{itemize}
+  \item[b] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
+\end{itemize}
+
+_Solution:_
+
+```{r}
+mq(x = macdata, lag = 20)
+```
+
+There is some correlation in the dataset. 
 
 
+```{r}
+mq(x = macdata[,-3], lag = 20)
+```
+
+Even without unemployment, there is some correlation in the dataset. 
 
 
+\begin{itemize}
+  \item[c] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
+\end{itemize}
 
+```{r}
+data_dim <- dim(macdata) 
 
+Tmax <- data_dim[1] # observations
+K <- data_dim[2] # variables
+(max.p <- (Tmax * K - K) / K^2 )
+```
 
+`r floor(max.p)` lags can be estimated in addition to the intercept. 
 
 
 

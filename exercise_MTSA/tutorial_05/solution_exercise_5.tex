@@ -52,6 +52,8 @@
 \newcommand{\adj}{\operatorname{adj}}
 \newcommand{\loglik}{\operatorname{ll}}
 
+\usepackage{centernot}
+
 \allowdisplaybreaks
 
 \titleformat{\section}
@@ -71,6 +73,46 @@
 \usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
 \addbibresource{R_packages.bib}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -219,5 +261,188 @@ From Theorem 4.4:
   \item[i)] $\lim \limits_{T \rightarrow \infty} c_T \longrightarrow \infty$ 
   \item[ii)] $\lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \longrightarrow 0$
 \end{itemize}
+
+If i) and ii) hold, \(C(l)\) chooses the optimal/correct model.
+
+\begin{itemize}
+  \item AIC: $c_T  = 2K^2$
+  \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ K^2 \centernot\implies \infty
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] not consistent
+  \end{itemize}
+  \item BIC: $c_T = \log(T)  \cdot K^2$
+    \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = \log(T) \cdot K^2   \implies \infty
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{\log(T)}{T} K^2 \implies 0 
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] consistent
+  \end{itemize}
+  \item HQ: $c_T = 2 \ \log(\log(T)) \ K^2$
+  \begin{align*}
+    \lim \limits_{T \rightarrow \infty} c_T & = 2 \ \log(\log(T)) \ K^2 \implies \infty
+    \lim \limits_{T \rightarrow \infty} \dfrac{c_T}{T} \dfrac{2 \ \log(\log(T)) \ K^2}{T} \implies 0 
+  \end{align*}
+  \begin{itemize}
+    \item[$\Rightarrow$] consistent
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{exercise-2-varp-data-application}{%
+\section{Exercise 2: VAR(p): Data
+application}\label{exercise-2-varp-data-application}}
+
+This exercise is concerned with finding an appropriate \(\VAR(p)\) model
+for US macroeconomic data. You can find the dataset
+\texttt{us\_macrodata.Rda} attached to this exercise sheet in the Moodle
+folder for this tutorial. Please use the \texttt{load} command to import
+the dataset from your directory into R. There are 5 variables -- CPI,
+Real GDP, the unemployment rate, general private investment and the
+debt-to-GDP ratio. All series have been sampled quarterly and were
+seasonally adjusted before downloaded from FRED.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# loading data}
+\KeywordTok{load}\NormalTok{(}\DataTypeTok{file =}\NormalTok{ here}\OperatorTok{::}\KeywordTok{here}\NormalTok{(}\StringTok{"exercise_MTSA/00_data/us_macrodata.Rda"}\NormalTok{))}
+\CommentTok{# loading the MTS package}
+\KeywordTok{library}\NormalTok{(MTS)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+  \item[a] Plot all time series and judge which time series seem non-stationary. Proceed to compute growth rates of the non-stationary variables.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{macmat <-}\StringTok{ }\KeywordTok{data.matrix}\NormalTok{(us.macro_series)}
+\KeywordTok{plot.ts}\NormalTok{(macmat)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{solution_exercise_5_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+Every series except unemployment looks non-stationary. Regarding the
+debt-to-gdp ratio, this is surprising, but we better difference it as
+well.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{macdata <-}\StringTok{ }\KeywordTok{cbind}\NormalTok{(}\KeywordTok{diff}\NormalTok{(}\KeywordTok{log}\NormalTok{(us.macro_series}\OperatorTok{$}\NormalTok{cpi)), }
+\NormalTok{                 us.macro_series}\OperatorTok{$}\NormalTok{unemprate[}\OperatorTok{-}\NormalTok{(}\KeywordTok{nrow}\NormalTok{(macmat))], }
+                 \KeywordTok{diff}\NormalTok{(}\KeywordTok{log}\NormalTok{(us.macro_series}\OperatorTok{$}\NormalTok{rgdp)),}
+                 \KeywordTok{diff}\NormalTok{(}\KeywordTok{log}\NormalTok{(us.macro_series}\OperatorTok{$}\NormalTok{gp_investment)), }
+                 \KeywordTok{diff}\NormalTok{(}\KeywordTok{log}\NormalTok{(us.macro_series}\OperatorTok{$}\NormalTok{debt_gdp)))}
+
+\KeywordTok{plot.ts}\NormalTok{(macdata)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{solution_exercise_5_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+Note that the last observation of \enquote{unemp} was dropped for
+conformable length. Its last and not first due to the date information:
+measurements are always from the first day of a quarter.
+
+\begin{itemize}
+  \item[b] Perform a Ljung-Box test on the dataset. Does it look worthwhile to estimate a $\VAR(p)$
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mq}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ macdata, }\DataTypeTok{lag =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Ljung-Box Statistics:  
+##         m       Q(m)     df    p-value
+##  [1,]     1       369      25        0
+##  [2,]     2       658      50        0
+##  [3,]     3       932      75        0
+##  [4,]     4      1211     100        0
+##  [5,]     5      1430     125        0
+##  [6,]     6      1624     150        0
+##  [7,]     7      1796     175        0
+##  [8,]     8      1953     200        0
+##  [9,]     9      2083     225        0
+## [10,]    10      2205     250        0
+## [11,]    11      2313     275        0
+## [12,]    12      2418     300        0
+## [13,]    13      2513     325        0
+## [14,]    14      2619     350        0
+## [15,]    15      2702     375        0
+## [16,]    16      2793     400        0
+## [17,]    17      2881     425        0
+## [18,]    18      2965     450        0
+## [19,]    19      3031     475        0
+## [20,]    20      3112     500        0
+\end{verbatim}
+
+\includegraphics{solution_exercise_5_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+There is some correlation in the dataset.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{mq}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ macdata[,}\OperatorTok{-}\DecValTok{3}\NormalTok{], }\DataTypeTok{lag =} \DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Ljung-Box Statistics:  
+##         m       Q(m)     df    p-value
+##  [1,]     1       337      16        0
+##  [2,]     2       607      32        0
+##  [3,]     3       866      48        0
+##  [4,]     4      1121      64        0
+##  [5,]     5      1325      80        0
+##  [6,]     6      1502      96        0
+##  [7,]     7      1650     112        0
+##  [8,]     8      1781     128        0
+##  [9,]     9      1894     144        0
+## [10,]    10      2003     160        0
+## [11,]    11      2101     176        0
+## [12,]    12      2197     192        0
+## [13,]    13      2278     208        0
+## [14,]    14      2372     224        0
+## [15,]    15      2444     240        0
+## [16,]    16      2518     256        0
+## [17,]    17      2589     272        0
+## [18,]    18      2651     288        0
+## [19,]    19      2702     304        0
+## [20,]    20      2761     320        0
+\end{verbatim}
+
+\includegraphics{solution_exercise_5_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+Even without unemployment, there is some correlation in the dataset.
+
+\begin{itemize}
+  \item[c] Determine the length of the time series. How many coefficients can be estimated and what does it mean for $K$ and $p$?
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data_dim <-}\StringTok{ }\KeywordTok{dim}\NormalTok{(macdata) }
+
+\NormalTok{Tmax <-}\StringTok{ }\NormalTok{data_dim[}\DecValTok{1}\NormalTok{] }\CommentTok{# observations}
+\NormalTok{K <-}\StringTok{ }\NormalTok{data_dim[}\DecValTok{2}\NormalTok{] }\CommentTok{# variables}
+\NormalTok{(max.p <-}\StringTok{ }\NormalTok{(Tmax }\OperatorTok{*}\StringTok{ }\NormalTok{K }\OperatorTok{-}\StringTok{ }\NormalTok{K) }\OperatorTok{/}\StringTok{ }\NormalTok{K}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 39.2
+\end{verbatim}
+
+39 lags can be estimated in addition to the intercept.
 
 \end{document}
