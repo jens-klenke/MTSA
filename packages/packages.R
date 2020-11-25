@@ -4,4 +4,6 @@ pacman::p_load(dplyr,
                ggplot2,
                MTS,
                expm,
-               MASS)
+               MASS, 
+               Quandl,
+               here)
