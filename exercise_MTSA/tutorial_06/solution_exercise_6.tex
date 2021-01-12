@@ -718,7 +718,7 @@ model and 30 for the redefined model.
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# performing the Ljung-Box tests}
-\KeywordTok{mq}\NormalTok{(var_}\FloatTok{3.}\NormalTok{fit}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{lag =} \DecValTok{25}\NormalTok{, }\DataTypeTok{adj =}\NormalTok{ ncoef.var_}\DecValTok{3}\NormalTok{) }\CommentTok{# overspecified model}
+\KeywordTok{mq}\NormalTok{(var_}\FloatTok{3.}\NormalTok{fit}\OperatorTok{$}\NormalTok{residuals, }\DataTypeTok{lag =} \DecValTok{25}\NormalTok{, }\DataTypeTok{adj =}\NormalTok{ ncoef.var_}\DecValTok{3}\NormalTok{) }\CommentTok{# full model}
 \end{Highlighting}
 \end{Shaded}
 
@@ -792,14 +792,289 @@ model and 30 for the redefined model.
 
 \includegraphics{solution_exercise_6_files/figure-latex/2_f-2.pdf}
 
+\begin{itemize}
+  \item[i)] Do the models absorb the dynamics in the data completely?
+\end{itemize}
+
+\emph{Solution:}
+
+Ljung-Box test rejects \(H_0\) everywhere, since there are dynamic
+patterns in the residuals. A \(\VAR(4)\) did not absorb everything of
+the pattern, but we did not expected this after the previous results.
+
+\begin{itemize}
+  \item[ii)] Explain the massive differences of the two tests at m = {3, 4}.
+\end{itemize}
+
+\emph{Solution:}
+
+The full model uses 75 coefficients, without intercept, while the
+redefined model just 30.
+
+\begin{itemize}
+  \item[g)] Now estimate a $\VAR(1)$ model (with intercept). How does it compare to the $\VAR(3)$ model in terms of $\MSE$?
+\end{itemize}
+
+\emph{Solution:}
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{# Well, both tests show depressing results. but by freeing up degrees of freedom, we can at least make a statement about m = 3 in the refined model}
-
-\CommentTok{# some computation:}
-\CommentTok{#ncoef.var4 / 5^2}
-\CommentTok{#ncoef.var4.ref / 5^2}
+\NormalTok{var_}\FloatTok{1.}\NormalTok{fit <-}\StringTok{ }\KeywordTok{VAR}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ macdata, }\DataTypeTok{p =} \DecValTok{1}\NormalTok{, }\DataTypeTok{include.mean =} \OtherTok{TRUE}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
+
+\begin{verbatim}
+## Constant term: 
+## Estimates:  0.0006524376 0.0004706507 0.1048617 -0.04570757 -0.009633996 
+## Std.Error:  0.001716609 0.002438123 0.08110986 0.01120102 0.005156064 
+## AR coefficient matrix 
+## AR( 1 )-matrix 
+##          [,1]    [,2]     [,3]    [,4]    [,5]
+## [1,]  0.72558  0.0422 0.000393 -0.0253 -0.0755
+## [2,] -0.16622  0.3665 0.001002 -0.0369 -0.0489
+## [3,]  9.70625 -8.8835 0.985534 -3.9430  2.7900
+## [4,] -0.03134  1.7298 0.009042 -0.2355 -0.6760
+## [5,] -0.00339  0.1806 0.002089 -0.0590  0.3043
+## standard error 
+##        [,1]   [,2]     [,3]   [,4]   [,5]
+## [1,] 0.0519 0.0825 0.000278 0.0167 0.0316
+## [2,] 0.0737 0.1172 0.000395 0.0237 0.0448
+## [3,] 2.4510 3.8991 0.013150 0.7876 1.4912
+## [4,] 0.3385 0.5385 0.001816 0.1088 0.2059
+## [5,] 0.1558 0.2479 0.000836 0.0501 0.0948
+##   
+## Residuals cov-mtx: 
+##               [,1]          [,2]          [,3]          [,4]          [,5]
+## [1,]  2.616396e-05  5.011600e-06 -0.0001337874  2.459967e-05 -2.236565e-05
+## [2,]  5.011600e-06  5.278030e-05 -0.0004802772  1.887306e-04 -7.099746e-05
+## [3,] -1.337874e-04 -4.802772e-04  0.0584128103 -2.844944e-03  1.130147e-03
+## [4,]  2.459967e-05  1.887306e-04 -0.0028449444  1.113976e-03 -2.982007e-04
+## [5,] -2.236565e-05 -7.099746e-05  0.0011301473 -2.982007e-04  2.360464e-04
+##   
+## det(SSE) =  3.783152e-18 
+## AIC =  -39.86217 
+## BIC =  -39.44552 
+## HQ  =  -39.6935
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{diag}\NormalTok{(var_}\FloatTok{1.}\NormalTok{fit}\OperatorTok{$}\NormalTok{Sigma) }\OperatorTok{/}\StringTok{ }\KeywordTok{diag}\NormalTok{(var_}\FloatTok{3.}\NormalTok{fit}\OperatorTok{$}\NormalTok{Sigma)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.228895 1.118259 1.848220 1.127132 1.079123
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{det}\NormalTok{(var_}\FloatTok{1.}\NormalTok{fit}\OperatorTok{$}\NormalTok{Sigma) }\OperatorTok{/}\StringTok{ }\KeywordTok{det}\NormalTok{(var_}\FloatTok{3.}\NormalTok{fit}\OperatorTok{$}\NormalTok{Sigma)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.263859
+\end{verbatim}
+
+The \(\VAR(3)\) is also better then a \(\VAR(1) \ \MSE\)-wise. Not
+surprisingly at in-sample, see e.
+
+\begin{itemize}
+  \item[h)] Lastly, compute the forecasts’ $\MSE$s (referred to as MSFE) for both models using the command `VARpred`. Please use a forecast horizon h of 10.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_}\FloatTok{1.}\NormalTok{pred <-}\StringTok{ }\KeywordTok{VARpred}\NormalTok{(}\DataTypeTok{model =}\NormalTok{ var_}\FloatTok{1.}\NormalTok{fit, }\DataTypeTok{h =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## orig  197 
+## Forecasts at origin:  197 
+##           [,1]     [,2]  [,3]      [,4]       [,5]
+##  [1,] 0.008722 0.005923 3.992 0.0080434 -3.574e-03
+##  [2,] 0.008867 0.005069 4.029 0.0008851 -1.817e-03
+##  [3,] 0.008999 0.004947 4.109 0.0002384 -9.365e-04
+##  [4,] 0.009071 0.004941 4.194 0.0002959 -4.877e-04
+##  [5,] 0.009122 0.004988 4.280 0.0007365 -1.778e-04
+##  [6,] 0.009159 0.005051 4.363 0.0012791  7.813e-05
+##  [7,] 0.009189 0.005119 4.444 0.0018445  3.103e-04
+##  [8,] 0.009214 0.005188 4.522 0.0024037  5.289e-04
+##  [9,] 0.009234 0.005256 4.597 0.0029469  7.375e-04
+## [10,] 0.009252 0.005322 4.669 0.0034709  9.373e-04
+## Standard Errors of predictions:  
+##           [,1]     [,2]   [,3]    [,4]    [,5]
+##  [1,] 0.005115 0.007265 0.2417 0.03338 0.01536
+##  [2,] 0.006539 0.007630 0.4410 0.03669 0.01626
+##  [3,] 0.007179 0.007687 0.6050 0.03675 0.01648
+##  [4,] 0.007511 0.007730 0.7332 0.03683 0.01656
+##  [5,] 0.007687 0.007760 0.8371 0.03693 0.01661
+##  [6,] 0.007783 0.007779 0.9239 0.03704 0.01665
+##  [7,] 0.007835 0.007792 0.9982 0.03714 0.01668
+##  [8,] 0.007864 0.007802 1.0627 0.03723 0.01672
+##  [9,] 0.007880 0.007809 1.1193 0.03732 0.01674
+## [10,] 0.007889 0.007816 1.1693 0.03740 0.01677
+## Root mean square errors of predictions:  
+##           [,1]     [,2]    [,3]    [,4]   [,5]
+##  [1,] 0.005192 0.007375  0.2453 0.03388 0.0156
+##  [2,] 0.705114 0.403543 63.8382 2.63617 0.9229
+##  [3,] 0.513008 0.162239 71.6994 0.36968 0.4636
+##  [4,] 0.382002 0.140978 71.6973 0.41900 0.2861
+##  [5,] 0.283639 0.117478 69.9009 0.48379 0.2222
+##  [6,] 0.210677 0.095129 67.6873 0.48522 0.1960
+##  [7,] 0.156631 0.078414 65.4039 0.47118 0.1831
+##  [8,] 0.116693 0.067173 63.1158 0.45493 0.1748
+##  [9,] 0.087233 0.060026 60.8354 0.43921 0.1682
+## [10,] 0.065543 0.055507 58.5704 0.42412 0.1622
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_}\FloatTok{3.}\NormalTok{pred <-}\StringTok{ }\KeywordTok{VARpred}\NormalTok{(}\DataTypeTok{model =}\NormalTok{ var_}\FloatTok{3.}\NormalTok{fit, }\DataTypeTok{h =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## orig  197 
+## Forecasts at origin:  197 
+##           [,1]     [,2]  [,3]     [,4]       [,5]
+##  [1,] 0.007769 0.006092 4.081 0.009667 -2.226e-03
+##  [2,] 0.006417 0.005455 4.172 0.004432 -1.661e-03
+##  [3,] 0.006934 0.006130 4.266 0.007252 -1.992e-03
+##  [4,] 0.007787 0.005867 4.367 0.005236 -6.408e-04
+##  [5,] 0.007630 0.005721 4.478 0.005341  1.524e-05
+##  [6,] 0.007852 0.005875 4.588 0.006116  2.508e-04
+##  [7,] 0.008191 0.005952 4.699 0.006403  8.293e-04
+##  [8,] 0.008297 0.005967 4.808 0.007047  1.216e-03
+##  [9,] 0.008451 0.006060 4.913 0.007795  1.459e-03
+## [10,] 0.008632 0.006130 5.012 0.008321  1.772e-03
+## Standard Errors of predictions:  
+##           [,1]     [,2]   [,3]    [,4]    [,5]
+##  [1,] 0.004614 0.006870 0.1778 0.03144 0.01479
+##  [2,] 0.005543 0.007207 0.3471 0.03493 0.01549
+##  [3,] 0.005834 0.007515 0.5056 0.03645 0.01581
+##  [4,] 0.006262 0.007572 0.6660 0.03675 0.01639
+##  [5,] 0.006659 0.007608 0.8131 0.03688 0.01666
+##  [6,] 0.006894 0.007663 0.9423 0.03708 0.01676
+##  [7,] 0.007083 0.007701 1.0501 0.03725 0.01684
+##  [8,] 0.007251 0.007732 1.1386 0.03741 0.01689
+##  [9,] 0.007378 0.007761 1.2102 0.03757 0.01692
+## [10,] 0.007479 0.007781 1.2681 0.03769 0.01694
+## Root mean square errors of predictions:  
+##           [,1]     [,2]     [,3]     [,4]    [,5]
+##  [1,] 0.004798 0.007144   0.1849  0.03269 0.01538
+##  [2,] 2.072861 1.470646 201.1592 10.27156 3.10502
+##  [3,] 1.227546 1.435967 248.0941  7.04102 2.13880
+##  [4,] 1.536335 0.623325 292.5700  3.13470 2.92281
+##  [5,] 1.528387 0.504341 314.8219  2.07860 1.99568
+##  [6,] 1.204334 0.616768 321.3266  2.61215 1.26442
+##  [7,] 1.095587 0.513635 312.7534  2.39174 1.12425
+##  [8,] 1.046496 0.470372 297.0697  2.34716 0.87519
+##  [9,] 0.921178 0.447960 276.7477  2.32674 0.63992
+## [10,] 0.825714 0.377270 255.6431  1.99677 0.58559
+\end{verbatim}
+
+\begin{itemize}
+  \item[i)] Does the model superior in f) still prevail at every h?
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_}\FloatTok{1.}\NormalTok{pred}\OperatorTok{$}\NormalTok{rmse }\OperatorTok{/}\StringTok{ }\NormalTok{var_}\FloatTok{3.}\NormalTok{pred}\OperatorTok{$}\NormalTok{rmse}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             [,1]      [,2]      [,3]       [,4]       [,5]
+##  [1,] 1.08221998 1.0323561 1.3271960 1.03644347 1.01413021
+##  [2,] 0.34016444 0.2743983 0.3173516 0.25664729 0.29722459
+##  [3,] 0.41791375 0.1129826 0.2890007 0.05250421 0.21676409
+##  [4,] 0.24864505 0.2261703 0.2450605 0.13366564 0.09787525
+##  [5,] 0.18558031 0.2329339 0.2220332 0.23274606 0.11131688
+##  [6,] 0.17493226 0.1542386 0.2106496 0.18575354 0.15503482
+##  [7,] 0.14296532 0.1526650 0.2091231 0.19700271 0.16287921
+##  [8,] 0.11150869 0.1428086 0.2124613 0.19382054 0.19977943
+##  [9,] 0.09469717 0.1339985 0.2198226 0.18876828 0.26288521
+## [10,] 0.07937792 0.1471278 0.2291100 0.21240438 0.27697552
+\end{verbatim}
+
+At \(h = 1\), the \(\VAR(3)\) is better. (As \(h = 1\) corresponds to
+the in-sample \(\MSE\), this is hardly surprising.) But as \(h \geq 2\),
+the sparser \(\VAR(1)\) model fairs much better, because it is less
+prone to overfitting which hurts the out-of-sample forecasts.
+
+\begin{itemize}
+  \item[ii)] Explain what conceptual difference bewteen $\MSE$ and $\text{MSFE}$ drives the resuls in i). 
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{itemize}
+  \item MSE: in-sample predicting error
+  \begin{itemize}   
+    \item Same Data is used for fitting and evaluating of the model. Problem of overfitting could potential araise. 
+  \end{itemize}
+  \item MSFE: out-of-sample predicting error
+  \begin{itemize}   
+    \item Different Data is used for fitting and evaluating of the model. So the problem of overfitting is avoided.
+  \end{itemize}
+\end{itemize}
+
+\begin{itemize}
+  \item[iii)] To which values do the forecasts converge to if $h$ goes to $\infty$?
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# deviations from mean}
+\NormalTok{var_}\FloatTok{1.}\NormalTok{pred}\OperatorTok{$}\NormalTok{pred }\OperatorTok{-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{colMeans}\NormalTok{(macdata), }
+                         \DataTypeTok{nrow =} \DecValTok{10}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                [,1]          [,2]      [,3]         [,4]         [,5]
+##  [1,] -0.0009308481 -0.0009238241 -2.339300 -0.007716632 -0.009007171
+##  [2,] -0.0007856999 -0.0017786759 -2.301837 -0.014874960 -0.007249986
+##  [3,] -0.0006532736 -0.0019001751 -2.222785 -0.015521678 -0.006369408
+##  [4,] -0.0005813275 -0.0019067256 -2.137505 -0.015464158 -0.005920551
+##  [5,] -0.0005311935 -0.0018597422 -2.051676 -0.015023576 -0.005610652
+##  [6,] -0.0004936130 -0.0017963123 -1.967893 -0.014481018 -0.005354758
+##  [7,] -0.0004637550 -0.0017279406 -1.886945 -0.013915615 -0.005122574
+##  [8,] -0.0004391954 -0.0016589988 -1.809068 -0.013356417 -0.004903959
+##  [9,] -0.0004184827 -0.0015911497 -1.734286 -0.012813195 -0.004695399
+## [10,] -0.0004006619 -0.0015250806 -1.662548 -0.012289175 -0.004495605
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_}\FloatTok{3.}\NormalTok{pred}\OperatorTok{$}\NormalTok{pred }\OperatorTok{-}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =} \KeywordTok{colMeans}\NormalTok{(macdata), }
+                         \DataTypeTok{nrow =} \DecValTok{10}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{5}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##               [,1]          [,2]      [,3]         [,4]         [,5]
+##  [1,] -0.001883544 -0.0007555704 -2.250274 -0.006092947 -0.007659215
+##  [2,] -0.003236090 -0.0013924001 -2.159637 -0.011327765 -0.007094231
+##  [3,] -0.002718484 -0.0007168289 -2.065514 -0.008508153 -0.007425388
+##  [4,] -0.001866159 -0.0009807007 -1.964194 -0.010523850 -0.006073741
+##  [5,] -0.002022726 -0.0011262015 -1.853396 -0.010418845 -0.005417649
+##  [6,] -0.001800495 -0.0009724132 -1.742955 -0.009644073 -0.005182115
+##  [7,] -0.001461997 -0.0008955327 -1.632514 -0.009357422 -0.004603569
+##  [8,] -0.001355442 -0.0008798122 -1.523163 -0.008713018 -0.004216821
+##  [9,] -0.001202226 -0.0007876886 -1.418728 -0.007965395 -0.003974333
+## [10,] -0.001020473 -0.0007169872 -1.319314 -0.007439477 -0.003661298
+\end{verbatim}
+
+They converge to the means of \(\mathbb{E}(z_t)\) because this process
+is stationary and the influence of \(a_t, a_{t-1}, \ldots, a_{0}\)
+vanishes as \(h \rightarrow \infty\)
 
 \end{document}

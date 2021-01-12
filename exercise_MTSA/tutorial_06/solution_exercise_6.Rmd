@@ -283,24 +283,80 @@ _Solution:_
 The full model uses `r 5^2 * 3` coefficients, without intercept, while the redefined model just `r ncoef.var_3.ref`. 
 
 
-```{r}
-# Well, both tests show depressing results. but by freeing up degrees of freedom, we can at least make a statement about m = 3 in the refined model
+\begin{itemize}
+  \item[g)] Now estimate a $\VAR(1)$ model (with intercept). How does it compare to the $\VAR(3)$ model in terms of $\MSE$?
+\end{itemize}
 
-# some computation:
-#ncoef.var4 / 5^2
-#ncoef.var4.ref / 5^2
+_Solution:_
+
+
+```{r 2_g}
+var_1.fit <- VAR(x = macdata, p = 1, include.mean = TRUE)
+diag(var_1.fit$Sigma) / diag(var_3.fit$Sigma)
+det(var_1.fit$Sigma) / det(var_3.fit$Sigma)
 ```
 
+The $\VAR(3)$ is also better then a $\VAR(1) \ \MSE$-wise. Not surprisingly at in-sample, see e. 
+
+\begin{itemize}
+  \item[h)] Lastly, compute the forecasts’ $\MSE$s (referred to as MSFE) for both models using the command `VARpred`. Please use a forecast horizon h of 10.
+\end{itemize}
+
+_Solution:_
+
+```{r 2_h}
+var_1.pred <- VARpred(model = var_1.fit, h = 10)
+var_3.pred <- VARpred(model = var_3.fit, h = 10)
+```
+
+\begin{itemize}
+  \item[i)] Does the model superior in f) still prevail at every h?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_h_i}
+var_1.pred$rmse / var_3.pred$rmse
+```
+
+At $h = 1$, the $\VAR(3)$ is better. (As $h = 1$ corresponds to the in-sample  $\MSE$, this is hardly surprising.) But as $h \geq 2$, the sparser $\VAR(1)$ model fairs much better, because it is less prone to overfitting which hurts the out-of-sample forecasts.
+
+\begin{itemize}
+  \item[ii)] Explain what conceptual difference bewteen $\MSE$ and $\text{MSFE}$ drives the resuls in i). 
+\end{itemize}
+
+_Solution:_
+
+\begin{itemize}
+  \item MSE: in-sample predicting error
+  \begin{itemize}   
+    \item Same Data is used for fitting and evaluating of the model. Problem of overfitting could potential araise. 
+  \end{itemize}
+  \item MSFE: out-of-sample predicting error
+  \begin{itemize}   
+    \item Different Data is used for fitting and evaluating of the model. So the problem of overfitting is avoided.
+  \end{itemize}
+\end{itemize}
+
+
+\begin{itemize}
+  \item[iii)] To which values do the forecasts converge to if $h$ goes to $\infty$?
+\end{itemize}
+
+```{r 2_h_iii}
+# deviations from mean
+var_1.pred$pred - matrix(data = colMeans(macdata), 
+                         nrow = 10, ncol = 5, byrow = TRUE)
+
+var_3.pred$pred - matrix(data = colMeans(macdata), 
+                         nrow = 10, ncol = 5, byrow = TRUE)
+```
+
+They converge to the means of $\mathbb{E}(z_t)$ because this process is stationary and the influence of  $a_t, a_{t-1}, \ldots, a_{0}$ vanishes as $h \rightarrow \infty$
+
+
 
 <!--
 
-
-
-
-
-
-
-<!--
-  
 
 -->
