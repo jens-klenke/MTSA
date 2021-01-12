@@ -1,0 +1,306 @@
+---
+title: 'Multivariate Time Series Analysis'
+author: 'Dr. Yannick Hoga'
+author2: 'Thilo Reinschlüssel'
+subtitle: 'Solution Exercise Sheet 6'
+semester: "Winter Term 2019/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+    template: ../template.tex
+    fig_caption: yes
+    citation_package: biblatex
+    number_sections: true
+toc: true
+lot: true
+lof: true
+graphics: true
+linkcolor: black
+urlcolor: black
+citecolor: black
+colorlinks: true
+font: Times New Roman
+fontsize: 12pt
+geometry: lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm
+classoption: a4paper
+---
+
+```{r , include=FALSE}
+Sys.setlocale(locale = "English_United States.1252") ## English US Windows
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("packages/packages.R"))
+```
+
+# Exercise 1: Model Selection - Review
+
+\begin{itemize}
+  \item[a)] Is the MSE scale-invariant? 
+\end{itemize}
+
+_Solution:_
+
+No, the MSE is scale-dependent. Take the following $\VAR(1)$ as an example ($\mu_z = 0 \ \text{w.l.o.g}$):
+
+\begin{align*}
+z_t =  \phi_1 z_{t-1} + a_t\\
+\end{align*}
+
+Define $k_t := b z_t$ where $b$ is a scalar. 
+
+\begin{align*}
+  \Rightarrow k_t & = b z_t = \phi_1 b z_{t-1} + e_t \\
+  \Leftrightarrow e_T & = k_t - \phi_1 k_t = b \cdot \left(z_t - \phi z_{t-1} \right) = b \cdot a_t\\
+  \\
+  \MSE(\hat{k}_{t, t+1} ) & = \mathbb{E} \left[ e_{t+1}^{2}\right] = \mathbb{E} \left[ (b a_{t+1})^{2}\right] \\
+   & = b^2 \cdot \mathbb{E} \left( a_{t+1}^{2}\right)\\
+   & = b^2 \cdot  \MSE(\hat{z}_{t, t+1} )\\
+\end{align*}
+
+where $\hat{k}_{t, t-1}, \hat{z}_{t, t-1}$ are the $\VAR (1)$ predictions. 
+
+\begin{itemize}
+  \item[b)] What is the fundamental trade-off which information criteria are supposed to balance? 
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  IC (l) & = \underbrace{\log \left( A \right)}_{\substack{\text{Fit} \\ \\  \sim \ \log(|\MSE|)}} + \underbrace{\dfrac{l}{T} \ c_T}_{\text{complexity}}
+\end{align*}
+
+\begin{itemize}
+  \item[c)] Does a linear transformation affect the value of the information criteria? Does it also influence the location of the minima?  
+\end{itemize}
+
+_Solution:_
+
+Again, the $\VAR(1)$ example. 
+\[z_t = \phi_0 + \phi_1 z_{t-1} +a_t \quad \mid z_t \ \text{is} \ k \times 1 \]
+
+Linear transformation: $k_t = B z_t + c$
+
+\begin{itemize}
+  \item[$\Rightarrow$] $c$ is covered by $\phi_0 = \phi_0 + c$, no problem. w.l.o.g. we omit that part.
+  \item[$\Rightarrow$] $\underbrace{B z_t}_{=: k_t} = \phi_1 \underbrace{B z_{t-1}}_{=: k_{t-1}} + \underbrace{B a_t}_{=: e_t}$
+\end{itemize}
+
+\begin{align*}
+  \Rightarrow \left| \MSE \left(\hat{k}_{t, t+1} \right) \right| & = \left| \mathbb{E} \left(e_t e_t^{'} \right) \right| \\
+  & = \left| \mathbb{E} \left(\underbrace{B}_{k \times k} \underbrace{a_t a_t^{'}}_{k \times k} \underbrace{B^{'}}_{k \times k}\right) \right|\\
+  & = \left| B \ \mathbb{E} \left( \underbrace{a_t a_t^{'} }_{= \MSE (\hat{z}_{t, t+1})}\right) \ B \right|\\
+  & = \left| B \right| \ \left| \MSE \left( \hat{z}_{t, t+1}) \right) \right| \ \left| B \right| \\
+  & = \left(\left| B \right|\right)^2 \ \left| \MSE \left( \hat{z}_{t, t+1}) \right) \right| 
+\end{align*}
+
+$\Rightarrow$ The linear transformation affects the value of the ICs. BUt as long as $|B| \neq 0$ (non-singular), the $\MSE\left( \hat{k}_{t,t+1} \right)$ is minimal where $\MSE\left( \hat{z}_{t,t+1} \right)$ has its minimum. 
+
+Example fot singular $B$: 
+
+\[B = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}, \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}, \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}\]
+
+\begin{itemize}
+  \item[d)] Finally: Are OLS standard errors scale invariant? 
+\end{itemize}
+
+_Solution:_
+
+In (3-3, lecture slides), we write the $\VAR(p)$ model as: $Z = X\beta + A$
+
+\begin{align*}
+  \Leftrightarrow A & = Z - X \beta \\
+  \text{and} \;\hat{\beta} & = \left( X^{'} X\right)^{-1} X^{'} Z = \beta + \left( X^{'} X\right)^{-1} X^{'} A \\
+  \\
+  \Leftrightarrow  \Var \left( \hat{\beta} - \beta \right) & = \mathbb{E} \left( \left(X^{'} X \right)^{-1}  X^{'} A \left[ (X^{'} X)^{-1} X^{'} A \right]^{'} \right) \\
+  & = \mathbb{E} \left( \left(X^{'} X \right)^{-1}  X^{'} A  A^{'} X \left(X^{'} X \right)^{-1} \right)
+\end{align*}
+
+If we scale $Z$ by the scalar $b$, we also scale $X = \left(LZ, L^2 Z, \ldots \right)$ and $A$ by $b$. $\Rightarrow \tilde{X} = bX, \tilde{Z} = bZ, \tilde{A} = bA, \tilde{\beta} = \dfrac{b^2}{b^2} \beta$.
+
+\begin{align*}
+  \Leftrightarrow \Var \left( \hat{\tilde{\beta}} - \beta \right) & = \mathbb{E} \left(\left(\tilde{X}^{'} \tilde{X} \right)^{-1} \tilde{X}^{'} \tilde{A} \tilde{A}^{'} \tilde{X} \left(\tilde{X}^{'} \tilde{X} \right)^{-1} \right)\\
+   & = \mathbb{E} \left( \dfrac{1}{b^2} \left(\tilde{X}^{'} \tilde{X} \right)^{-1} b^2 \tilde{X}^{'} \tilde{A} \tilde{A}^{'} \tilde{X} b^2  \dfrac{1}{b^2}\left(\tilde{X}^{'} \tilde{X} \right)^{-1} \right) \\
+   & = \left( \hat{\beta} - \beta \right)
+\end{align*}
+
+$\Rightarrow$ Standard errors are scale-invariant! (similar to $R^2$)
+
+# Exercise 2: Simplicfication and Forecasting - Macroeconomic Data
+
+Reconsider Exercise 2 from Exercise Sheet 5. Again, please import/load the dataset `us macrodata.Rda` into your workspace and compute the growth rates of the variables appearing non-stationary. There are still 5 variables—CPI, Real GDP, the unemployment rate, general private investment and the debt-to-GDP ratio. All series have been sampled quarterly and were seasonally adjusted before downloaded from _FRED_.
+
+\begin{itemize}
+  \item[a)] Fit a $\VAR(p)$ model according to the Hannan-Quinn information-criteria? 
+\end{itemize}
+
+_Solution:_
+
+```{r, warning=FALSE}
+# loading the Data
+load(file = here::here("exercise_MTSA/00_data/us_macrodata.Rda"))
+
+# compute growth rates (diff-logs) of every variable except unemployment
+macdata <- cbind(diff(log(us.macro_series$cpi)),
+                 diff(log(us.macro_series$rgdp)),
+                 us.macro_series$unemprate[-nrow(us.macro_series)],
+                 diff(log(us.macro_series$gp_investment)),
+                 diff(log(us.macro_series$debt_gdp)))
+
+```
+```{r 2_a IC}
+VARorder(x = macdata, maxp = 25)
+```
+The Hannan-Quinn suggests a $\VAR$ with an order of 3. 
+
+```{r 2_a fit}
+var_3.fit <- VAR(x = macdata, p = 3, include.mean = TRUE)
+```
+
+\begin{itemize}
+  \item[b)] Use the estimated coefficients and the associated standard errors to compute the $t$-statics $(H_0: \phi_{p,i,j} = 0, \text{vs} \ H_1: \phi_{p,i,j} \neq 0)$ for each coefficient separately. Then count how many coefficients are \emph{not} significantly different from zero at the 5 \% level.  
+\end{itemize}
+
+_Solution:_
+
+```{r 2_b}
+var_3.tsingle <- var_3.fit$coef / var_3.fit$secoef
+sum(abs(var_3.tsingle) < 1.96)
+# alternative solution:
+VARchi(x = macdata, p = 3, include.mean = TRUE, thres = 1.96)
+```
+
+`r sum(abs(var_3.tsingle) < 1.96)` coefficients are not significant to a 5 \% level. 
+
+\begin{itemize}
+  \item[c)] Estimate the refined model using the command refVAR by setting a threshold corresponding to the 5% level from b).
+\end{itemize}
+
+_Solution:_
+
+```{r 2_c}
+var_3.ref.fit <- refVAR(model = var_3.fit, thres = 1.96)
+```
+
+\begin{itemize}
+  \item[i)] How many variables have been set to 0?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_c_i}
+sum(var_3.ref.fit$coef == 0)
+```
+
+`r sum(var_3.ref.fit$coef == 0)` coefficients are set to 0. 
+
+\begin{itemize}
+  \item[ii)] How many variables have been set to 0?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_c_ii}
+isTRUE(sum(abs(var_3.tsingle) < 1.96) == sum(var_3.ref.fit$coef == 0))
+```
+
+The difference is `r sum(abs(var_3.tsingle) < 1.96) - sum(var_3.ref.fit$coef == 0)` coefficients. So there are not equal but pretty close. 
+
+\begin{itemize}
+  \item[iii)] What may be the reason for the two numbers differing? (Hint: Slide 4-21)
+\end{itemize}
+
+_Solution:_
+
+Separate tests give `r sum(abs(var_3.tsingle) < 1.96)` but the joint (multiple) test gives only `r sum(var_3.ref.fit$coef == 0)`. Most coefficients initially explained tiny bits of the variation. And if these coefficients are correlated with each other, restricting some coefficients changes the remaining coefficients, forcing an earlier rejection. 
+
+$\Rightarrow$ Problem in backwards selection!
+
+\begin{itemize}
+  \item[d)]  Compare the values of all information criteria offered to you both for the ‘ordinary’ VAR and the refined VAR model. Which model is best? Is the recommendation unanimous?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_d}
+cbind( c("AIC", "BIC", "HQ"), 
+       c(var_3.fit$aic, var_3.fit$bic, var_3.fit$hq), 
+       c(var_3.ref.fit$aic, var_3.ref.fit$bic, var_3.ref.fit$hq) )
+```
+
+The redefined model wins, all 3 ICs support it. Also note how close the ICs values are in comparison to the fully specified model. 
+
+\begin{itemize}
+  \item[e)] Proceed to compare the MSEs of the ‘ordinary’ VAR model and the refined model. Is the model picked by the information criteria again superior? Explain your results.
+\end{itemize}
+
+_Solution:_
+
+```{r}
+# 1. Check squared errors for each variable
+diag(var_3.fit$Sigma) / diag(var_3.ref.fit$Sigma)
+# 2. Check determinants of the MSE matrices (like for the ICs)
+det(var_3.fit$Sigma) / det(var_3.ref.fit$Sigma)
+```
+
+No, the fully specified model performs better. It is more complex and can therefore model complex dynamics better (in-sample). But it is questional whether those dynamics are deterministic or just noise (overfitting).
+
+\begin{itemize}
+  \item[f)]  Calculate the numbers of coefficients estimated both for the ‘ordinary’ model and the refined model. Then perform a Ljung-Box test on the residuals of both models.
+\end{itemize}
+
+_Solution:_
+
+```{r 2_f_not_include, include = FALSE}
+# But, we want only to adjust for the dynamic coefficients for the Ljung-Box test!
+ncoef.var_3 <- 5^2 * 3 # leaving out the intercept! 
+ncoef.var_3.ref <- ncoef.var_3 - sum(var_3.ref.fit$coef[-1,] == 0.0) # leaving out the intercept!!!
+```
+
+
+In total we included 3 lags and therefore estimated `r 5^2 * 3 + 5` coefficients ($K + K^2 \cdot p$).  But we only want to adjust for the dynamic coefficients ($K^2 \times p$) which equals `r 5^2 * 3` for the fully specified model and `r ncoef.var_3.ref` for the redefined model.  
+
+```{r 2_f}
+# performing the Ljung-Box tests
+mq(var_3.fit$residuals, lag = 25, adj = ncoef.var_3) # full model
+mq(var_3.ref.fit$residuals, lag = 25, adj = ncoef.var_3.ref)
+```
+
+
+\begin{itemize}
+  \item[i)] Do the models absorb the dynamics in the data completely?
+\end{itemize}
+
+_Solution:_
+
+Ljung-Box test rejects $H_0$ everywhere, since there are dynamic patterns in the residuals. A $\VAR(4)$ did not absorb everything of the pattern, but we did not expected this after the previous results. 
+
+\begin{itemize}
+  \item[ii)] Explain the massive differences of the two tests at m = {3, 4}.
+\end{itemize}
+
+_Solution:_
+
+The full model uses `r 5^2 * 3` coefficients, without intercept, while the redefined model just `r ncoef.var_3.ref`. 
+
+
+```{r}
+# Well, both tests show depressing results. but by freeing up degrees of freedom, we can at least make a statement about m = 3 in the refined model
+
+# some computation:
+#ncoef.var4 / 5^2
+#ncoef.var4.ref / 5^2
+```
+
+
+<!--
+
+
+
+
+
+
+
+<!--
+  
+
+-->
