@@ -1077,4 +1077,336 @@ They converge to the means of \(\mathbb{E}(z_t)\) because this process
 is stationary and the influence of \(a_t, a_{t-1}, \ldots, a_{0}\)
 vanishes as \(h \rightarrow \infty\)
 
+\hypertarget{exercise-3-simplicfication-and-forecasting-exchange-rates}{%
+\section{Exercise 3: Simplicfication and Forecasting -- Exchange
+Rates}\label{exercise-3-simplicfication-and-forecasting-exchange-rates}}
+
+\begin{itemize}
+  \item[a)] Fit a $\VAR(1)$ model to the data regardless of the information criteria.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fx_var1.fit <-}\StringTok{ }\KeywordTok{VAR}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ fx_series, }\DataTypeTok{p =} \DecValTok{1}\NormalTok{, }\DataTypeTok{include.mean =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Constant term: 
+## Estimates:  -5.019648e-06 -2.684985e-06 
+## Std.Error:  8.707697e-05 9.152714e-05 
+## AR coefficient matrix 
+## AR( 1 )-matrix 
+##          [,1]    [,2]
+## [1,] 0.016600  0.0287
+## [2,] 0.000201 -0.0217
+## standard error 
+##        [,1]   [,2]
+## [1,] 0.0147 0.0140
+## [2,] 0.0155 0.0147
+##   
+## Residuals cov-mtx: 
+##               [,1]          [,2]
+## [1,]  3.804083e-05 -1.128310e-05
+## [2,] -1.128310e-05  4.202843e-05
+##   
+## det(SSE) =  1.471488e-09 
+## AIC =  -20.3354 
+## BIC =  -20.3302 
+## HQ  =  -20.33358
+\end{verbatim}
+
+\begin{itemize}
+  \item[b)] Now fit the refined model based on your VAR(1) setting the threshold to 1.96. How many coefficients have been set to zero?
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fx_var1.ref.fit <-}\StringTok{ }\KeywordTok{refVAR}\NormalTok{(}\DataTypeTok{model =}\NormalTok{ fx_var1.fit, }\DataTypeTok{thres =} \FloatTok{1.96}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Constant term: 
+## Estimates:  0 0 
+## Std.Error:  0 0 
+## AR coefficient matrix 
+## AR( 1 )-matrix 
+##      [,1] [,2]
+## [1,]    0    0
+## [2,]    0    0
+## standard error 
+##      [,1] [,2]
+## [1,]    0    0
+## [2,]    0    0
+##   
+## Residuals cov-mtx: 
+##               resi          resi
+## resi  3.807533e-05 -1.130523e-05
+## resi -1.130523e-05  4.204841e-05
+##   
+## det(SSE) =  1.473199e-09 
+## AIC =  -20.33583 
+## BIC =  -20.33583 
+## HQ  =  -20.33583
+\end{verbatim}
+
+Number of coefficients not restricted to 0:0. The means of the series:
+\ensuremath{-6.0948723\times 10^{-6}},
+\ensuremath{-4.3991025\times 10^{-6}}.
+
+\begin{itemize}
+  \item[c)] Compare the MSEs of the ‘ordinary’ model and the refined model.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{diag}\NormalTok{(fx_var1.fit}\OperatorTok{$}\NormalTok{Sigma) }\OperatorTok{/}\StringTok{ }\KeywordTok{diag}\NormalTok{(fx_var1.ref.fit}\OperatorTok{$}\NormalTok{Sigma)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      resi      resi 
+## 0.9990940 0.9995248
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{det}\NormalTok{(fx_var1.fit}\OperatorTok{$}\NormalTok{Sigma) }\OperatorTok{/}\StringTok{ }\KeywordTok{det}\NormalTok{(fx_var1.ref.fit}\OperatorTok{$}\NormalTok{Sigma)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.9988387
+\end{verbatim}
+
+Virtually the same. though the \(\VAR(1)\) explains tiny bits of the
+variation.
+
+\begin{itemize}
+  \item[d)] Thirdly, estimate a $\VAR(0)$ with intercept by regression. Compare its MSFE with the forecast errors of the ‘ordinary’ $\VAR(1)$ model regarding a forecast horizon $h = 10$.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fx_var0.predictions <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{(fx_series) }
+\NormalTok{fx_var0.msfe <-}\StringTok{ }\KeywordTok{colMeans}\NormalTok{( (}\KeywordTok{cbind}\NormalTok{(fx_series[,}\DecValTok{1}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{fx_var0.predictions[}\DecValTok{1}\NormalTok{], fx_series[,}\DecValTok{2}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{fx_var0.predictions[}\DecValTok{2}\NormalTok{]))}\OperatorTok{^}\DecValTok{2}\NormalTok{ )}
+\NormalTok{fx_var0.rmse <-}\StringTok{ }\KeywordTok{sqrt}\NormalTok{(fx_var0.msfe)}
+\NormalTok{fx_var1.pred <-}\StringTok{ }\KeywordTok{VARpred}\NormalTok{(}\DataTypeTok{model =}\NormalTok{ fx_var1.fit, }\DataTypeTok{h =} \DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## orig  5021 
+## Forecasts at origin:  5021 
+##            lr.Eu      lr.Ja
+##  [1,] -1.563e-04  1.240e-04
+##  [2,] -4.051e-06 -5.411e-06
+##  [3,] -5.242e-06 -2.568e-06
+##  [4,] -5.181e-06 -2.630e-06
+##  [5,] -5.181e-06 -2.629e-06
+##  [6,] -5.181e-06 -2.629e-06
+##  [7,] -5.181e-06 -2.629e-06
+##  [8,] -5.181e-06 -2.629e-06
+##  [9,] -5.181e-06 -2.629e-06
+## [10,] -5.181e-06 -2.629e-06
+## Standard Errors of predictions:  
+##           [,1]     [,2]
+##  [1,] 0.006168 0.006483
+##  [2,] 0.006171 0.006484
+##  [3,] 0.006171 0.006484
+##  [4,] 0.006171 0.006484
+##  [5,] 0.006171 0.006484
+##  [6,] 0.006171 0.006484
+##  [7,] 0.006171 0.006484
+##  [8,] 0.006171 0.006484
+##  [9,] 0.006171 0.006484
+## [10,] 0.006171 0.006484
+## Root mean square errors of predictions:  
+##           [,1]     [,2]
+##  [1,] 0.006170 0.006485
+##  [2,] 0.006209 0.006506
+##  [3,] 0.006171 0.006484
+##  [4,] 0.006171 0.006484
+##  [5,] 0.006171 0.006484
+##  [6,] 0.006171 0.006484
+##  [7,] 0.006171 0.006484
+##  [8,] 0.006171 0.006484
+##  [9,] 0.006171 0.006484
+## [10,] 0.006171 0.006484
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{paste}\NormalTok{(}\StringTok{"Ratio of forecast errors:"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "Ratio of forecast errors:"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fx_var1.pred}\OperatorTok{$}\NormalTok{rmse }\OperatorTok{/}\StringTok{ }\KeywordTok{matrix}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ fx_var0.rmse, }\DataTypeTok{nrow =} \DecValTok{10}\NormalTok{, }\DataTypeTok{byrow =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{ncol =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##            [,1]      [,2]
+##  [1,] 0.9998946 0.9999708
+##  [2,] 1.0063092 1.0031989
+##  [3,] 1.0000495 0.9999113
+##  [4,] 1.0000486 0.9999097
+##  [5,] 1.0000486 0.9999097
+##  [6,] 1.0000486 0.9999097
+##  [7,] 1.0000486 0.9999097
+##  [8,] 1.0000486 0.9999097
+##  [9,] 1.0000486 0.9999097
+## [10,] 1.0000486 0.9999097
+\end{verbatim}
+
+\(\VAR(0)\) with intercept:
+
+\begin{align*}
+  z_t & = \phi_0 + a_t\\
+  \Rightarrow \hat{\phi_0} & = \argmin_{\phi_0} \sum_{t = 1}^{T} \left(z_t - \phi_0 \right)^{'} \left(z_t - \phi_0 \right)\\
+  \Rightarrow \hat{\phi}_0 & = \dfrac{1}{T} \sum_{t = 1}^{T} z_t \rightarrow \mathbb{E} (z_t)\\
+  \Rightarrow \hat{z}_{t,t+h} &= = \bar{z_t} = \hat{\phi}_0
+\end{align*}
+
+The \(\VAR(1)\) does slightly better at \(h = \left\{ 1,2,3 \right\}\)
+but then the forecast errors align because the \(\VAR(1)\) forecast has
+returned to the mean.
+
+\begin{itemize}
+  \item[e)] How do your results in d) align with the insights you gained in exercise 2h)?
+\end{itemize}
+
+\emph{Solution:}
+
+The \(\VAR(1)\) might be overspecified, but this did not lead to
+considerable overfitting. Primarily this is due to the small number of
+coefficients and the large sample size
+\(\left( \dfrac{\# \text{coefs}}{\# \text{data points}} \; \; \text{remains small}\right)\)
+
+\begin{itemize}
+  \item[f)]  What can you do to reproduce the findings from 2h) in this setting?
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var25.fit <-}\StringTok{ }\KeywordTok{VAR}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ fx_series[}\DecValTok{1}\OperatorTok{:}\DecValTok{500}\NormalTok{,], }\DataTypeTok{p =} \DecValTok{25}\NormalTok{, }\DataTypeTok{include.mean =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{output =} \OtherTok{FALSE}\NormalTok{)}
+\NormalTok{var25.pred <-}\StringTok{ }\KeywordTok{VARpred}\NormalTok{(}\DataTypeTok{model =}\NormalTok{ var25.fit, }\DataTypeTok{h =} \DecValTok{10}\NormalTok{, }\DataTypeTok{output =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## orig  500
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var25.pred}\OperatorTok{$}\NormalTok{rmse }\OperatorTok{/}\StringTok{ }\NormalTok{fx_var1.pred}\OperatorTok{$}\NormalTok{rmse}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           [,1]     [,2]
+##  [1,] 1.065278 1.096485
+##  [2,] 5.759076 1.623631
+##  [3,] 2.179696 3.392377
+##  [4,] 2.241620 2.135705
+##  [5,] 5.304804 3.650994
+##  [6,] 4.145933 4.549648
+##  [7,] 4.886221 3.987958
+##  [8,] 3.059212 3.946744
+##  [9,] 3.646427 7.089310
+## [10,] 2.589909 2.147618
+\end{verbatim}
+
+Note the chaotic (non-)structure in the MSFE! Usually it should rise
+with h\ldots. Degrees of freedom: `r 500 - 25 * 2\^{}2 + 2. Reduce the
+number of observations massively and raise the number of coefficients
+distinctly. This will produce overfitting.
+
+The forecasts will converge to the mean quickly (faster than in 2)h) ),
+since there is barly any autocorrelation so the innovations' effects
+vanish almost immediately. And trivially, the MSFE (out-of-sample) will
+be similar to the MSE (in-sample), because there is effectively no model
+to be found except the global mean.
+
+\hypertarget{exercise-4-forecast-errors}{%
+\section{Exercise 4: Forecast Errors}\label{exercise-4-forecast-errors}}
+
+Show that Equation (5.1) in the lecture slides implies that
+\[ \mathbb{E} \left[ \hat{z}_{T,\ T + h}^{(i)} - z_{T+h} \right]^2 \geq \mathbb{E} \left[ \hat{z}_{T}^{(i)}  (h)- z_{T+h} \right]^2 \text{,}\]
+
+where \(\hat{z}_{T, T+h}^{(i)}\) and \(z_T^{(i)} (h)\) denote the
+\(i\)-th components of the respective forecasts \((i = 1, \dots ,K)\)
+for the observation \(z_{T+h}\). This means that the optimal univariate
+forecasts are simply the components of the optimal \emph{multivariate}
+forecast \(z_T (h)\).
+
+\emph{Solution:}
+
+\begin{itemize}
+  \item $\hat{z}_{T, T+h}^{(i)}$: $h$-steps ahead forecast of variable $i$ at time $T$ 
+  \item $\hat{z}_{T}^{(i)} (h)$: optimal $h$-steps ahead forecast of variable $i$ at time $T$
+\end{itemize}
+
+\underline{Multivariate:} Equation 5.1
+
+\begin{align*}
+  \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) \right| & \geq \left| \text{MSE} \left( \hat{z}_{T} (h) \right) \right| \\
+  \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) - \text{MSE} \left( \hat{z}_{T} (h) \right) \right| & \geq 0 \\
+\end{align*}
+
+\(\rightarrow\) a p.s.d. matrix!
+
+From slide (5-5) we know:
+
+\begin{align*}
+  \mathbb{E} \left[ \left( z_T (h) - \hat{z}_{T, T+h}\right) \left( z_T (h) - \hat{z}_{T, T+h}\right)^{'} \right] & \geq 0 =: A\\
+\end{align*}
+
+For any p.s.d. matrix \(A\) and vector \(w\) it holds that
+
+\begin{align*}
+  w^{'} A w & \geq 0 \\
+  \\
+  \text{Define} \ w & = \begin{pmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \vdots \\ 0 \end{pmatrix} \leftarrow \ \text{only 1 at indes} i \text{!}
+\end{align*}
+
+\begin{itemize}
+  \item $w^{'} A$ is $0$ everywhere except at row $i$ and $Aw$ sets every column except $i$ to zero. 
+  \item $w^{'}A w$ is only $\neq 0$ at the $i^{th}$ element on the main diagonal!
+\end{itemize}
+
+That means:
+
+\begin{align*}
+  w^{'} A w & = \mathbb{E} \left[ \left( z_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right]\\
+  & \geq 0 \ \text{(p.s.d)}\\
+  & \text{which corresponds to} \ \; \text{MSE} \left(z_{T, T+h}^{(i)} \right) - \text{MSE} \left(z_{T}^{(i)} \right)\\
+  & = \mathbb{E} \left[ \left( \hat{z}_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right] - \mathbb{E} \left[ \left( z_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right] \\
+  & \geq 0
+\end{align*}
+
 \end{document}

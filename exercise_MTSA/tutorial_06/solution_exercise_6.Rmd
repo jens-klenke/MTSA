@@ -354,9 +354,164 @@ var_3.pred$pred - matrix(data = colMeans(macdata),
 
 They converge to the means of $\mathbb{E}(z_t)$ because this process is stationary and the influence of  $a_t, a_{t-1}, \ldots, a_{0}$ vanishes as $h \rightarrow \infty$
 
+# Exercise 3: Simplicfication and Forecasting – Exchange Rates
+
+```{r 3_prep,include = FALSE, warning=FALSE}
+# cleaning 
+rm(list = ls())
+# loading
+load(here::here('exercise_MTSA/00_data/quandl.Rda'))
+answer <- "There is nothing to gain here, hence the VAR(1) is not better or worse than the VAR(0). There are still plenty of degrees of freedom left."
+```
+
+\begin{itemize}
+  \item[a)] Fit a $\VAR(1)$ model to the data regardless of the information criteria.
+\end{itemize}
+
+_Solution:_
+
+```{r 3_a}
+fx_var1.fit <- VAR(x = fx_series, p = 1, include.mean = TRUE)
+```
+
+\begin{itemize}
+  \item[b)] Now fit the refined model based on your VAR(1) setting the threshold to 1.96. How many coefficients have been set to zero?
+\end{itemize}
+
+_Solution:_
+
+```{r 3_b}
+fx_var1.ref.fit <- refVAR(model = fx_var1.fit, thres = 1.96)
+```
+
+Number of coefficients not restricted to 0:`r sum(fx_var1.ref.fit$coef != 0.0)`. The means of the series: `r colMeans(fx_series)`. 
+
+\begin{itemize}
+  \item[c)] Compare the MSEs of the ‘ordinary’ model and the refined model.
+\end{itemize}
+
+_Solution:_
+
+```{r 3_c}
+diag(fx_var1.fit$Sigma) / diag(fx_var1.ref.fit$Sigma)
+det(fx_var1.fit$Sigma) / det(fx_var1.ref.fit$Sigma)
+```
+
+Virtually the same. though the $\VAR(1)$ explains tiny bits of the variation. 
+
+\begin{itemize}
+  \item[d)] Thirdly, estimate a $\VAR(0)$ with intercept by regression. Compare its MSFE with the forecast errors of the ‘ordinary’ $\VAR(1)$ model regarding a forecast horizon $h = 10$.
+\end{itemize}
+
+_Solution:_
+
+```{r 3_d}
+fx_var0.predictions <- colMeans(fx_series) 
+fx_var0.msfe <- colMeans( (cbind(fx_series[,1] - fx_var0.predictions[1], fx_series[,2] - fx_var0.predictions[2]))^2 )
+fx_var0.rmse <- sqrt(fx_var0.msfe)
+fx_var1.pred <- VARpred(model = fx_var1.fit, h = 10)
+cat("\n")
+paste("Ratio of forecast errors:")
+fx_var1.pred$rmse / matrix(data = fx_var0.rmse, nrow = 10, byrow = TRUE, ncol = 2)
+```
+
+
+$\VAR(0)$ with intercept:
+
+\begin{align*}
+  z_t & = \phi_0 + a_t\\
+  \Rightarrow \hat{\phi_0} & = \argmin_{\phi_0} \sum_{t = 1}^{T} \left(z_t - \phi_0 \right)^{'} \left(z_t - \phi_0 \right)\\
+  \Rightarrow \hat{\phi}_0 & = \dfrac{1}{T} \sum_{t = 1}^{T} z_t \rightarrow \mathbb{E} (z_t)\\
+  \Rightarrow \hat{z}_{t,t+h} &= = \bar{z_t} = \hat{\phi}_0
+\end{align*}
+
+The $\VAR(1)$ does slightly better at $h = \left\{ 1,2,3 \right\}$ but then the forecast errors align because the $\VAR(1)$ forecast has returned to the mean. 
+
+\begin{itemize}
+  \item[e)] How do your results in d) align with the insights you gained in exercise 2h)?
+\end{itemize}
+
+_Solution:_
+
+The $\VAR(1)$ might be overspecified, but this did not lead to considerable overfitting. Primarily this is due to the small number of coefficients and the large sample size $\left( \dfrac{\# \text{coefs}}{\# \text{data points}} \; \; \text{remains small}\right)$
+
+\begin{itemize}
+  \item[f)]  What can you do to reproduce the findings from 2h) in this setting?
+\end{itemize}
+
+_Solution:_
+
+```{r 3_f}
+var25.fit <- VAR(x = fx_series[1:500,], p = 25, include.mean = TRUE, output = FALSE)
+var25.pred <- VARpred(model = var25.fit, h = 10, output = FALSE)
+var25.pred$rmse / fx_var1.pred$rmse
+```
+
+Note the chaotic (non-)structure in the MSFE! Usually it should rise with h.... Degrees of freedom: `r 500 - 25 * 2^2 + 2. Reduce the number of observations massively and raise the number of coefficients distinctly. This will produce overfitting.
+
+The forecasts will converge to the mean quickly (faster than in 2)h) ), since there is barly any autocorrelation so the innovations' effects vanish almost immediately. And trivially, the MSFE (out-of-sample) will be similar to the MSE (in-sample), because there is effectively no model to be found except the global mean.
+
+
+# Exercise 4: Forecast Errors
+
+Show that Equation (5.1) in the lecture slides implies that
+\[ \mathbb{E} \left[ \hat{z}_{T,\ T + h}^{(i)} - z_{T+h} \right]^2 \geq \mathbb{E} \left[ \hat{z}_{T}^{(i)}  (h)- z_{T+h} \right]^2 \text{,}\]
+
+where $\hat{z}_{T, T+h}^{(i)}$ and $z_T^{(i)} (h)$ denote the $i$-th components of the respective forecasts $(i = 1, \dots ,K)$ for the observation $z_{T+h}$. This means that the optimal univariate forecasts are simply the components
+of the optimal _multivariate_ forecast $z_T (h)$.
+
+_Solution:_
+
+\begin{itemize}
+  \item $\hat{z}_{T, T+h}^{(i)}$: $h$-steps ahead forecast of variable $i$ at time $T$ 
+  \item $\hat{z}_{T}^{(i)} (h)$: optimal $h$-steps ahead forecast of variable $i$ at time $T$
+\end{itemize}
+
+\underline{Multivariate:} Equation 5.1
+
+\begin{align*}
+  \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) \right| & \geq \left| \text{MSE} \left( \hat{z}_{T} (h) \right) \right| \\
+  \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) - \text{MSE} \left( \hat{z}_{T} (h) \right) \right| & \geq 0 \\
+\end{align*}
+
+$\rightarrow$ a p.s.d. matrix! 
+
+From slide (5-5) we know: 
+
+\begin{align*}
+  \mathbb{E} \left[ \left( z_T (h) - \hat{z}_{T, T+h}\right) \left( z_T (h) - \hat{z}_{T, T+h}\right)^{'} \right] & \geq 0 =: A\\
+\end{align*}
+
+For any p.s.d. matrix $A$ and vector $w$ it holds that
+
+\begin{align*}
+  w^{'} A w & \geq 0 \\
+  \\
+  \text{Define} \ w & = \begin{pmatrix} 0 \\ \vdots \\ 0 \\ 1 \\ 0 \vdots \\ 0 \end{pmatrix} \leftarrow \ \text{only 1 at indes} i \text{!}
+\end{align*}
+
+
+\begin{itemize}
+  \item $w^{'} A$ is $0$ everywhere except at row $i$ and $Aw$ sets every column except $i$ to zero. 
+  \item $w^{'}A w$ is only $\neq 0$ at the $i^{th}$ element on the main diagonal!
+\end{itemize}
+
+
+That means: 
+
+\begin{align*}
+  w^{'} A w & = \mathbb{E} \left[ \left( z_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right]\\
+  & \geq 0 \ \text{(p.s.d)}\\
+  & \text{which corresponds to} \ \; \text{MSE} \left(z_{T, T+h}^{(i)} \right) - \text{MSE} \left(z_{T}^{(i)} \right)\\
+  & = \mathbb{E} \left[ \left( \hat{z}_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right] - \mathbb{E} \left[ \left( z_T^{(i)} (h) - z_{T, T+h}^{(i)} (h) \right)^2 \right] \\
+  & \geq 0
+\end{align*}
+
+
+
+
 
 
 <!--
-
 
 -->
