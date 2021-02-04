@@ -239,7 +239,7 @@ Using lag notation:
 \end{align*}
 
 \begin{itemize}
-  \item[b)] Asume the linear forecasting model $y_T (h) = \psi y_T$ ans show that $\psi = \phi^h$ minimieses the $\MSE$ of $y_T (h)$  given that $y_t$ is a $\VAR(1)$ process. 
+  \item[b)] Assume the linear forecasting model $y_T (h) = \psi y_T$ ans show that $\psi = \phi^h$ minimieses the $\MSE$ of $y_T (h)$  given that $y_t$ is a $\VAR(1)$ process. 
 \end{itemize}
 
 \emph{Solution:}
@@ -255,5 +255,143 @@ Using lag notation:
   \Rightarrow y_{T+ h} - Y_T (h) & = \phi^h Y_T + \sum_{i = 0}^{h -1} \phi^i a_{T + h -1} - \psi y_T\\
   \Rightarrow \MSE(y_T (h)) & = \mathbb{E} \left[ \underbrace{\left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right) \left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right)^{'} }_{\text{depends not on} \ \psi}       + \underbrace{\left(\phi^h - \psi \right)y_T y_T^{'} \left(\phi^h - \psi \right)}_{\text{minimised by} \ \psi = \phi^h} \right]
 \end{align*}
+
+\hypertarget{exercise-2-properties-of-forecast-errors}{%
+\section{Exercise 2: Properties of forecast
+errors}\label{exercise-2-properties-of-forecast-errors}}
+
+\begin{itemize}
+  \item[a)] Show that for a general $\VAR(p)$ process
+  \[z_{T+h} - z_T (h) = e_T (h) = \sum_{i = 0}^{h -1} \theta_i a_{T + h -i}\]
+  \begin{itemize}
+    \item[] where $z_T (h)$ is assumed to be the optimal forecast.
+  \end{itemize}
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  z_T  & =  \phi_0 + \phi_1 z_{T-1} + \ldots  + \phi_p z_{T-p} + a_t \\
+  \text{and forecast:} \ \ z_{T-1} (1) & = \phi_0  +\phi_1 z_{T-1} + \ldots  + \phi_p z_{T - p}\\
+  \\
+  \Rightarrow Z_{T + 1} - z_T (1) & = a_{T +1} = e_T (1) \\
+  \Rightarrow z_{T + 2} - z_T (2) & = \phi_1 \underbrace{\left( z_{T + 1} - z_T (1) \right)} + a_{T + 2}\\
+  & = \phi_1 a_{T+1} + a_{T+2}\\
+  \Rightarrow z_{T + 3} - z_T (3) & = \phi_1 \underbrace{\left( Z_{T + 2} - z_{T} (2) \right)}_{\phi_1 a_{T + 1} + a_{T + 2}} + \phi_2 \underbrace{\left( z_{T +1} - Z_T (1) \right)}_{a_{T + 2}} + a_{T + 3} \\
+  & = \phi_1 \left( \phi_1 a_{T + 1} + a_{T + 2} \right) + \phi_2 a_{T + 2} + a_{T + 3}\\
+  & = \underbrace{\left( \phi_1^2 + \phi_2 \right)}_{\theta_2} a_{T + 1} + \underbrace{\phi_1}_{\theta_1} a_{T + 2} + \underbrace{ \ }_{I} a_{T + 3}\\
+  & = \theta_2 a_{T + 1} + \theta_1 a_{T + 2} + \underbrace{\theta_0}_{I} a_{T + 3}\\
+  \Rightarrow z_{T + h} - z_T (h) & = \theta_{h - 1} a_{T + 1} + \theta_{h - 2} a_{T + 2} + \ldots + \theta_{1} a_{T + h - 1} + \underbrace{\theta_0}_{I} a_{T + h}
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Assume that $a_t \sim N \left( 0, \Sigma_a \right)$. Derive the distribution of $e_T (h)$.   
+\end{itemize}
+
+\emph{Solution:} \begin{align*}
+  \mathbb{E} \left[ z_{T +h}  - z_T (h) \right] & = \sum_{i = 0}^{h-1} \theta_i  \underbrace{\mathbb{E} \left[ a_{T + h - 1}\right]}_{= 0} = 0\\
+  \\
+  \Cov \left[ z_{T+} - z_T (h) \right]  & = \mathbb{E} \left[ \left( \sum_{i = 0}^{h-1} \theta_i a_{T + h - i} \right) \left( \sum_{j = 0}^{h-1} \theta_j a_{T + h - j} \right)^{'} \right]\\
+   & = \mathbb{E} \left[ \sum_{i = 0}^{h-1} \theta_i \ a_{T + h - i} \ a_{T + h - j}^{'} \ \theta_i^{'} \right]\\
+   & = \sum_{i = 0}^{h-1} \theta_i \ \mathbb{E} \left[\ a_{T + h - i} \ a_{T + h - j}^{'} \right] \ \theta_i^{'} \\
+   & = \sum_{i = 0}^{h-1} \theta_i \ \Sigma_a  \theta_i^{'}  = \Sigma_e (h) \\
+   & \text{since} \mathbb{E} \left( a_{T + h - i} a_{T + h - j} \right) = 0 \text{if} j \neq i 
+\end{align*}
+
+By using the fact that a sum of i.i.d. normally distributed variables
+follows are normal distributed: \begin{align*}
+  e_T (h) \sim \left( N, \Sigma_e (h)\right)\\
+  \text{with} \ \Sigma_e (h) = \sum_{i = 0}^{h - 1} \theta_i \Sigma_a \theta_i
+\end{align*}
+
+\begin{itemize}
+  \item[c)] Prove that $\Cov \left( e_T (h) \right) \rightarrow \Gamma_0$ as $h \rightarrow \infty$. 
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \lim_{h \rightarrow \infty} \Cov \left( e_T (h) \right) & = \mathbb{E} \left[ \left( \sum_{i = 0}^{\infty} \theta_i a_{T + h -i}\right)  \left( \sum_{i = 0}^{\infty} \theta_i a_{T + h -i}\right)^{'} \right] \\
+  & = \lim_{h \rightarrow \infty} \mathbb{E} \left( z_{T + h} z_{T + h}^{'} \right)\\
+  & = \lim_{h \rightarrow \infty} \Gamma_0^{T + h} = \Gamma_0\\
+\end{align*}
+
+by weak stationary.
+
+\hypertarget{exercise-3-forecast-intervals}{%
+\section{Exercise 3: Forecast
+intervals}\label{exercise-3-forecast-intervals}}
+
+\emph{Solution:}
+
+\begin{align*}
+  e_T (h) & \sim N \left( 0, \Cov(e_T(h))\right) \\
+  & \text{For each element it holds that:}\\
+  \dfrac{e_{T}^{(i)} (h) }{\sqrt{\Var(e_T^{(i)} (h))}} & \sim N(0,1)\\
+  \\
+  \Rightarrow & \text{we need} \ \sqrt{\Cov(e_T (h))} \\
+  & \rotatebox[origin=c]{180}{$\Lsh$} \ \text{Cholesky decomposition of a positive deinifite matrix} \ A \\
+  A & = UDU^{'} \text{, with D a diagonal matrix and U a lower traingular matrix}\\
+  & \text{D can be split further into} \ D^{\frac{1}{2}} \cdot D^{\frac{1}{2}} \ (\text{note that} \ D^{'} = D \  \text{and} \ D^{\frac{1}{2}^{'}} = D^{\frac{1}{2}}) \\
+  \Rightarrow A & = U D^{\frac{1}{2}} D^{\frac{1}{2}^{'}} = U D^{\frac{1}{2}} \left(U D^{\frac{1}{2}} \right)^{'}\\ 
+  & = L L^{'}\\ 
+  & \ \text{using} \ \Cov(e_T(h)) = \Cov(e_T(h))^{'} \ \text{by symmetry}
+\end{align*}
+
+\begin{align*}
+  \Rightarrow e_T (h)^{'} \cdot \Cov(e_T(h))^{-1} \cdot e_T (h) & = e_T (h)^{'} \underbrace{\Cov(e_T(h))^{- \frac{1}{2}^{'}}}_{= L} \underbrace{\Cov(e_T(h))^{- \frac{1}{2}}}_{= L^{'}} e_T (h)\\
+  & = \underbrace{\left( e_T (h) \ \Cov(e_T(h))^{- \frac{1}{2}} \right)^{'}}_{\sim N(0, I)} \underbrace{\left( e_T (h) \ \Cov(e_T(h))^{- \frac{1}{2}} \right)}_{\sim N(0, I)} 
+\end{align*}
+
+Both distributions are multivariate with \(K\) variables. Due to the
+inner product we have a sum of \(K\) squared standard normal variables.
+
+\(\Rightarrow\) this follows are \(\chi^2_K\) distribution!
+
+The ellipsid an then be set up:
+
+\[\left\{ z \in \mathbb{R}^K: e_T (h)^{'} \Cov(e_T (h))^{-1} e_T (h) \leq \chi_{K, 1- \alpha}^2 \right\}\]
+
+\hypertarget{exercise-4-delta-method}{%
+\section{Exercise 4: Delta Method}\label{exercise-4-delta-method}}
+
+For this task, assume both \(y_T\) and \(x_t\) to be \(K \times 1\)
+vectors and
+\(x_t \overset{i.i.d.}{\sim} \left[ \mu_x, \Sigma_x\right]\).
+
+\begin{itemize}
+  \item[a)] Let $y_t = f(x_t) = \phi_1 x_t$. Compute the mean and variance of $y_T$.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  y_t & = \phi_1 x_t\\
+  \\
+  \mathbb{E} & = \mathbb{E} (\phi_1 x_t) = \phi_1 \mathbb{E} (x_t) = \phi_1 \mu_x \\
+  y_t - \mathbb{E}(y_t) & = \tilde{y}_t = \phi_1 (x_t - \mu_x) = \phi_1 \tilde{x}_t\\
+  \\
+  \Cov(y_t) & = \Cov(\tilde{y}_t) = \Cov(\phi_1 \tilde{x}_t) \\
+  & = \phi_1 \mathbb{E} (\tilde{x}_t \tilde{x}_t^{'}) \phi_1^{'} = \phi_1 \Sigma_x \phi_1^{'}
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Derive the distribution of $\sqrt{T} \left(\bar{y_T} - E(y) \right)$ from your results in a). 
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  x_t \  \text{ is i.i.d. distributed, } \mathbb{E}(x_t)< \infty, \Cov(x_t) < \infty \\
+  \\
+  \Rightarrow \text{ a CLT applies!}\\
+  \sqrt{T} \left( \bar{Y}_T - \mathbb{E} (y) \right) \overset{d}{\longrightarrow} N(0, \phi_1 \Sigma_x \phi_1^{'} )
+\end{align*}
+
+\begin{itemize}
+  \item[c)] Now let $f(\cdot)$ be some function $f(x): \mathbb{R}^K \mapsto \mathbb{R}^K$. Derive the first order Taylor expansion for $f(x)$ at $\mu_x$ and write it down in detail.  
+\end{itemize}
+
+\emph{Solution:}
 
 \end{document}
