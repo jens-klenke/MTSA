@@ -1,0 +1,113 @@
+---
+title: 'Multivariate Time Series Analysis'
+author: 'Dr. Yannick Hoga'
+author2: 'Thilo Reinschlüssel'
+subtitle: 'Solution Exercise Sheet 7'
+semester: "Winter Term 2019/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+    template: ../template.tex
+    fig_caption: yes
+    citation_package: biblatex
+    number_sections: true
+toc: true
+lot: true
+lof: true
+graphics: true
+linkcolor: black
+urlcolor: black
+citecolor: black
+colorlinks: true
+font: Times New Roman
+fontsize: 12pt
+geometry: lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm
+classoption: a4paper
+---
+
+```{r , include=FALSE}
+Sys.setlocale(locale = "English_United States.1252") ## English US Windows
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("packages/packages.R"))
+```
+
+# Exercise 1: The optimal forecast
+
+\begin{itemize}
+  \item[a)] Show that the stationary $\VAR(1)$ process $z_t = t_{t-1} + a_t$ with $a_t$ a standard white noise has the following causal representation:
+  
+  $$z_t = \sum_{i  = 0}^{\infty} \theta_i a_{t-i} $$
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  z_t & = \phi \cdot \underbrace{z_{t-1}}_{\phi z_{t-2} + a_{t-1}} + a_t \\
+  & = \phi^2 z_{t-2} + \phi a_{t-1} + a_t\\
+  & = \phi^3 z_{t-3} + \phi^2 a_{t-2} + \phi a_{t-1} + a_t\\
+  & \vdots \\
+  & = \phi^m z_{t -m} + \sum_{i = 0}^{m - 1} \phi^i a_{t-i}\\
+  & = 0 + \sum_{i = 0}^{m - 1} \phi^i a_{t-i}˜ \\
+  & \text{with} \ \lim_{m \rightarrow \infty} \phi^m = 0 \ \text{by weak stationarity}\\
+  & = \sum_{i = 0}^{\infty} \theta_i a_{t-i}
+\end{align*}
+
+
+Using lag notation: 
+
+\begin{align*}
+  z_t & = \phi  L z_t + a_t \\
+  \Leftrightarrow (1 - \phi L)z_t & = a_t \\
+  \Leftrightarrow z_t & = (1 - \phi L)^{-1} a_t
+  \text{and} \quad (1 - \phi L)^{-1} & = \sum_{i = 0}^{\infty} \phi^i L^i \\
+  & \text{(requires stationarity and invertiability)}
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Assume the linear forecasting model $y_T (h) = \psi y_T$ ans show that $\psi = \phi^h$ minimieses the $\MSE$ of $y_T (h)$  given that $y_t$ is a $\VAR(1)$ process. 
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  y_T (h) = \argmin \underbrace{\MSE(y_T (h))}_{\mathbb{E} \left( \left[y_{T+h} - y_T (h) \right] \left[y_{T+h} - y_T (h) \right]^{'} \right)}\\
+\end{align*}  
+\begin{align*}  
+  \rightarrow Y_{T+h} & = \phi Y_{T+ h -1} + a_{T+h}\\
+  & \vdots\\
+  & = \phi^h  Y_T + \sum_{i = 0}^{h -1} \phi^i a_{T+h-i}\\
+  \\
+  \Rightarrow y_{T+ h} - Y_T (h) & = \phi^h Y_T + \sum_{i = 0}^{h -1} \phi^i a_{T + h -1} - \psi y_T\\
+  \Rightarrow \MSE(y_T (h)) & = \mathbb{E} \left[ \underbrace{\left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right) \left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right)^{'} }_{\text{depends not on} \ \psi}       + \underbrace{\left(\phi^h - \psi \right)y_T y_T^{'} \left(\phi^h - \psi \right)}_{\text{minimised by} \ \psi = \phi^h} \right]
+\end{align*}
+
+# Exercise 2: Forecast intervals
+
+Derive the confidence ellipsoid for $e_T (h)$ (see slide 5-14) fomr (5.9) based on your results in Exercise 2.
+
+_Solution:_
+
+\begin{align*}
+  z_T & = \phi_0 + \phi_1 z_{T-1} + \ldots + \phi_p z_{T - p} + a_T\\
+  \text{and forecast:} \ z_{T-1} (1) & = \phi_0 + \phi_1 z_{t-1} + \ldots + \phi_p z_{T-p} 
+\end{align*}
+
+
+\begin{align*}
+ \Rightarrow  z_{T+1} - z_T (1) & =  a_{T + 1}\\
+\end{align*}
+
+
+
+# Exercise 3:
+
+\begin{itemize}
+  \item[a)] Asume the linear forecasting model $y_T (h) = \psi y_T$ ans show that $\psi = \phi^h$ minimieses the $\MSE$ of $y_T (h)$  given that $y_t$ is a $\VAR(1)$ process. 
+\end{itemize}
+
+
+_Solution:_
+
+
+

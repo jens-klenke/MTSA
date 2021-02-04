@@ -93,9 +93,9 @@ Linear transformation: $k_t = B z_t + c$
   & = \left(\left| B \right|\right)^2 \ \left| \MSE \left( \hat{z}_{t, t+1}) \right) \right| 
 \end{align*}
 
-$\Rightarrow$ The linear transformation affects the value of the ICs. BUt as long as $|B| \neq 0$ (non-singular), the $\MSE\left( \hat{k}_{t,t+1} \right)$ is minimal where $\MSE\left( \hat{z}_{t,t+1} \right)$ has its minimum. 
+$\Rightarrow$ The linear transformation affects the value of the ICs. But as long as $|B| \neq 0$ (non-singular), the $\MSE\left( \hat{k}_{t,t+1} \right)$ is minimal where $\MSE\left( \hat{z}_{t,t+1} \right)$ has its minimum. 
 
-Example fot singular $B$: 
+Example for singular $B$: 
 
 \[B = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}, \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}, \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}\]
 
@@ -127,7 +127,7 @@ $\Rightarrow$ Standard errors are scale-invariant! (similar to $R^2$)
 
 # Exercise 2: Simplicfication and Forecasting - Macroeconomic Data
 
-Reconsider Exercise 2 from Exercise Sheet 5. Again, please import/load the dataset `us macrodata.Rda` into your workspace and compute the growth rates of the variables appearing non-stationary. There are still 5 variables—CPI, Real GDP, the unemployment rate, general private investment and the debt-to-GDP ratio. All series have been sampled quarterly and were seasonally adjusted before downloaded from _FRED_.
+Reconsider Exercise 2 from Exercise Sheet 5. Again, please import/load the dataset `us_macrodata.Rda` into your workspace and compute the growth rates of the variables appearing non-stationary. There are still 5 variables—CPI, Real GDP, the unemployment rate, general private investment and the debt-to-GDP ratio. All series have been sampled quarterly and were seasonally adjusted before downloaded from _FRED_.
 
 \begin{itemize}
   \item[a)] Fit a $\VAR(p)$ model according to the Hannan-Quinn information-criteria? 
@@ -150,7 +150,7 @@ macdata <- cbind(diff(log(us.macro_series$cpi)),
 ```{r 2_a IC}
 VARorder(x = macdata, maxp = 25)
 ```
-The Hannan-Quinn suggests a $\VAR$ with an order of 3. 
+The Hannan-Quinn information criteria suggests to fit a $\VAR(3)$. 
 
 ```{r 2_a fit}
 var_3.fit <- VAR(x = macdata, p = 3, include.mean = TRUE)
@@ -169,10 +169,10 @@ sum(abs(var_3.tsingle) < 1.96)
 VARchi(x = macdata, p = 3, include.mean = TRUE, thres = 1.96)
 ```
 
-`r sum(abs(var_3.tsingle) < 1.96)` coefficients are not significant to a 5 \% level. 
+`r sum(abs(var_3.tsingle) < 1.96)` coefficients are not significant at a 5 \% level. 
 
 \begin{itemize}
-  \item[c)] Estimate the refined model using the command refVAR by setting a threshold corresponding to the 5% level from b).
+  \item[c)] Estimate the refined model using the command `refVAR` by setting a threshold corresponding to the 5\% level from b).
 \end{itemize}
 
 _Solution:_
@@ -194,7 +194,7 @@ sum(var_3.ref.fit$coef == 0)
 `r sum(var_3.ref.fit$coef == 0)` coefficients are set to 0. 
 
 \begin{itemize}
-  \item[ii)] How many variables have been set to 0?
+  \item[ii)] Does the number coincide with your count in task b)?
 \end{itemize}
 
 _Solution:_
@@ -203,7 +203,7 @@ _Solution:_
 isTRUE(sum(abs(var_3.tsingle) < 1.96) == sum(var_3.ref.fit$coef == 0))
 ```
 
-The difference is `r sum(abs(var_3.tsingle) < 1.96) - sum(var_3.ref.fit$coef == 0)` coefficients. So there are not equal but pretty close. 
+There is a difference between the two methods. In the redefined model there are `r sum(abs(var_3.tsingle) < 1.96) - sum(var_3.ref.fit$coef == 0)` coefficients less set to zero.
 
 \begin{itemize}
   \item[iii)] What may be the reason for the two numbers differing? (Hint: Slide 4-21)
@@ -211,7 +211,7 @@ The difference is `r sum(abs(var_3.tsingle) < 1.96) - sum(var_3.ref.fit$coef == 
 
 _Solution:_
 
-Separate tests give `r sum(abs(var_3.tsingle) < 1.96)` but the joint (multiple) test gives only `r sum(var_3.ref.fit$coef == 0)`. Most coefficients initially explained tiny bits of the variation. And if these coefficients are correlated with each other, restricting some coefficients changes the remaining coefficients, forcing an earlier rejection. 
+Separate tests results in `r sum(abs(var_3.tsingle) < 1.96)` coefficient which should be 0, but the joint (multiple) test gives only `r sum(var_3.ref.fit$coef == 0)`. Most coefficients initially explained tiny bits of the variation and if these coefficients are correlated with each other, restricting some coefficients changes the remaining coefficients, forcing an earlier rejection. 
 
 $\Rightarrow$ Problem in backwards selection!
 
@@ -227,7 +227,7 @@ cbind( c("AIC", "BIC", "HQ"),
        c(var_3.ref.fit$aic, var_3.ref.fit$bic, var_3.ref.fit$hq) )
 ```
 
-The redefined model wins, all 3 ICs support it. Also note how close the ICs values are in comparison to the fully specified model. 
+The value of the ICs support in all three cases the redefined model. Also note how close the ICs values are in comparison to the fully specified model. 
 
 \begin{itemize}
   \item[e)] Proceed to compare the MSEs of the ‘ordinary’ VAR model and the refined model. Is the model picked by the information criteria again superior? Explain your results.
@@ -296,7 +296,7 @@ diag(var_1.fit$Sigma) / diag(var_3.fit$Sigma)
 det(var_1.fit$Sigma) / det(var_3.fit$Sigma)
 ```
 
-The $\VAR(3)$ is also better then a $\VAR(1) \ \MSE$-wise. Not surprisingly at in-sample, see e. 
+The $\VAR(3)$ performs also better then a $\VAR(1) \ \MSE$-wise. Not surprisingly at in-sample, see e. 
 
 \begin{itemize}
   \item[h)] Lastly, compute the forecasts’ $\MSE$s (referred to as MSFE) for both models using the command `VARpred`. Please use a forecast horizon h of 10.
@@ -352,7 +352,7 @@ var_3.pred$pred - matrix(data = colMeans(macdata),
                          nrow = 10, ncol = 5, byrow = TRUE)
 ```
 
-They converge to the means of $\mathbb{E}(z_t)$ because this process is stationary and the influence of  $a_t, a_{t-1}, \ldots, a_{0}$ vanishes as $h \rightarrow \infty$
+They converge to the means of $\mathbb{E}(z_t)$ because this process is stationary and the influence of  $a_t, a_{t-1}, \ldots, a_{0}$ vanishes as $h \rightarrow \infty$,
 
 # Exercise 3: Simplicfication and Forecasting – Exchange Rates
 
@@ -384,7 +384,7 @@ _Solution:_
 fx_var1.ref.fit <- refVAR(model = fx_var1.fit, thres = 1.96)
 ```
 
-Number of coefficients not restricted to 0:`r sum(fx_var1.ref.fit$coef != 0.0)`. The means of the series: `r colMeans(fx_series)`. 
+The Number of coefficients which are not set to zero are `r sum(fx_var1.ref.fit$coef != 0.0)`. The means of the series: `r colMeans(fx_series)` very close to zero. 
 
 \begin{itemize}
   \item[c)] Compare the MSEs of the ‘ordinary’ model and the refined model.
@@ -410,8 +410,9 @@ fx_var0.predictions <- colMeans(fx_series)
 fx_var0.msfe <- colMeans( (cbind(fx_series[,1] - fx_var0.predictions[1], fx_series[,2] - fx_var0.predictions[2]))^2 )
 fx_var0.rmse <- sqrt(fx_var0.msfe)
 fx_var1.pred <- VARpred(model = fx_var1.fit, h = 10)
-cat("\n")
-paste("Ratio of forecast errors:")
+```
+The ratio of the forecast errors are:
+```{r 3_d_2}
 fx_var1.pred$rmse / matrix(data = fx_var0.rmse, nrow = 10, byrow = TRUE, ncol = 2)
 ```
 
@@ -447,7 +448,7 @@ var25.pred <- VARpred(model = var25.fit, h = 10, output = FALSE)
 var25.pred$rmse / fx_var1.pred$rmse
 ```
 
-Note the chaotic (non-)structure in the MSFE! Usually it should rise with h.... Degrees of freedom: `r 500 - 25 * 2^2 + 2. Reduce the number of observations massively and raise the number of coefficients distinctly. This will produce overfitting.
+Note the chaotic (non-)structure in the MSFE! Usually it should rise with $h$. Reduce the number of observations massively and raise the number of coefficients distinctly. This will produce overfitting.
 
 The forecasts will converge to the mean quickly (faster than in 2)h) ), since there is barly any autocorrelation so the innovations' effects vanish almost immediately. And trivially, the MSFE (out-of-sample) will be similar to the MSE (in-sample), because there is effectively no model to be found except the global mean.
 
@@ -472,9 +473,8 @@ _Solution:_
 \begin{align*}
   \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) \right| & \geq \left| \text{MSE} \left( \hat{z}_{T} (h) \right) \right| \\
   \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) - \text{MSE} \left( \hat{z}_{T} (h) \right) \right| & \geq 0 \\
+  & \text{$\rightarrow$ a p.s.d. matrix! }
 \end{align*}
-
-$\rightarrow$ a p.s.d. matrix! 
 
 From slide (5-5) we know: 
 

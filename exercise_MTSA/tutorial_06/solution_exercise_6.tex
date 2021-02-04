@@ -311,11 +311,11 @@ Linear transformation: \(k_t = B z_t + c\)
 \end{align*}
 
 \(\Rightarrow\) The linear transformation affects the value of the ICs.
-BUt as long as \(|B| \neq 0\) (non-singular), the
+But as long as \(|B| \neq 0\) (non-singular), the
 \(\MSE\left( \hat{k}_{t,t+1} \right)\) is minimal where
 \(\MSE\left( \hat{z}_{t,t+1} \right)\) has its minimum.
 
-Example fot singular \(B\):
+Example for singular \(B\):
 
 \[B = \begin{pmatrix} 1 & 1 \\ 1 & 1 \end{pmatrix}, \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}, \begin{pmatrix} 1 & 0 & 0 \\ 0 & 0 & 0 \\ 0 & 0 & 1 \end{pmatrix}\]
 
@@ -354,7 +354,7 @@ If we scale \(Z\) by the scalar \(b\), we also scale
 Data}\label{exercise-2-simplicfication-and-forecasting---macroeconomic-data}}
 
 Reconsider Exercise 2 from Exercise Sheet 5. Again, please import/load
-the dataset \texttt{us\ macrodata.Rda} into your workspace and compute
+the dataset \texttt{us\_macrodata.Rda} into your workspace and compute
 the growth rates of the variables appearing non-stationary. There are
 still 5 variables---CPI, Real GDP, the unemployment rate, general
 private investment and the debt-to-GDP ratio. All series have been
@@ -421,7 +421,7 @@ sampled quarterly and were seasonally adjusted before downloaded from
 ## [26,] 25 -43.1356 -32.7193 -38.9190  30.4528  0.2078
 \end{verbatim}
 
-The Hannan-Quinn suggests a \(\VAR\) with an order of 3.
+The Hannan-Quinn information criteria suggests to fit a \(\VAR(3)\).
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -520,10 +520,10 @@ The Hannan-Quinn suggests a \(\VAR\) with an order of 3.
 ## Chi-square test and p-value:  387.5318 0
 \end{verbatim}
 
-60 coefficients are not significant to a 5 \% level.
+60 coefficients are not significant at a 5 \% level.
 
 \begin{itemize}
-  \item[c)] Estimate the refined model using the command refVAR by setting a threshold corresponding to the 5% level from b).
+  \item[c)] Estimate the refined model using the command `refVAR` by setting a threshold corresponding to the 5\% level from b).
 \end{itemize}
 
 \emph{Solution:}
@@ -615,7 +615,7 @@ The Hannan-Quinn suggests a \(\VAR\) with an order of 3.
 48 coefficients are set to 0.
 
 \begin{itemize}
-  \item[ii)] How many variables have been set to 0?
+  \item[ii)] Does the number coincide with your count in task b)?
 \end{itemize}
 
 \emph{Solution:}
@@ -630,8 +630,8 @@ The Hannan-Quinn suggests a \(\VAR\) with an order of 3.
 ## [1] FALSE
 \end{verbatim}
 
-The difference is 12 coefficients. So there are not equal but pretty
-close.
+There is a difference between the two methods. In the redefined model
+there are 12 coefficients less set to zero.
 
 \begin{itemize}
   \item[iii)] What may be the reason for the two numbers differing? (Hint: Slide 4-21)
@@ -639,11 +639,11 @@ close.
 
 \emph{Solution:}
 
-Separate tests give 60 but the joint (multiple) test gives only 48. Most
-coefficients initially explained tiny bits of the variation. And if
-these coefficients are correlated with each other, restricting some
-coefficients changes the remaining coefficients, forcing an earlier
-rejection.
+Separate tests results in 60 coefficient which should be 0, but the
+joint (multiple) test gives only 48. Most coefficients initially
+explained tiny bits of the variation and if these coefficients are
+correlated with each other, restricting some coefficients changes the
+remaining coefficients, forcing an earlier rejection.
 
 \(\Rightarrow\) Problem in backwards selection!
 
@@ -668,8 +668,9 @@ rejection.
 ## [3,] "HQ"  "-40.0314738695581" "-40.4542360818213"
 \end{verbatim}
 
-The redefined model wins, all 3 ICs support it. Also note how close the
-ICs values are in comparison to the fully specified model.
+The value of the ICs support in all three cases the redefined model.
+Also note how close the ICs values are in comparison to the fully
+specified model.
 
 \begin{itemize}
   \item[e)] Proceed to compare the MSEs of the ‘ordinary’ VAR model and the refined model. Is the model picked by the information criteria again superior? Explain your results.
@@ -877,7 +878,7 @@ redefined model just 30.
 ## [1] 3.263859
 \end{verbatim}
 
-The \(\VAR(3)\) is also better then a \(\VAR(1) \ \MSE\)-wise. Not
+The \(\VAR(3)\) performs also better then a \(\VAR(1) \ \MSE\)-wise. Not
 surprisingly at in-sample, see e.
 
 \begin{itemize}
@@ -1075,7 +1076,7 @@ prone to overfitting which hurts the out-of-sample forecasts.
 
 They converge to the means of \(\mathbb{E}(z_t)\) because this process
 is stationary and the influence of \(a_t, a_{t-1}, \ldots, a_{0}\)
-vanishes as \(h \rightarrow \infty\)
+vanishes as \(h \rightarrow \infty\),
 
 \hypertarget{exercise-3-simplicfication-and-forecasting-exchange-rates}{%
 \section{Exercise 3: Simplicfication and Forecasting -- Exchange
@@ -1155,9 +1156,9 @@ Rates}\label{exercise-3-simplicfication-and-forecasting-exchange-rates}}
 ## HQ  =  -20.33583
 \end{verbatim}
 
-Number of coefficients not restricted to 0:0. The means of the series:
-\ensuremath{-6.0948723\times 10^{-6}},
-\ensuremath{-4.3991025\times 10^{-6}}.
+The Number of coefficients which are not set to zero are 0. The means of
+the series: \ensuremath{-6.0948723\times 10^{-6}},
+\ensuremath{-4.3991025\times 10^{-6}} very close to zero.
 
 \begin{itemize}
   \item[c)] Compare the MSEs of the ‘ordinary’ model and the refined model.
@@ -1244,21 +1245,7 @@ variation.
 ## [10,] 0.006171 0.006484
 \end{verbatim}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{cat}\NormalTok{(}\StringTok{"}\CharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\KeywordTok{paste}\NormalTok{(}\StringTok{"Ratio of forecast errors:"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-## [1] "Ratio of forecast errors:"
-\end{verbatim}
+The ratio of the forecast errors are:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1342,9 +1329,8 @@ coefficients and the large sample size
 \end{verbatim}
 
 Note the chaotic (non-)structure in the MSFE! Usually it should rise
-with h\ldots. Degrees of freedom: `r 500 - 25 * 2\^{}2 + 2. Reduce the
-number of observations massively and raise the number of coefficients
-distinctly. This will produce overfitting.
+with \(h\). Reduce the number of observations massively and raise the
+number of coefficients distinctly. This will produce overfitting.
 
 The forecasts will converge to the mean quickly (faster than in 2)h) ),
 since there is barly any autocorrelation so the innovations' effects
@@ -1376,9 +1362,8 @@ forecast \(z_T (h)\).
 \begin{align*}
   \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) \right| & \geq \left| \text{MSE} \left( \hat{z}_{T} (h) \right) \right| \\
   \left| \text{MSE} \left( \hat{z}_{T, T+h} \right) - \text{MSE} \left( \hat{z}_{T} (h) \right) \right| & \geq 0 \\
+  & \text{$\rightarrow$ a p.s.d. matrix! }
 \end{align*}
-
-\(\rightarrow\) a p.s.d. matrix!
 
 From slide (5-5) we know:
 

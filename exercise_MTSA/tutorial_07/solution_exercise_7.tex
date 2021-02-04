@@ -1,0 +1,259 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{lmodern}
+
+\usepackage{enumitem}
+\usepackage{placeins}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
+
+
+% Figure Placement:
+\usepackage{float}
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+%%%% Jens %%%%
+\usepackage{titlesec}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\renewcommand{\vec}{\operatorname{vec}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\Var}{\operatorname{Var}} % Variance
+\newcommand{\MSE}{\operatorname{MSE}} % Variance
+\newcommand{\VAR}{\operatorname{VAR}} % Vector autoregression
+\newcommand{\Lag}{\operatorname{L}} % Lag operator
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\adj}{\operatorname{adj}}
+\newcommand{\loglik}{\operatorname{ll}}
+
+\usepackage{centernot}
+
+\allowdisplaybreaks
+
+\titleformat{\section}
+{\normalfont\large\bfseries}{\thesection}{1em}{}
+
+\newcommand{\tmpsection}[1]{}
+\let\tmpsection=\section
+\renewcommand{\section}[1]{\tmpsection{\underline{#1}} }
+
+
+
+
+
+%% citation setup
+\usepackage{csquotes}
+
+\usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
+\setlength\bibitemsep{1.5\itemsep}
+\addbibresource{R_packages.bib}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true, linktocpage = TRUE]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={Dr.~Yannick Hoga},
+            pdftitle={Multivariate Time Series Analysis},
+            colorlinks=true,
+            citecolor=black,
+            urlcolor=black,
+            linkcolor=black,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{5}
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Multivariate Time Series Analysis}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+\subtitle{Solution Exercise Sheet 7}
+  \author{Dr.~Yannick Hoga}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \date{}
+  \predate{}\postdate{}
+
+
+%% linespread settings
+
+\usepackage{setspace}
+
+\onehalfspacing
+
+
+% Language Setup
+
+\usepackage{ifthen}
+\usepackage{iflang}
+\usepackage[super]{nth}
+\usepackage[ngerman, english]{babel}
+
+%Acronyms
+\usepackage[printonlyused, withpage, nohyperlinks]{acronym}
+\usepackage{changepage}
+
+% Multicols for the Title page
+\usepackage{multicol}
+
+
+% foot
+
+
+\begin{document}
+
+\selectlanguage{english}
+
+%%%%%%%%%%%%%% Jens %%%%%
+\numberwithin{equation}{section}
+
+
+
+
+\restoregeometry
+
+
+%%% Header 
+
+\begin{minipage}{0.6\textwidth}
+University of Duisburg-Essen\\
+Faculty of Business Administration and Economics\\
+Chair of Econometrics\\
+\end{minipage}
+
+%\begin{minipage}{0.4\textwidth}
+	\begin{flushright}
+	\vspace{-3cm}
+	\includegraphics*[width=5cm]{../Includes/duelogo_en.png}\\
+	\vspace{.125cm}
+	\end{flushright}
+%\end{minipage}
+%\vspace{.125cm}
+\hspace{-0.005cm}Winter Term 2019/2020
+
+\vspace{0.05cm}
+
+\begin{center}
+	\vspace{.25cm}
+	Dr.~Yannick Hoga \hspace{.5cm} Thilo Reinschlüssel \\
+	\vspace{.25cm}
+	\textbf{\Large{Multivariate Time Series Analysis}}\\
+	\vspace{.25cm}
+	\textbf{\large{Solution Exercise Sheet 7}}\\
+	\vspace{.125cm}
+\end{center}
+
+
+
+
+% body from markdown
+
+\hypertarget{exercise-1-the-optimal-forecast}{%
+\section{Exercise 1: The optimal
+forecast}\label{exercise-1-the-optimal-forecast}}
+
+\begin{itemize}
+  \item[a)] Show that the stationary $\VAR(1)$ process $z_t = t_{t-1} + a_t$ with $a_t$ a standard white noise has the following causal representation:
+  
+  $$z_t = \sum_{i  = 0}^{\infty} \theta_i a_{t-i} $$
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  z_t & = \phi \cdot \underbrace{z_{t-1}}_{\phi z_{t-2} + a_{t-1}} + a_t \\
+  & = \phi^2 z_{t-2} + \phi a_{t-1} + a_t\\
+  & = \phi^3 z_{t-3} + \phi^2 a_{t-2} + \phi a_{t-1} + a_t\\
+  & \vdots \\
+  & = \phi^m z_{t -m} + \sum_{i = 0}^{m - 1} \phi^i a_{t-i}\\
+  & = 0 + \sum_{i = 0}^{m - 1} \phi^i a_{t-i}˜ \\
+  & \text{with} \ \lim_{m \rightarrow \infty} \phi^m = 0 \ \text{by weak stationarity}\\
+  & = \sum_{i = 0}^{\infty} \theta_i a_{t-i}
+\end{align*}
+
+Using lag notation:
+
+\begin{align*}
+  z_t & = \phi  L z_t + a_t \\
+  \Leftrightarrow (1 - \phi L)z_t & = a_t \\
+  \Leftrightarrow z_t & = (1 - \phi L)^{-1} a_t
+  \text{and} \quad (1 - \phi L)^{-1} & = \sum_{i = 0}^{\infty} \phi^i L^i \\
+  & \text{(requires stationarity and invertiability)}
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Asume the linear forecasting model $y_T (h) = \psi y_T$ ans show that $\psi = \phi^h$ minimieses the $\MSE$ of $y_T (h)$  given that $y_t$ is a $\VAR(1)$ process. 
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  y_T (h) = \argmin \underbrace{\MSE(y_T (h))}_{\mathbb{E} \left( \left[y_{T+h} - y_T (h) \right] \left[y_{T+h} - y_T (h) \right]^{'} \right)}\\
+\end{align*}\\
+\begin{align*}  
+  \rightarrow Y_{T+h} & = \phi Y_{T+ h -1} + a_{T+h}\\
+  & \vdots\\
+  & = \phi^h  Y_T + \sum_{i = 0}^{h -1} \phi^i a_{T+h-i}\\
+  \\
+  \Rightarrow y_{T+ h} - Y_T (h) & = \phi^h Y_T + \sum_{i = 0}^{h -1} \phi^i a_{T + h -1} - \psi y_T\\
+  \Rightarrow \MSE(y_T (h)) & = \mathbb{E} \left[ \underbrace{\left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right) \left( \sum_{i = 0}^{h-1} \phi^i a_{T+h-i}  \right)^{'} }_{\text{depends not on} \ \psi}       + \underbrace{\left(\phi^h - \psi \right)y_T y_T^{'} \left(\phi^h - \psi \right)}_{\text{minimised by} \ \psi = \phi^h} \right]
+\end{align*}
+
+\end{document}
