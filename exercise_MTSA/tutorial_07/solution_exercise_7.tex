@@ -1,6 +1,7 @@
 \documentclass[12pt,a4paper]{article}
 \usepackage{lmodern}
 
+\usepackage{scalerel}
 \usepackage{enumitem}
 \usepackage{placeins}
 \usepackage{amssymb,amsmath}
@@ -393,5 +394,67 @@ vectors and
 \end{itemize}
 
 \emph{Solution:}
+
+\begin{align*}
+  f(x) & = f(x_1, \ldots, f_k)\\
+  & = \begin{pmatrix}
+    f_1 (x_1, \ldots, f_k)\\
+    \vdots \\
+    f_k (x_1, \ldots, f_k)
+  \end{pmatrix}\\
+  \\
+  & \text{1st order Tylor expansion:}\\
+  \\
+  f(x) & \approx f (\mu_x) + \begin{pmatrix}
+    \frac{\partial f_1}{\partial x_1} & \cdots & \frac{\partial f_1}{\partial x_k}\\
+    \vdots \\
+    \frac{\partial f_x}{\partial x_1} & \cdots & \frac{\partial f_k}{\partial x_k}\\  
+    \end{pmatrix} \cdot 
+    \begin{pmatrix}
+      x_1 - \mu_{x_1}^{(1)}\\
+      \vdots \\
+      x_k - \mu_{x_k}^{(k)}
+    \end{pmatrix}
+\end{align*}
+
+\begin{itemize}
+  \item[d)] Based on the expression in c), show that a CLT applies for $\sqrt{T} \left( f \left(\bar{X_T} \right) - f \left( \mu_x \right) \right)$, and derive the distribution. 
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \text{Use} \; x & = \bar{x_T}\\
+  \Rightarrow f(\bar{x_T}) & \approx f(\mu_x) + J (\bar{x_T} - \mu_x)\\
+  \Leftrightarrow f(\bar{x_T} - f(\mu_x)) & \approx J (\bar{x_T} - \mu_x)\\
+  \mathbb{E} \left( f \left( \bar{x_T}\right) - f \left( \mu_x\right) \right) & = \mathbb{E} \left( J \cdot \bar{x_t} - \mu_x \right)\\
+  & = J \cdot 0 = 0 \\
+  \\
+  \Rightarrow \Cov \left(  f \left( \bar{x_T}\right) - f \left( \mu_x\right) \right) & = \mathbb{E} \left( \left( f \left( \bar{x_T}\right) - f \left( \mu_x\right) \right) \left(  f \left( \bar{x_T}\right) - f \left( \mu_x\right) \right)^{'}  \right) \\
+  & = \mathbb{E} \left( J  \left( \tilde{x_T} - \mu_x \right) \left( \tilde{x_T} - \mu_x \right)^{'} J^{'}  \right) \\
+  & = J \ \mathbb{E} \left( \left( \dfrac{1}{T} \sum_{t = 1}^{T} \tilde{x_t} \right) \left( \dfrac{1}{T} \sum_{t = 1}^{T} \tilde{x_t} \right)^{'} \right) J\\
+  & = J \ \mathbb{E} \left( \dfrac{1}{T} \left( \underbrace{\sum_{t = 1}^{T} \tilde{x_t} \tilde{x_t^{'}}}_{\Sigma_x} + \underbrace{\sum_{t \neq s}^{T} \tilde{x_t} \tilde{x_s^{'}}}_{E(\cdot) = 0 }  \right) \right) J \cdot \dfrac{1}{T}\\
+  & = \dfrac{1}{T} J \cdot \Sigma_x \cdot J^{'}\\
+  & \Rightarrow \sqrt{T} \left( f (\bar{x}_T - f(\mu_x)) \right) \overset{d}{\longrightarrow} N(0, J \Sigma_x J^{'})
+\end{align*}
+
+\begin{itemize}
+  \item[e)] Lastly, assume the variable $x_t$ to be known (meaning it is not stochastic). We want to predict $y_t$ using $y_t = \phi_1 x_t$. Unfortunately, we only have $\widehat{\phi_1}$ which is stochastic with $\sqrt{T} \left( \widehat{\phi_1} - \phi_1 \right) \overset{d}{\longrightarrow} N(0, \Sigma_{\phi})$. Can we say something about the distribution of the prediction error $\hat{y}_t - y_t$?
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  \hat{y_t} - y_t & = \underbrace{\left( \widehat{\phi_1} - \phi_1 \right)}_{\text{stochastic}} \underbrace{x_t}_{\text{deterministic}}\\
+  \mathbb{E} \left( \widehat{y_t} - y_t \right) & = \underbrace{\mathbb{E} \left( \widehat{\phi_1} - \phi_1 \right) }_{= 0} x_t = 0 \\
+  \\
+  \Cov( f(\bar{x_T}) - f(\mu_x) ) & = \Cov \left( \left( \widehat{\phi_1} - \phi_1 \right) x_t \right) \\
+  & = x_t^{'} \Cov \left( \widehat{\phi_1} - \phi_1 \right) x_t\\
+  & =  x_t^{'} \Sigma_{\phi_1} x_t
+\end{align*}
+
+and since \(\widehat{\phi_1}\) follows a normal distribution:
+
+\[\widehat{y_t} - y_t \sim N(0, x^{'} \Sigma_{\phi_1} x)\]
 
 \end{document}
