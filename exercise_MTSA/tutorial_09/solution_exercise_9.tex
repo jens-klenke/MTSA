@@ -1,9 +1,5 @@
-\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
-$if(fontfamily)$
-\usepackage{$fontfamily$}
-$else$
+\documentclass[12pt,a4paper]{article}
 \usepackage{lmodern}
-$endif$
 
 \usepackage{scalerel}
 \usepackage{bbm}
@@ -15,9 +11,6 @@ $endif$
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
-$if(euro)$
-  \usepackage{eurosym}
-$endif$
 \else % if luatex or xelatex
   \ifxetex
     \usepackage{mathspec}
@@ -27,18 +20,6 @@ $endif$
   \fi
   \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
   \newcommand{\euro}{€}
-$if(mainfont)$
-    \setmainfont{$mainfont$}
-$endif$
-$if(sansfont)$
-    \setsansfont{$sansfont$}
-$endif$
-$if(monofont)$
-    \setmonofont[Mapping=tex-ansi]{$monofont$}
-$endif$
-$if(mathfont)$
-    \setmathfont(Digits,Latin,Greek){$mathfont$}
-$endif$
 \fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -47,17 +28,7 @@ $endif$
 \usepackage{microtype}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-$if(geometry)$
-\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
-$endif$
-$if(lang)$
-\ifxetex
-  \usepackage{polyglossia}
-  \setmainlanguage{$mainlang$}
-\else
-  \usepackage[shorthands=off,$lang$]{babel}
-\fi
-$endif$
+\usepackage[lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm]{geometry}
 
 
 % Figure Placement:
@@ -103,35 +74,9 @@ $endif$
 %% citation setup
 \usepackage{csquotes}
 
-$if(natbib)$
-\usepackage{natbib}
-\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}
-$endif$
-$if(biblatex)$
 \usepackage[backend=biber, maxbibnames = 99, style = apa]{biblatex}
 \setlength\bibitemsep{1.5\itemsep}
 \addbibresource{R_packages.bib}
-$if(biblio-files)$
-\bibliography{$biblio-files$}
-$endif$
-$endif$
-$if(listings)$
-\usepackage{listings}
-$endif$
-$if(lhs)$
-\lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
-$endif$
-$if(highlighting-macros)$
-$highlighting-macros$
-$endif$
-$if(verbatim-in-note)$
-\usepackage{fancyvrb}
-\VerbatimFootnotes
-$endif$
-$if(tables)$
-\usepackage{longtable,booktabs}
-$endif$
-$if(graphics)$
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -141,7 +86,6 @@ $if(graphics)$
 % margins by default, and it is still possible to overwrite the defaults
 % using explicit options in \includegraphics[width, height, ...]{}
 \setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
-$endif$
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
               unicode=false, % unicode breaks when used with xetex
@@ -151,34 +95,18 @@ $endif$
 \fi
 \hypersetup{breaklinks=true,
             bookmarks=true,
-            pdfauthor={$author-meta$},
-            pdftitle={$title-meta$},
+            pdfauthor={Dr.~Yannick Hoga},
+            pdftitle={Multivariate Time Series Analysis},
             colorlinks=true,
-            citecolor=$if(citecolor)$$citecolor$$else$blue$endif$,
-            urlcolor=$if(urlcolor)$$urlcolor$$else$blue$endif$,
-            linkcolor=$if(linkcolor)$$linkcolor$$else$magenta$endif$,
+            citecolor=black,
+            urlcolor=black,
+            linkcolor=black,
             pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
-$if(links-as-notes)$
-% Make links footnotes instead of hotlinks:
-\renewcommand{\href}[2]{#2\footnote{\url{#1}}}
-$endif$
-$if(strikeout)$
-\usepackage[normalem]{ulem}
-% avoid problems with \sout in headers with hyperref:
-\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
-$endif$
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-$if(numbersections)$
 \setcounter{secnumdepth}{5}
-$else$
-\setcounter{secnumdepth}{0}
-$endif$
-$if(verbatim-in-note)$
-\VerbatimFootnotes % allows verbatim text in footnotes
-$endif$
 
 %%% Use protect on footnotes to avoid problems with footnotes in titles
 \let\rmarkdownfootnote\footnote%
@@ -195,48 +123,22 @@ $endif$
 }
 
 \setlength{\droptitle}{-2em}
-$if(title)$
-  \title{$title$}
+  \title{Multivariate Time Series Analysis}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-$else$
-  \title{}
-  \pretitle{\vspace{\droptitle}}
-  \posttitle{}
-$endif$
-$if(subtitle)$
-\subtitle{$subtitle$}
-$endif$
-$if(author)$
-  \author{$for(author)$$author$$sep$ \\ $endfor$}
+\subtitle{Solution Exercise Sheet 9}
+  \author{Dr.~Yannick Hoga}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
-$else$
-  \author{}
-  \preauthor{}\postauthor{}
-$endif$
-$if(date)$
-  \predate{\centering\large\emph}
-  \postdate{\par}
-  \date{$date$}
-$else$
   \date{}
   \predate{}\postdate{}
-$endif$
 
-$for(header-includes)$
-$header-includes$
-$endfor$
 
 %% linespread settings
 
 \usepackage{setspace}
 
-$if(linespread)$
-\linespread{$linespread$}
-$else$
 \onehalfspacing
-$endif$
 
 
 % Language Setup
@@ -259,15 +161,7 @@ $endif$
 
 \begin{document}
 
-$if(language)$
-\ifthenelse{\equal{$language$}{german}}{
-  \selectlanguage{ngerman}
-  }{
-  \selectlanguage{english}
-  }
-$else$
 \selectlanguage{english}
-$endif$
 
 %%%%%%%%%%%%%% Jens %%%%%
 \numberwithin{equation}{section}
@@ -294,17 +188,17 @@ Chair of Econometrics\\
 	\end{flushright}
 %\end{minipage}
 %\vspace{.125cm}
-\hspace{-0.005cm}$semester$
+\hspace{-0.005cm}Winter Term 2019/2020
 
 \vspace{0.05cm}
 
 \begin{center}
 	\vspace{.25cm}
-	$author$ \hspace{.5cm} $author2$ \\
+	Dr.~Yannick Hoga \hspace{.5cm} Thilo Reinschlüssel \\
 	\vspace{.25cm}
-	\textbf{\Large{$title$}}\\
+	\textbf{\Large{Multivariate Time Series Analysis}}\\
 	\vspace{.25cm}
-	\textbf{\large{$subtitle$}}\\
+	\textbf{\large{Solution Exercise Sheet 9}}\\
 	\vspace{.125cm}
 \end{center}
 
@@ -313,6 +207,86 @@ Chair of Econometrics\\
 
 % body from markdown
 
-$body$
+\hypertarget{exercise-1-granger-causality-theory}{%
+\section{Exercise 1: Granger Causality --
+Theory}\label{exercise-1-granger-causality-theory}}
+
+Let \(z_t = (x_t, y_t)^{'}\) be a stationary time series with two
+dimensions. Define the forecast errar as the univariare series
+\(e_T (h) = y_{T +h} - y_T (h)\) with
+\(y_T (h) = \mathbb{E} \left( y_{T + h} | \Omega_T \right)\). The
+information set \(\Omega_T\) contains all relevant variables available
+whereas
+\(\Omega^{\setminus x}_{T} = \Omega_T \setminus \left\{ x_t\right\}_{t = 0}^{T}\)
+omits the variable \(x\) entirely. (This setting is the univariate
+equivalent to definition 6.1 on Slide 6-4.)
+
+\begin{itemize}
+  \item[a)] Prove that $\mathbb{E} \left( e_T(h) | \Omega_{T}^{\setminus x} \right) = 0$.
+\end{itemize}
+
+\emph{Solution:}
+
+\begin{align*}
+  z_t & = \begin{pmatrix} x_t \\ y_t \end{pmatrix}\\
+  \\
+  \mathbb{E} \left( e_T (h) | \Omega_{T}^{\setminus x} \right) & = \mathbb{E} \left( y_{T + h} - \mathbb{E} \left( y_{T +h} | \Omega_T \right) | \ \Omega_{T}^{\setminus x} \right)\\
+  & \overset{\text{LIE}}{=} \mathbb{E} \left( \mathbb{E} \left( y_{T +h} - y_{T + h}| \Omega_T \right) | \Omega_{T}^{\setminus x} \right)\\
+  & \text{since } \Omega_{T}^{\setminus x} \subseteq \Omega_{T}  \\
+  & \text{LIE = Law of Iterated Expectations}\\
+  & = 0\\
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Prove that $\Var \left(e_t (h)| \Omega_T \right) \leq \Var \left(e_t (h)| \Omega_T^{\setminus x} \right)$
+\end{itemize}
+
+\emph{Solution:}
+
+2 Theorems necessary for the proof:
+
+1 Conditional Jensen's Inequality
+
+\(g(\cdot ): \mathbb{R}^{m} \rightarrow \mathbb{R}\) is convex (like
+\(\chi^2\)), then for any random vectors (y,x) for which
+\(\mathbb{E} (||y||) < \infty\) and \(\mathbb{E} (|| g(y)||)< \infty\),
+\(g \left( \mathbb{E} (y|x) \right) \leq \mathbb{E} \left( (g(y)|x) \right)\).
+It is the other way around for concave functions.
+
+2 Conditioning Theorem
+
+If \(\mathbb{E}(|y|) < \infty\), then
+\(\mathbb{E}(g(x) y | x) = g(x) \cdot \mathbb{E}(y|x)\). If in addition
+\(\mathbb{E} (|g(x) y|) < \infty\), then
+\(\mathbb{E} (g(x) y) = \mathbb{E} (g(x) \mathbb{E} (y|x))\).
+
+Back to Granger:
+
+\(e_T (h) = y_{T +h} - y_T (h)\) is a scalar. We know that
+\(\mathbb{E} \left( e_T (h) | \Omega_T^{ \setminus x} \right) = 0\),
+\(\mathbb{E} \left( e_T (h) | \Omega_T \right) = 0\) and
+\(\Var(e_T (h)) < \infty\) since \(y_t\) is a weakly stationary (w.s.)
+process. Furthermore, w.s. implies that
+\(\mathbb{E} (y_t) < \infty, \mathbb{E} (y_t^2) < \infty\).
+
+From Jensen's Inequality it follows:
+
+\begin{align*}
+  \left[ \mathbb{E} \left( y_{T + h} | \Omega_{T}^{\setminus x } \right) \right]^2 & \overset{\text{LIE}}{=} \left[ \mathbb{E} \left[ \mathbb{E} \left( y_{T + h} | \Omega_{T} \right) | \Omega_T^{\setminus x} \right] \right]^2 \\
+  & \leq \mathbb{E} \left[ \left[ \mathbb{E} (y_{t +h} | \Omega_T)\right]^2 | \Omega_{t}^{\setminus x} \right]
+\end{align*}
+
+Taking conditional expactations:
+
+\begin{align*}
+  \mathbb{E} \left[ \left( \mathbb{E}\left[ y_{T + h | \Omega_{T}^{\setminus x}} \right]  \right)^2 \right] \leq \mathbb{E} \left( \left[ \mathbb{E} \left( y_{T +h} | \Omega_T \right) \right]^2 \right)
+\end{align*}
+
+This extends to:
+
+\begin{align*}
+  \left[ \mathbb{E} (y_{T + h}) \right]^2 & \leq \mathbb{E}  \left( \left[ \mathbb{E} \left( y_{T + h} | \Omega_T^{\setminus x} \right) \right]^2 \right)\\
+  \text{Since} \; \mathbb{E} (y_{T + h}) & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}^{\setminus x}\right) \right]
+\end{align*}
 
 \end{document}

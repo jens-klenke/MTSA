@@ -1,0 +1,97 @@
+---
+title: 'Multivariate Time Series Analysis'
+author: 'Dr. Yannick Hoga'
+author2: 'Thilo Reinschlüssel'
+subtitle: 'Solution Exercise Sheet 9'
+semester: "Winter Term 2019/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+    template: ../template.tex
+    fig_caption: yes
+    citation_package: biblatex
+    number_sections: true
+toc: true
+lot: true
+lof: true
+graphics: true
+linkcolor: black
+urlcolor: black
+citecolor: black
+colorlinks: true
+font: Times New Roman
+fontsize: 12pt
+geometry: lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm
+classoption: a4paper
+---
+
+```{r , include=FALSE}
+Sys.setlocale(locale = "English_United States.1252") ## English US Windows
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("packages/packages.R"))
+```
+
+# Exercise 1: Granger Causality – Theory
+
+Let $z_t = (x_t, y_t)^{'}$ be a stationary time series with two dimensions. Define the forecast errar as the univariare series $e_T (h) = y_{T +h} - y_T (h)$ with $y_T (h) = \mathbb{E} \left( y_{T + h} | \Omega_T \right)$. The information set $\Omega_T$ contains all relevant variables available whereas $\Omega^{\setminus x}_{T} = \Omega_T \setminus \left\{ x_t\right\}_{t = 0}^{T}$ omits the variable $x$ entirely. (This setting is the univariate equivalent to definition 6.1 on Slide 6-4.) 
+
+\begin{itemize}
+  \item[a)] Prove that $\mathbb{E} \left( e_T(h) | \Omega_{T}^{\setminus x} \right) = 0$.
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  z_t & = \begin{pmatrix} x_t \\ y_t \end{pmatrix}\\
+  \\
+  \mathbb{E} \left( e_T (h) | \Omega_{T}^{\setminus x} \right) & = \mathbb{E} \left( y_{T + h} - \mathbb{E} \left( y_{T +h} | \Omega_T \right) | \ \Omega_{T}^{\setminus x} \right)\\
+  & \overset{\text{LIE}}{=} \mathbb{E} \left( \mathbb{E} \left( y_{T +h} - y_{T + h}| \Omega_T \right) | \Omega_{T}^{\setminus x} \right)\\
+  & \text{since } \Omega_{T}^{\setminus x} \subseteq \Omega_{T}  \\
+  & \text{LIE = Law of Iterated Expectations}\\
+  & = 0\\
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Prove that $\Var \left(e_t (h)| \Omega_T \right) \leq \Var \left(e_t (h)| \Omega_T^{\setminus x} \right)$
+\end{itemize}
+
+_Solution:_
+
+2 Theorems necessary for the proof: 
+
+1 Conditional Jensen's Inequality 
+
+$g(\cdot ): \mathbb{R}^{m} \rightarrow \mathbb{R}$ is convex (like $\chi^2$), then for any random vectors (y,x) for which $\mathbb{E} (||y||) < \infty$ and $\mathbb{E} (|| g(y)||)< \infty$, $g \left( \mathbb{E} (y|x) \right) \leq \mathbb{E} \left( (g(y)|x) \right)$. It is the other way around for concave functions. 
+
+2 Conditioning Theorem 
+
+If $\mathbb{E}(|y|) < \infty$, then $\mathbb{E}(g(x) y | x) = g(x) \cdot \mathbb{E}(y|x)$. If in addition $\mathbb{E} (|g(x) y|) < \infty$, then $\mathbb{E} (g(x) y) = \mathbb{E} (g(x) \mathbb{E} (y|x))$. 
+
+Back to Granger: 
+
+$e_T (h) = y_{T +h} - y_T (h)$ is a scalar. We know that $\mathbb{E} \left( e_T (h) | \Omega_T^{ \setminus x} \right) = 0$, $\mathbb{E} \left( e_T (h) | \Omega_T \right) = 0$ and $\Var(e_T (h)) < \infty$ since $y_t$ is a weakly stationary (w.s.) process. Furthermore, w.s. implies that $\mathbb{E} (y_t) < \infty, \mathbb{E} (y_t^2) < \infty$. 
+
+From Jensen's Inequality it follows:
+
+\begin{align*}
+  \left[ \mathbb{E} \left( y_{T + h} | \Omega_{T}^{\setminus x } \right) \right]^2 & \overset{\text{LIE}}{=} \left[ \mathbb{E} \left[ \mathbb{E} \left( y_{T + h} | \Omega_{T} \right) | \Omega_T^{\setminus x} \right] \right]^2 \\
+  & \leq \mathbb{E} \left[ \left[ \mathbb{E} (y_{t +h} | \Omega_T)\right]^2 | \Omega_{t}^{\setminus x} \right]
+\end{align*}
+
+Taking conditional expactations: 
+
+\begin{align*}
+  \mathbb{E} \left[ \left( \mathbb{E}\left[ y_{T + h | \Omega_{T}^{\setminus x}} \right]  \right)^2 \right] \leq \mathbb{E} \left( \left[ \mathbb{E} \left( y_{T +h} | \Omega_T \right) \right]^2 \right)
+\end{align*}
+
+This extends to: 
+
+\begin{align*}
+  \left[ \mathbb{E} (y_{T + h}) \right]^2 & \leq \mathbb{E}  \left( \left[ \mathbb{E} \left( y_{T + h} | \Omega_T^{\setminus x} \right) \right]^2 \right)\\
+  \text{Since} \; \; \mathbb{E} (y_{T + h}) & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}^{\setminus x}\right) \right]\\
+  & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}\right) \right]
+\end{align*}
+
+the inequations (I) and (II) imply similar ranking for the variances:  
+

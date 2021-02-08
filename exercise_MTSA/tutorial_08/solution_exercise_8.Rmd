@@ -1,0 +1,134 @@
+---
+title: 'Multivariate Time Series Analysis'
+author: 'Dr. Yannick Hoga'
+author2: 'Thilo Reinschlüssel'
+subtitle: 'Solution Exercise Sheet 8'
+semester: "Winter Term 2019/2020"
+output:
+  pdf_document:
+    keep_tex: yes
+    template: ../template.tex
+    fig_caption: yes
+    citation_package: biblatex
+    number_sections: true
+toc: true
+lot: true
+lof: true
+graphics: true
+linkcolor: black
+urlcolor: black
+citecolor: black
+colorlinks: true
+font: Times New Roman
+fontsize: 12pt
+geometry: lmargin = 2cm, rmargin = 2cm, tmargin = 2cm, bmargin = 2.5cm
+classoption: a4paper
+---
+
+```{r , include=FALSE}
+Sys.setlocale(locale = "English_United States.1252") ## English US Windows
+knitr::opts_chunk$set(echo = TRUE)
+
+source(here::here("packages/packages.R"))
+```
+
+# Exercise 1: Forecast Intervals and Distributional Assumptions
+
+\begin{itemize}
+  \item[a)] Which key assumption about the innovations $a_t$ is made in the lecture to derive the distribution of the forecast errors $e_T (h)$? 
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  a_t & \overset{\text{i.i.d.}}{\sim} N (0, \Sigma_a)
+\end{align*}
+
+\begin{itemize}
+  \item i.i.d $\Rightarrow$ no autocorrelation
+  \item $N \ \Rightarrow$ normal distributed 
+  \item $\Sigma_a \ \Rightarrow$ heteroskedasticity
+\end{itemize}
+
+\begin{itemize}
+  \item[b)] Assume we knew all parameters / coefficients and let $\Sigma_a$ be the identity matrix $I_{3 \times 3}$. Based on the assumption from a), derive the distribution of $e_T (1)$  for any stationary $\VAR(p)$.  
+\end{itemize}
+
+_Solution:_
+
+\begin{align*}
+  e_T (1) & = z_{T + 1} - z_T (1) \\
+  & = a_{T + 1}\\
+  \\
+  & \text{holds for any } \VAR(p) \ \text{since}\\
+  z_T (1) & = \mathbb{E} \left(z_{T + 1} | z_T, \ldots , z_0 \right)\\
+  \\
+  \Rightarrow e_t (1) & = a_{T + 1} \sim N \left(0, I_{3 \times 3} \right)
+\end{align*}
+
+\begin{itemize}
+  \item[c)] Derive the confidence ellipsoid associated to b) for $\alpha = 5 \%$. What is the fraction forecast errors that lie inside the ellposid? 
+\end{itemize}
+
+_Solution:_
+
+llipsoid: 
+
+$$\left\{ z \in \mathbb{R}^{3}: \left( z_T (1) - z \right)^{'} \Sigma_e^{-1} (1) \left( z_T (1) - z \right) \leq \chi_{3, 1- \alpha}^{2}\right\}$$
+
+By defining $z_T (1) - z =: \epsilon$ and using that $\Sigma_e (1) = \Sigma_a = I_{3 \times 3}$ the ellipsoid is: $\left\{ \epsilon \in \mathbb{R}^{3}: \epsilon^{'} \ \epsilon \leq \chi_{3, 1- \alpha}^{2}\right\}$. For $\alpha = 5 \%$, $95 \%$ of the observed forecast errors are expected to fall inside the confidence ellipsoid.
+
+\begin{itemize}
+  \item[d)] Run a simulation in `R `: Draw the forecast error $e_T (1)$ defined in a) and b) with $K = 3$. Check if it is located inside or outside the confidence ellipsoid derived in c). Use $N = 10 000$ repetitions in total and conclude whether the confidence ellipsoid is appropriate.  
+\end{itemize}
+
+_Solution:_
+
+Just check if $e_T  (1)^{'} e_T (1)  \leq \chi_{3, 0.95}^{2}$ and compute $\displaystyle \dfrac{1}{N} \sum_{i = 1}^{N} \mathbbm{1} \left( e_T  (1)^{'} e_T (1)  \leq \chi_{3, 0.95}^{2}\right)$. 
+
+```{r d}
+N <- 10000 # number of repetitions
+K <- 3 # dimension of VAR
+ # drawing a_t from iid N(0,I)
+gauss <- mvrnorm(n = N, mu = c(0,0,0), Sigma = diag(K))
+# computing e'e for all draws in one take equals diag(EE')
+msfe_gauss <- diag(gauss %*% t(gauss)) 
+# this is only a one-sided test since we have squared each error!
+limit <- qchisq(p = 0.95, df=3, lower.tail=TRUE) 
+sum(msfe_gauss < limit) / N
+```
+
+\begin{itemize}
+  \item[e)] Repeat the simulation from above but this time assume $a_t$ to be drawn from a uniform distribution. $\Sigma_a = I_{3 \times 3}$ remains. How reliable is the confidence ellipsoid in this case? 
+  \textit{Hint: Set $\pm \dfrac{\sqrt{12}}{2}$ as lower / upper bound for unit variance.}
+\end{itemize}
+
+_Solution:_
+
+```{r e}
+# variance = 1 again, Kurtosis is < 3 for this one
+unif <- matrix(data = runif(n = N * 3, min = -sqrt(12)/2, 
+                            max = sqrt(12)/2), nrow = N, ncol = 3) 
+msfe_unif <- rowSums(unif^2)
+sum(msfe_unif < limit) / N
+```
+
+It is to conservative. 
+
+\begin{itemize}
+  \item[f)] Repeat the simulation drawing innovations from a $t$-distribution with $2$ degrees of freedom and conclude.
+\end{itemize}
+
+_Solution:_
+
+```{r f}
+# variance = 1 by default, kurtosis > 3 and this hurts a lot
+t2 <- matrix(data = rt(n = N * 3, df = 2), nrow = N, ncol = 3)
+msfe_t2 <- rowSums(t2^2)
+sum(msfe_t2 < limit) / N
+```
+
+Too liberal, the ellipsoid is not appropriate. 
+
+
+
