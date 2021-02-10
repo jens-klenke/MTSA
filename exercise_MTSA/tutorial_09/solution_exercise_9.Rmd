@@ -60,11 +60,11 @@ _Solution:_
 
 2 Theorems necessary for the proof: 
 
-1 Conditional Jensen's Inequality 
+$1.$ Conditional Jensen's Inequality 
 
 $g(\cdot ): \mathbb{R}^{m} \rightarrow \mathbb{R}$ is convex (like $\chi^2$), then for any random vectors (y,x) for which $\mathbb{E} (||y||) < \infty$ and $\mathbb{E} (|| g(y)||)< \infty$, $g \left( \mathbb{E} (y|x) \right) \leq \mathbb{E} \left( (g(y)|x) \right)$. It is the other way around for concave functions. 
 
-2 Conditioning Theorem 
+$2.$ Conditioning Theorem 
 
 If $\mathbb{E}(|y|) < \infty$, then $\mathbb{E}(g(x) y | x) = g(x) \cdot \mathbb{E}(y|x)$. If in addition $\mathbb{E} (|g(x) y|) < \infty$, then $\mathbb{E} (g(x) y) = \mathbb{E} (g(x) \mathbb{E} (y|x))$. 
 
@@ -79,19 +79,195 @@ From Jensen's Inequality it follows:
   & \leq \mathbb{E} \left[ \left[ \mathbb{E} (y_{t +h} | \Omega_T)\right]^2 | \Omega_{t}^{\setminus x} \right]
 \end{align*}
 
-Taking conditional expactations: 
+Taking conditional expectations: 
 
-\begin{align*}
-  \mathbb{E} \left[ \left( \mathbb{E}\left[ y_{T + h | \Omega_{T}^{\setminus x}} \right]  \right)^2 \right] \leq \mathbb{E} \left( \left[ \mathbb{E} \left( y_{T +h} | \Omega_T \right) \right]^2 \right)
-\end{align*}
+\begin{align}
+  \mathbb{E} \left[ \left( \mathbb{E}\left[ y_{T + h | \Omega_{T}^{\setminus x}} \right]  \right)^2 \right] \leq \mathbb{E} \left( \left[ \mathbb{E} \left( y_{T +h} | \Omega_T \right) \right]^2 \right) \label{eq:1}
+\end{align}
 
 This extends to: 
 
+\begin{align}
+  \left[ \mathbb{E} (y_{T + h}) \right]^2 & \leq \mathbb{E}  \left( \left[ \mathbb{E} \left( y_{T + h} | \Omega_T^{\setminus x} \right) \right]^2 \right) \label{eq:2}\\
+  \text{Since} \; \; \mathbb{E} (y_{T + h}) & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}^{\setminus x}\right) \right] \nonumber \\
+  & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}\right) \right] \nonumber
+\end{align}
+
+the inequations \eqref{eq:1} and \eqref{eq:2} imply similar ranking for the variances:  
+
 \begin{align*}
-  \left[ \mathbb{E} (y_{T + h}) \right]^2 & \leq \mathbb{E}  \left( \left[ \mathbb{E} \left( y_{T + h} | \Omega_T^{\setminus x} \right) \right]^2 \right)\\
-  \text{Since} \; \; \mathbb{E} (y_{T + h}) & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}^{\setminus x}\right) \right]\\
-  & = \mathbb{E} \left[ \mathbb{E} \left( y_{T +h} | \Omega_{T}\right) \right]
+0 & \leq \Var \left( \mathbb{E} \left[ y_{T + h} | \Omega_{T}^{\setminus x} \right] \right) \leq \Var \left( \mathbb{E} \left[ y_{T + h} | \Omega_{T} \right] \right) \\
+  & \text{since} \Var(z) = \mathbb{E} (z^2) - \left[ \mathbb{E} (z) \right]^2
 \end{align*}
 
-the inequations (I) and (II) imply similar ranking for the variances:  
+Consider the decomposition below: 
+
+\begin{align*}
+  y_{T + h} - \mu & = \underbrace{ y_{T + h} - \mathbb{E} \left( y_{T + h} | \Omega \right)}_{e_T (h)| \Omega} + \underbrace{\mathbb{E} \left( y_{T + h} | \Omega \right) - \mu}_{u_T (h) | \Omega} 
+\end{align*}
+
+Remember that: 
+
+\begin{align*}
+  \mathbb{E} [e_T (h)| \Omega] & = 0 \quad \text{for} \quad \Omega = \left\{ \Omega_T, \Omega_T^{\setminus x} \right\} \\
+  \text{and } \mathbb{E} [e_T (h) * u_T (h)] & = 0 \Rightarrow \Cov(e_T (h), u_T (h)) = 0
+\end{align*}
+
+Thus:
+
+\begin{align*}
+  \Var \left( y_{T + h} - \mu | \Omega \right) & = \Var \left( e_T (h) + u_T (h) | \Omega \right) \\
+  & = \Var \left( e_T (h)  | \Omega \right) +  \Var \left( u_T (h) | \Omega \right)
+\end{align*}
+
+Since $\mu$ is a constant and $y_{T + h}$ does not depend on $\Omega$:
+
+\begin{align*}
+  \Var\left(y_{T + h} - \mu | \Omega \right) & = \Var\left( y_{T + h}\right) \\
+  \Var\left(u_{T} (h) | \Omega \right) & = \Var\left( \mathbb{E} [ y_{T + h} | \Omega ]\right) \\
+  \Var\left(  y_{T + h} \right) & = \Var\left(  e_{T} h  | \Omega \right) + \Var\left( \mathbb{E} [ y_{T + h} | \Omega ]\right)
+\end{align*}
+
+We have already shown that 
+
+\begin{align*}
+\Var \left( \mathbb{E}(y_{T + h} | \Omega_T) \right) \geq \Var \left( \mathbb{E} \left(y_{T +h} | \Omega_{T}^{\setminus x} \right) \right)
+\end{align*}
+
+and we know that $\Var(y_{T +h}) = \sigma^2$ is constant. This implies:
+
+\begin{align*}
+\Var\left(e_T (h) | \Omega_T \right) \leq \Var \left( e_T (h) | \Omega_T^{\setminus x} \right) \qquad _{\square}
+\end{align*}
+
+# Exercise 2: Granger Causality and IRFs in Data
+
+We return to the dataset ` fx_series.Rda` and examine Granger (Non)-Causality and the Impulse Response Functions (IRFs). Remember that this dataset contains two time series of exchange rates.
+
+```{r set_up,  include = FALSE}
+load(here::here('exercise_MTSA/00_data/quandl.Rda'))
+```
+
+\begin{itemize}
+  \item[a)] Do you find any Granger Causality in a $\VAR(1)$ model? Which zero restrictions are implied for the coefficient matrix $\phi_1$?
+\end{itemize}
+
+_Solution:_
+
+```{r 2_a}
+# VAR(1) with intercept, no trends
+var1.fit <- VAR(fx_series, p = 1, type = "const") 
+# there is conditional heteroscedasticity in the data, 
+#that's why employing a HC VCOV matric helps
+causality(x = var1.fit, cause = "lr.Eu", vcov. = vcovHC(var1.fit)) 
+causality(x = var1.fit, cause = "lr.Ja", vcov. = vcovHC(var1.fit))
+```
+
+The $H_0$ of Granger \emph{Non}-Causality is never rejected. 
+
+\begin{align*}
+  z_t = \phi_0 + \begin{pmatrix} \ast & 0 \\ 0 & \ast \end{pmatrix} z_{t - 1} + a_t
+\end{align*}
+
+\begin{itemize}
+  \item[b)] Is there evidence for instantaneous causality? Whar are the implications regarding $\Sigma_a$?
+\end{itemize}
+
+_Solution:_
+
+Yes, the $H_0$ is rejected (in the test from a) ).There is evidence for instantaneous Causality meaning that $\Sigma_a$ has non-zero entries of the main diagonal. 
+
+\begin{align*}
+  \Sigma_a = \begin{pmatrix} \ast & \sigma_{12}  \\ \sigma_{12} & \ast \end{pmatrix} , \quad \sigma_{12} \neq 0 
+\end{align*}
+
+\begin{itemize}
+  \item[c)] Before you plot the IRFs, make a guess about their appearance based on Granger Causality. Then compute the IRFs (do \emph{not} use orthogonal innovations!) for five periods and comment.
+\end{itemize}
+
+_Solution:_
+
+```{r 2_c}
+irf1 <- irf(x = var1.fit, ortho = FALSE, n.ahead = 5)
+# plot IRFs of shock on first exchange rate
+plot(x = 0:5, irf1$irf$lr.Eu[,1], ylim = c(0,1), type = "l", col = "red"
+     , main = "IRF of shock on lr.Eu")
+points(x = 0:5, y = irf1$irf$lr.Eu[,2], type = "l", col = "blue")
+legend("topright", legend = c("lr.Eu","lr.Ja"), lwd = c(2,2), col = c("red", "blue"))
+# plot IRFs of shock on second exchange rate
+plot(x = 0:5, irf1$irf$lr.Ja[,1], ylim = c(0,1), type = "l", col = "red"
+     , main = "IRF of shock on lr.Ja")
+points(x = 0:5, y = irf1$irf$lr.Ja[,2], type = "l", col = "blue")
+legend("topright", legend = c("lr.Eu","lr.Ja"), lwd = c(2,2), col = c("red", "blue"))
+
+irf1$irf$lr.Eu
+irf1$irf$lr.Ja
+```
+
+
+No evidence for Granger Causality between $z_{1, t}$ and $z_{2, t}$
+
+$\Rightarrow a_{1,t}$ barely influences $z_{2, t}$ if we control for $a_{2, t}$ and vice versa. 
+
+
+As expected, unit impulses on either $a_{1, t} / a_{2, t}$ did not affect $z_{2, t}/ z_{1, t}$ by much. The impulse vanishes quickly.  
+
+# Exercise 3: Granger Non-Causality and IRFs
+
+Consider a general three-dimensional $\VAR(1)$ in which the first variable $z_{1, t}$ does not Granger cause the other variables. Show that a shock $a_{1,T}$ does not affect $\left\{ z_{2, t}\right\}_{t = T}^{\infty}$ and $\left\{ z_{3, t}\right\}_{t = T}^{\infty}$.  
+
+_Solution:_
+
+\begin{align*}
+  z_t & = \phi_1 z_{t-1} + a_t \\
+  \\
+  \{z_{1, t}\} & \centernot{\rightarrow} \left\{ z_{2, \cdot}, z_{3, \cdot}\right\}\\
+  \\
+  \Rightarrow \phi_1 & = \begin{pmatrix} 
+  \ast & \ast & \ast \\
+  0 & \ast & \ast \\
+  0 & \ast & \ast \\
+  \end{pmatrix} =  \begin{pmatrix} 
+  a & b & c \\
+  0 & d & e \\
+  0 & f & g \\
+  \end{pmatrix}
+\end{align*}
+
+Take $\theta_S$ from the causal representation: 
+
+\begin{align*}
+  \dfrac{\partial z_{t,s}}{\partial a_t} & = \theta_s \\
+  z_{t + s} & = \sum_{i = 0}^{t + s -1} \theta_i a_{t + s -i}
+\end{align*}
+
+Special case for $\VAR(1)$:
+
+$\theta_s = \phi_1^{2}$ and $\theta_0 = I_{3 \times 3}$ which fulfills the restrictions trivially as $\theta_1$ does. 
+
+\begin{align*}
+\theta_2 & = \begin{pmatrix} 
+  a & b & c \\
+  0 & d & e \\
+  0 & f & g \\
+  \end{pmatrix} \begin{pmatrix} 
+  a & b & c \\
+  0 & d & e \\
+  0 & f & g \\
+  \end{pmatrix} \\
+  & = 
+  \begin{pmatrix} 
+  \ast & \ast & \ast \\
+  0 \cdot a + d \cdot 0 + e \cdot 0 & \ast & \ast \\
+  0 \cdot a + f \cdot 0 + g \cdot 0 & \ast & \ast \\
+  \end{pmatrix}\\
+  & = 
+  \begin{pmatrix} 
+  \ast    & \ast & \ast \\
+  0       & \ast & \ast \\
+  0       & \ast & \ast \\
+  \end{pmatrix}
+\end{align*}
+
+$\Rightarrow \theta_i = \phi_1 \cdot \theta_{i -1}$ does always fulfill  the restirctions for $i \geq 0$. Therefore $a_{1,t}$ does never influences $z_{2, \cdot}$ or $z_{3, \cdot}$. $\qquad _{\square}$
 

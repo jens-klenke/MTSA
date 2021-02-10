@@ -6,4 +6,5 @@ pacman::p_load(dplyr,
                expm,
                MASS, 
                Quandl,
-               here)
+               here,
+               vars)
